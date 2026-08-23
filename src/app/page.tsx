@@ -197,7 +197,7 @@ function Section({ children, className = '', number }: { children: React.ReactNo
       className={`relative ${className}`}
     >
       {number !== undefined && (
-        <span className="hidden lg:block absolute -top-1 right-4 font-terminal text-5xl font-bold text-border/40 animate-fade-in-number select-none pointer-events-none">
+        <span className="hidden lg:block absolute -top-2 right-2 sm:-top-4 sm:right-4 font-terminal text-7xl sm:text-8xl font-black text-border/[0.15] animate-fade-in-number select-none pointer-events-none">
           {String(number).padStart(2, '0')}
         </span>
       )}
@@ -828,7 +828,7 @@ export default function HomePage() {
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
               <Badge variant="outline" className="mb-6 border-primary/30 text-primary/80 animate-border-glow"><Zap className="w-3 h-3 mr-1.5" />AI for Autonomous Agents \u2014 Exasol Build Challenge 2026</Badge>
               <h1 className="text-3xl sm:text-5xl lg:text-[3.4rem] font-bold tracking-tight leading-[1.08] mb-6">
-                Single-shot text-to-SQL answers the question you{' '}<span className="text-gradient-amber">already knew</span>{' '}how to ask.
+                Single-shot text-to-SQL answers the question you{' '}<span className="text-gradient-amber text-shimmer-hover">already knew</span>{' '}how to ask.
               </h1>
               <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
                 CASEFILE is an agent that forms hypotheses, tests them, kills the wrong ones,
@@ -853,7 +853,7 @@ export default function HomePage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
-                  className="group relative flex flex-col items-center p-4 rounded-xl border border-border/40 bg-card/60 backdrop-blur-sm card-hover overflow-hidden"
+                  className="group relative flex flex-col items-center p-4 rounded-xl border border-border/40 bg-card/50 backdrop-blur-md card-hover overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <s.icon className="w-5 h-5 text-primary mb-2 relative" /><span className="font-terminal font-bold text-xl relative">{s.value}</span>
@@ -941,8 +941,8 @@ export default function HomePage() {
                 { state: 'INCONCLUSIVE', icon: HelpCircle, color: 'text-[oklch(0.75_0.15_85)]', border: 'border-[oklch(0.75_0.15_85/0.25)]', bg: 'from-[oklch(0.75_0.15_85/0.05)]', desc: 'Retry once with reformulation, then kill. Never loop forever on a broken query.' },
                 { state: 'BUDGET EXHAUSTED', icon: AlertTriangle, color: 'text-[oklch(0.75_0.15_85)]', border: 'border-[oklch(0.75_0.15_85/0.25)]', bg: 'from-[oklch(0.75_0.15_85/0.05)]', desc: 'Hard cap at 60 queries. Emit whatever confidence was reached. Never let a demo hang.' },
               ].map(s => (
-                <Card key={s.state} className={`bg-gradient-to-br ${s.bg} to-card/50 ${s.border} hover:to-card/80 transition-all duration-300`}>
-                  <CardContent className="p-4"><div className="flex items-center gap-2 mb-2"><s.icon className={`w-4 h-4 ${s.color}`} /><h4 className={`font-terminal text-sm font-semibold ${s.color}`}>{s.state}</h4></div><p className="text-xs text-muted-foreground leading-relaxed">{s.desc}</p></CardContent>
+                <Card key={s.state} className={`relative overflow-hidden bg-gradient-to-br ${s.bg} to-card/50 ${s.border} hover:to-card/80 transition-all duration-300`}>
+                  <CardContent className="p-4 relative"><div className={`absolute inset-0 pointer-events-none ${s.state === 'CONFIRMED' ? 'verdict-glow-confirmed' : s.state === 'REFUTED' ? 'verdict-glow-refuted' : 'verdict-glow-inconclusive'}`} /><div className="flex items-center gap-2 mb-2 relative"><s.icon className={`w-4 h-4 ${s.color}`} /><h4 className={`font-terminal text-sm font-semibold ${s.color}`}>{s.state}</h4></div><p className="text-xs text-muted-foreground leading-relaxed relative">{s.desc}</p></CardContent>
                 </Card>
               ))}
             </div></Section>
@@ -963,7 +963,7 @@ export default function HomePage() {
                 <table className="w-full"><thead><tr className="border-b border-border/40"><th className="text-left p-4 text-sm font-medium text-muted-foreground">Engine</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Per-query</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">47-query run</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Outcome</th></tr></thead>
                 <tbody>
                   <tr className="border-b border-border/20"><td className="p-4 text-sm">Typical cloud warehouse</td><td className="p-4 font-terminal text-sm text-muted-foreground">8\u201312 s</td><td className="p-4 font-terminal text-sm text-destructive font-medium">6\u20139 min</td><td className="p-4 text-sm text-destructive">Agent times out, user leaves</td></tr>
-                  <tr className="bg-primary/[0.06]"><td className="p-4 text-sm font-bold text-primary">Exasol Personal</td><td className="p-4 font-terminal text-sm text-primary font-medium">sub-second</td><td className="p-4 font-terminal text-sm text-[oklch(0.7_0.15_160)] font-medium">under 30 s</td><td className="p-4 text-sm text-[oklch(0.7_0.15_160)] font-medium">Investigation feels instant</td></tr>
+                  <tr className="animate-exasol-pulse"><td className="p-4 text-sm font-bold text-primary">Exasol Personal</td><td className="p-4 font-terminal text-sm text-primary font-medium">sub-second</td><td className="p-4 font-terminal text-sm text-[oklch(0.7_0.15_160)] font-medium">under 30 s</td><td className="p-4 text-sm text-[oklch(0.7_0.15_160)] font-medium">Investigation feels instant</td></tr>
                 </tbody></table>
               </div></CardContent>
             </Card>
@@ -987,13 +987,13 @@ export default function HomePage() {
                 { sub: 'BI copilot with pretty charts', why: 'Judged on the chart library, not the database.', Icon: BarChart3, iconBg: 'bg-muted/50', iconColor: 'text-muted-foreground' },
                 { sub: 'CASEFILE', why: 'The database\'s core property is the enabling condition. Cannot be ported without breaking.', Icon: CircuitBoard, iconBg: 'bg-primary/15', iconColor: 'text-primary', highlight: true },
               ].map((r, i) => (
-                <Card key={i} className={`border-border/40 ${r.highlight ? 'border-primary/30 bg-primary/[0.04] glow-amber' : 'hover:bg-secondary/50'} transition-all duration-200`}>
+                <Card key={i} className={`border-border/40 ${r.highlight ? 'border-primary/30 bg-primary/[0.04] glow-amber' : 'competitor-card hover:bg-secondary/50'} transition-all duration-200`}>
                   <CardContent className="p-4 flex items-start gap-4">
                     <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${r.iconBg} shrink-0 mt-0.5`}>
                       <r.Icon className={`w-5 h-5 ${r.iconColor}`} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm ${r.highlight ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>{r.sub}</p>
+                      <p className={`text-sm ${r.highlight ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>{r.highlight ? r.sub : <span className="competitor-name">{r.sub}</span>}</p>
                       <p className="text-xs text-muted-foreground/80 mt-1">{r.why}</p>
                     </div>
                   </CardContent>
@@ -1105,7 +1105,7 @@ export default function HomePage() {
             {/* Layout: receipts + timeline */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               <div className="lg:col-span-4 xl:col-span-3">
-                <Card className="border-border/40 sticky top-20"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium flex items-center gap-2"><Activity className="w-4 h-4 text-primary" />Receipts{isRunning && <span className="ml-auto flex items-center gap-1.5 text-xs text-primary"><span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-amber" />LIVE</span>}</CardTitle></CardHeader>
+                <Card className="glass backdrop-blur-md border-border/30 sticky top-20"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium flex items-center gap-2"><Activity className="w-4 h-4 text-primary" />Receipts{isRunning && <span className="ml-auto flex items-center gap-1.5 text-xs text-primary"><span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-amber" />LIVE</span>}</CardTitle></CardHeader>
                   <CardContent className="space-y-2 p-4 pt-0">
                     {/* Budget progress bar */}
                     <div className="mb-2">
@@ -1135,8 +1135,17 @@ export default function HomePage() {
                   </CardContent></Card>
               </div>
               <div className="lg:col-span-8 xl:col-span-9">
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full"><TabsList className="bg-secondary/40 border border-border/40 w-full justify-start"><TabsTrigger value="timeline" className="text-xs"><GitBranch className="w-3 h-3 mr-1.5" />Hypothesis Timeline</TabsTrigger><TabsTrigger value="tree" className="text-xs"><Network className="w-3 h-3 mr-1.5" />Tree</TabsTrigger><TabsTrigger value="casefile" className="text-xs" disabled={!isCompleted && !showExample}><FileSearch className="w-3 h-3 mr-1.5" />Case File</TabsTrigger><TabsTrigger value="logs" className="text-xs"><Terminal className="w-3 h-3 mr-1.5" />Event Log</TabsTrigger></TabsList>
-                  <TabsContent value="timeline" className="mt-4"><Card className="border-border/40"><CardContent className="p-4">{store.hypotheses.length === 0 && !isRunning ? (<div className="text-center py-16 text-muted-foreground"><Search className="w-10 h-10 mx-auto mb-3 opacity-20 animate-float" /><p className="text-sm">Start an investigation to see hypotheses appear here.</p><p className="text-xs mt-1 opacity-60">Each hypothesis is planned, executed, and judged in real-time.</p></div>) : (<ScrollArea className="max-h-[600px]" ref={timelineRef as any}><div className="space-y-2 pr-3">{store.hypotheses.map(h => <HypothesisItem key={h.hypId} hyp={h} isExpanded={expandedHyps.has(h.hypId)} onToggle={() => toggleHyp(h.hypId)} />)}{isRunning && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 p-3 text-muted-foreground text-sm"><div className="w-4 h-4 border-2 border-primary/50 border-t-primary rounded-full animate-spin" /><span>Investigating...</span><TypingDots /></motion.div>}</div></ScrollArea>)}</CardContent></Card></TabsContent>
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full"><TabsList className="bg-secondary/40 border border-border/40 w-full justify-start"><TabsTrigger value="timeline" className={`text-xs ${activeTab === 'timeline' ? 'tab-active-indicator' : ''}`}><GitBranch className="w-3 h-3 mr-1.5" />Hypothesis Timeline</TabsTrigger><TabsTrigger value="tree" className={`text-xs ${activeTab === 'tree' ? 'tab-active-indicator' : ''}`}><Network className="w-3 h-3 mr-1.5" />Tree</TabsTrigger><TabsTrigger value="casefile" className={`text-xs ${activeTab === 'casefile' ? 'tab-active-indicator' : ''}`} disabled={!isCompleted && !showExample}><FileSearch className="w-3 h-3 mr-1.5" />Case File</TabsTrigger><TabsTrigger value="logs" className={`text-xs ${activeTab === 'logs' ? 'tab-active-indicator' : ''}`}><Terminal className="w-3 h-3 mr-1.5" />Event Log</TabsTrigger></TabsList>
+                  <TabsContent value="timeline" className="mt-4"><Card className="border-border/40"><CardContent className="p-4">{store.hypotheses.length === 0 && !isRunning ? (<div className="relative text-center py-16 text-muted-foreground">
+                  <svg viewBox="0 0 500 50" className="w-full h-12 mb-4 opacity-60">
+                    <path d="M0,25 Q62.5,5 125,25 T250,25 T375,25 T500,25" fill="none" stroke="oklch(0.78 0.17 72)" strokeWidth="1.5" className="animate-spectral-opacity" style={{ animationDelay: '0s' }} />
+                    <path d="M0,25 Q62.5,45 125,25 T250,25 T375,25 T500,25" fill="none" stroke="oklch(0.7 0.15 160)" strokeWidth="1" className="animate-spectral-opacity" style={{ animationDelay: '1s' }} />
+                    <path d="M0,25 Q62.5,10 125,25 T250,25 T375,25 T500,25" fill="none" stroke="oklch(0.55 0 270)" strokeWidth="0.8" className="animate-spectral-opacity" style={{ animationDelay: '2s' }} />
+                  </svg>
+                  <Search className="w-12 h-12 mx-auto mb-3 opacity-20 animate-float" />
+                  <p className="text-sm">Awaiting signal — start an investigation to see hypotheses emerge.</p>
+                  <p className="text-xs mt-1 opacity-60">Each hypothesis is planned, executed, and judged in real-time.</p>
+                </div>) : (<ScrollArea className="max-h-[600px]" ref={timelineRef as any}><div className="space-y-2 pr-3">{store.hypotheses.map(h => <HypothesisItem key={h.hypId} hyp={h} isExpanded={expandedHyps.has(h.hypId)} onToggle={() => toggleHyp(h.hypId)} />)}{isRunning && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 p-3 text-muted-foreground text-sm"><div className="w-4 h-4 border-2 border-primary/50 border-t-primary rounded-full animate-spin" /><span>Investigating...</span><TypingDots /></motion.div>}</div></ScrollArea>)}</CardContent></Card></TabsContent>
                   <TabsContent value="tree" className="mt-4"><Card className="border-border/40"><CardContent className="p-4"><HypothesisTreeView hypotheses={store.hypotheses} /></CardContent></Card></TabsContent>
                   <TabsContent value="casefile" className="mt-4">{store.caseFile ? <CaseFileView caseFile={store.caseFile} /> : showExample ? <CaseFileView caseFile={EXAMPLE_CASE} isDemo /> : <Card className="border-border/40"><CardContent className="p-8 text-center text-muted-foreground"><FileText className="w-10 h-10 mx-auto mb-3 opacity-20" /><p className="text-sm">Case file will appear when the investigation completes.</p><Button variant="link" className="mt-3 text-xs" onClick={() => setShowExample(true)}>Or view an example output</Button></CardContent></Card>}</TabsContent>
                   <TabsContent value="logs" className="mt-4"><Card className="border-border/40"><CardContent className="p-4"><ScrollArea className="max-h-[600px]"><div className="space-y-1 font-terminal text-xs bg-noise rounded-lg p-3">{store.logs.length === 0 ? <p className="text-muted-foreground py-8 text-center">No events yet.</p> : store.logs.map((l, i) => <div key={i} className={`flex gap-2 py-1 px-2 rounded ${l.type === 'error' ? 'bg-destructive/10 text-destructive' : l.type === 'killed' ? 'text-[oklch(0.65_0.25_25)]' : l.type === 'verdict' && l.message.includes('CONFIRMED') ? 'text-[oklch(0.7_0.15_160)]' : 'text-muted-foreground'}`}><span className="text-muted-foreground/40 shrink-0">{new Date(l.timestamp).toLocaleTimeString()}</span><span className="shrink-0 w-16">[{l.type}]</span><span className="break-all">{l.message}</span></div>)}</div></ScrollArea></CardContent></Card></TabsContent>

@@ -268,3 +268,106 @@
 .animate-glow-idle {
   animation: glow-idle 2.5s ease-in-out infinite;
 }
+
+/* Hero text shimmer on hover */
+.text-shimmer-hover {
+  position: relative;
+  display: inline-block;
+}
+.text-shimmer-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, oklch(1 0 0 / 0.15) 50%, transparent 100%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  transition: background-position 0.6s ease;
+  pointer-events: none;
+}
+.text-shimmer-hover:hover::after {
+  background-position: -100% 0;
+}
+
+/* Spectral wave animation for empty state */
+@keyframes spectral-wave {
+  0% { d: path('M0 25 Q50 10 100 25 Q150 40 200 25 Q250 10 300 25 Q350 40 400 25 Q450 10 500 25'); }
+  50% { d: path('M0 25 Q50 40 100 25 Q150 10 200 25 Q250 40 300 25 Q350 10 400 25 Q450 40 500 25'); }
+  100% { d: path('M0 25 Q50 10 100 25 Q150 40 200 25 Q250 10 300 25 Q350 40 400 25 Q450 10 500 25'); }
+}
+@keyframes spectral-opacity {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.35; }
+}
+
+/* Competitor cross-out on hover */
+.competitor-card .competitor-name {
+  position: relative;
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+.competitor-card:hover .competitor-name {
+  color: oklch(0.4 0 0);
+}
+.competitor-card:hover .competitor-name::after {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 50%;
+  width: calc(100% + 4px);
+  height: 1.5px;
+  background: oklch(0.65 0.25 25 / 0.7);
+  transform: scaleX(1);
+  transition: transform 0.3s ease;
+}
+
+/* Active tab glow indicator */
+.tab-active-indicator {
+  position: relative;
+}
+.tab-active-indicator::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background: oklch(0.78 0.17 72);
+  border-radius: 1px;
+  box-shadow: 0 0 8px oklch(0.78 0.17 72 / 0.5);
+}
+
+/* Glassmorphism container */
+.glass {
+  background: oklch(0.1 0.007 270 / 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Verdict card radial glow */
+.verdict-glow-confirmed {
+  background: radial-gradient(ellipse at center, oklch(0.7 0.15 160 / 0.08) 0%, transparent 70%);
+}
+.verdict-glow-refuted {
+  background: radial-gradient(ellipse at center, oklch(0.65 0.25 25 / 0.08) 0%, transparent 70%);
+}
+.verdict-glow-inconclusive {
+  background: radial-gradient(ellipse at center, oklch(0.75 0.15 85 / 0.08) 0%, transparent 70%);
+}
+
+/* Pulsing Exasol table row */
+@keyframes exasol-row-pulse {
+  0%, 100% { background-color: oklch(0.78 0.17 72 / 0.04); }
+  50% { background-color: oklch(0.78 0.17 72 / 0.1); }
+}
+.animate-exasol-pulse {
+  animation: exasol-row-pulse 3s ease-in-out infinite;
+}
+
+/* Boot sequence counter flash */
+@keyframes boot-flash {
+  0% { opacity: 0.3; }
+  20% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+.animate-boot-flash {
+  animation: boot-flash 0.8s ease-out forwards;
+}

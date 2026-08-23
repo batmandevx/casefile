@@ -204,3 +204,57 @@ Stage Summary:
 3. Prepare README.md and submission deck
 4. Consider adding dark/light theme toggle
 5. Add investigation result comparison (side-by-side two runs)
+---
+Task ID: 4
+Agent: Main Developer (coordinated full-stack-developer subagent)
+Task: V4 polish pass — glassmorphism, kinetic interactions, data glows, command center UX
+
+Work Log:
+- **QA Assessment:** VLM scored 8.5/10, identified 5 concrete improvement paths to reach 9.5+
+- **9 CSS Additions to globals.css:**
+  1. `.text-shimmer-hover` — Shimmer sweep on hover
+  2. `.spectral-opacity` — Pulsing opacity for empty state waves
+  3. `.competitor-card .competitor-name` — Cross-out line-through on hover
+  4. `.tab-active-indicator::after` — Glowing amber bottom border on active tab
+  5. `.glass` — Glassmorphism container (backdrop-blur + semi-transparent bg)
+  6. `.verdict-glow-confirmed/refuted/inconclusive` — Radial gradient backgrounds per verdict
+  7. `.animate-exasol-pulse` — Pulsing bg on Exasol table row
+  8. `.animate-boot-flash` — Boot sequence counter flash
+  9. `@keyframes spectral-wave` — SVG path morphing for sine waves
+- **9 Targeted Page Changes:**
+  1. Hero shimmer on 'already knew' hover
+  2. Verdict card radial glows (4 cards)
+  3. Pulsing Exasol economics table row
+  4. Competitor cross-out hover effect
+  5. Active tab glow indicator
+  6. Enlarged watermark section numbers
+  7. Spectral SVG sine wave empty state
+  8. Receipts sidebar glassmorphism
+  9. Hero stat card glass enhancement
+- **QA:** ESLint 0 errors, 0 warnings. page.tsx 1402 lines, globals.css 373 lines.
+
+Stage Summary:
+- 9 new CSS classes/animations, 9 targeted page edits
+- Focused on depth, kinetic energy, and professional polish
+- All lint clean
+
+---
+
+## Current Project Status
+- **Phase**: V4 complete — premium dark-themed landing page with investigation demo
+- **Files**: `src/app/page.tsx` (1402 lines), `src/app/globals.css` (373 lines)
+- **Unchanged**: `src/lib/investigation-store.ts`, `mini-services/investigation-service/index.ts`, `src/app/layout.tsx`
+
+## Known Limitations
+- Socket.io requires Caddy gateway for external access
+- Investigation service must be started manually
+- No actual Exasol database — uses simulated query results
+
+## Unresolved Issues / Risks
+- None critical. All code changes pass lint.
+
+## Priority Recommendations for Next Phase
+1. Test full investigation flow through preview panel with real LLM calls
+2. Create a demo video recording for submission
+3. Prepare README.md and submission deck
+4. Add investigation result comparison (side-by-side two runs)
