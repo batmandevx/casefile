@@ -1,0 +1,1005 @@
+     1→     1→'use client'
+     2→     2→
+     3→     3→import { useEffect, useRef, useState, useCallback } from 'react'
+     4→     4→import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'framer-motion'
+     5→     5→import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+     6→     6→import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+     7→     7→import {
+     8→     8→  Search, Zap, FileSearch, Shield, Terminal, Database,
+     9→     9→  CheckCircle2, XCircle, HelpCircle, ChevronDown,
+    10→    10→  Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+    11→    11→  ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+    12→    12→  BarChart3, Layers, Fingerprint, Trophy, Eye,
+    13→    13→  Crosshair, FlaskConical, CircuitBoard, FileText,
+    14→    14→  Download, ChevronRight, Keyboard, MessageSquare,
+    15→    15→  ScrollText, ArrowRight, Github, ExternalLink,
+    16→    16→} from 'lucide-react'
+    17→    17→import { Button } from '@/components/ui/button'
+    18→    18→import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+    19→    19→import { Badge } from '@/components/ui/badge'
+    20→    20→import { Input } from '@/components/ui/input'
+    21→    21→import { ScrollArea } from '@/components/ui/scroll-area'
+    22→    22→import { Separator } from '@/components/ui/separator'
+    23→    23→import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+    24→    24→import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+    25→    25→import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, CartesianGrid, Cell, Tooltip as RTooltip } from 'recharts'
+    26→    26→import { useInvestigationStore, type HypothesisEvent, type CaseFile } from '@/lib/investigation-store'
+    27→    27→
+    28→    28→// ─── Constants ───
+    29→    29→const SERVICE_PORT = 3004
+    30→    30→const VERDICT_COLORS: Record<string, string> = {
+    31→    31→  CONFIRMED: 'text-[oklch(0.7_0.15_160)] border-[oklch(0.7_0.15_160)]',
+    32→    32→  REFUTED: 'text-[oklch(0.65_0.25_25)] border-[oklch(0.65_0.25_25)]',
+    33→    33→  INCONCLUSIVE: 'text-[oklch(0.75_0.15_85)] border-[oklch(0.75_0.15_85)]',
+    34→    34→  ERROR: 'text-destructive border-destructive',
+    35→    35→}
+    36→    36→const VERDICT_BG: Record<string, string> = {
+    37→    37→  CONFIRMED: 'bg-[oklch(0.7_0.15_160/0.08)]',
+    38→    38→  REFUTED: 'bg-[oklch(0.65_0.25_25/0.08)]',
+    39→    39→  INCONCLUSIVE: 'bg-[oklch(0.75_0.15_85/0.08)]',
+    40→    40→  ERROR: 'bg-destructive/10',
+    41→    41→}
+    42→    42→const VERDICT_ICONS: Record<string, React.ReactNode> = {
+    43→    43→  CONFIRMED: <CheckCircle2 className="w-4 h-4 text-[oklch(0.7_0.15_160)]" />,
+    44→    44→  REFUTED: <XCircle className="w-4 h-4 text-[oklch(0.65_0.25_25)]" />,
+    45→    45→  INCONCLUSIVE: <HelpCircle className="w-4 h-4 text-[oklch(0.75_0.15_85)]" />,
+    46→    46→  ERROR: <AlertTriangle className="w-4 h-4 text-destructive" />,
+    47→    47→}
+    48→    48→const BUDGET_MAX = 25
+    49→    49→
+    50→    50→// ─── Example case file (static showcase) ───
+    51→    51→const EXAMPLE_CASE: CaseFile = {
+    52→    52→  runId: 'demo_8f3a2c1e',
+    53→    53→  question: 'Fare-per-mile in the outer boroughs has drifted upward relative to Manhattan over the last two years. What is driving it?',
+    54→    54→  finding: 'The drift is concentrated in trips beginning between 22:00 and 04:00 in three outer zones, and is driven by a shift in trip composition rather than a pricing change: the share of short trips under 1.5 miles in those windows rose from 18% to 34%, and short trips carry a structurally higher fare-per-mile due to the fixed initial charge.',
+    55→    55→  finalConfidence: 0.89,
+    56→    56→  summary: { queriesExecuted: 47, rowsInScope: 312400000, totalDbMs: 21400, elapsedSeconds: 28.6, hypothesesRefuted: 12, maxDepth: 4 },
+    57→    57→  evidenceChain: [
+    58→    58→    { queryNum: 3, statement: 'Drift is not uniform across outer zones — it is concentrated in 3 of 61 zones.', verdict: 'CONFIRMED', confidence: 0.72, reasoning: 'Three zones show >15% FPM increase while the rest are within 3%.', sql: 'SELECT pickup_borough, AVG(fare_per_mile) as fpm ... GROUP BY pickup_borough, trip_year', resultSummary: 'Brooklyn: 7.1 (+14.5%), Queens: 7.4 (+13.8%), Bronx: 7.9 (+16.2%), Manhattan: 8.6 (+3.6%)' },
+    59→    59→    { queryNum: 11, statement: 'Within those zones, the effect is time-of-day dependent, peaking 22:00–04:00.', verdict: 'CONFIRMED', confidence: 0.81, reasoning: 'Overnight FPM ratio jumped from 0.78 to 0.96. Daytime unchanged.', sql: 'SELECT hour_bucket, AVG(fare_per_mile_outer) / AVG(fare_per_mile_manhattan) as ratio ...', resultSummary: '00-04: 0.96, 04-08: 0.82, 08-12: 0.79, 12-16: 0.77, 16-20: 0.80, 20-24: 0.93' },
+    60→    60→    { queryNum: 19, statement: 'Base fare rates did not change in these zones over the period.', verdict: 'REFUTED', confidence: 0.90, reasoning: 'The $3.00 initial charge and $2.50/mile rate are identical across all years.', sql: 'SELECT trip_year, MIN(fare_amount) as min_fare, AVG(fare_amount / NULLIF(trip_distance,0)) ...', resultSummary: '2022: $6.20/mi, 2023: $6.25/mi, 2024: $6.28/mi. Rate change <2%.' },
+    61→    61→    { queryNum: 28, statement: 'Trip-distance distribution shifted markedly in those windows.', verdict: 'CONFIRMED', confidence: 0.86, reasoning: 'Short-trip share rose from 18% to 34% in overnight windows for the 3 zones.', sql: "SELECT CASE WHEN trip_distance < 1.5 THEN 'short' ELSE 'long' END, COUNT(*) ...", resultSummary: 'Short trips 2022 overnight: 18%, 2024 overnight: 34%. Daytime: 22% → 23%.' },
+    62→    62→    { queryNum: 41, statement: 'Recomputing FPM at constant distance mix removes 84% of the observed drift.', verdict: 'CONFIRMED', confidence: 0.89, reasoning: 'Standardized FPM ratio drops from 1.18 to 1.03 when controlling for mix.', sql: 'WITH standardized AS (SELECT ... AVG(fare_per_mile) OVER (PARTITION BY distance_bucket) ...) ...', resultSummary: 'Raw drift: +18%. Mix-controlled drift: +3%. Residual is within noise.' },
+    63→    63→  ],
+    64→    64→  ruledOut: [
+    65→    65→    { queryNum: 7, statement: 'Seasonality: effect persists after month-controlling', reasoning: 'Month-over-month comparison shows consistent upward trend, not seasonal peaks.' },
+    66→    66→    { queryNum: 9, statement: 'Toll pass-through: toll-flagged trips excluded, effect unchanged', reasoning: 'Removing all trips with tolls_amount > 0 leaves the drift at +16%.' },
+    67→    67→    { queryNum: 14, statement: 'Single-vendor artifact: present across all vendor IDs', reasoning: 'VTS, CMT, and DDS all show 12-17% increases. No single vendor dominates.' },
+    68→    68→    { queryNum: 16, statement: 'Data-entry error in distance field: distribution is smooth', reasoning: 'No spike at implausible values. Distance distribution is smooth with natural tail.' },
+    69→    69→    { queryNum: 22, statement: 'Surge pricing / congestion surcharge changes', reasoning: 'Surcharge introduced in 2019 and unchanged. Rates are flat across the period.' },
+    70→    70→    { queryNum: 25, statement: 'Payment type shift (more credit = more tips inflating FPM)', reasoning: 'Credit card share went from 72% to 76%, but tipping patterns are stable.' },
+    71→    71→  ],
+    72→    72→  allHypotheses: [],
+    73→    73→}
+    74→    74→
+    75→    75→// ─── Benchmark chart data ───
+    76→    76→const BENCHMARK_DATA = [
+    77→    77→  { shape: 'Simple agg', exasolMs: 89, duckdbMs: 120, count: 14 },
+    78→    78→  { shape: 'Multi-join', exasolMs: 210, duckdbMs: 890, count: 21 },
+    79→    79→  { shape: 'Window fn', exasolMs: 145, duckdbMs: 340, count: 8 },
+    80→    80→  { shape: 'Self-join', exasolMs: 320, duckdbMs: 1200, count: 4 },
+    81→    81→]
+    82→    82→
+    83→    83→// ─── Placeholder rotation examples ───
+    84→    84→const PLACEHOLDER_EXAMPLES = [
+    85→    85→  'Why have late-night tip percentages dropped in Queens since 2023?',
+    86→    86→  'Are airport trips getting shorter or more expensive?',
+    87→    87→  'What drives the weekday vs weekend fare gap in Brooklyn?',
+    88→    88→  'Has the share of cash payments changed across boroughs?',
+    89→    89→]
+    90→    90→
+    91→    91→// ─── Sample question presets (shorter for buttons) ───
+    92→    92→const SAMPLE_QUESTIONS = [
+    93→    93→  'Why are late-night tips dropping in Queens?',
+    94→    94→  'Are airport trips getting more expensive?',
+    95→    95→  'Weekday vs weekend fare gap in Brooklyn?',
+    96→    96→  'Cash payment share shift across boroughs?',
+    97→    97→  'What drives short-trip fare-per-mile spikes?',
+    98→    98→]
+    99→    99→
+   100→   100→// ─── Navigation sections ───
+   101→   101→const NAV_SECTIONS = [
+   102→   102→  { label: 'Architecture', id: 'architecture' },
+   103→   103→  { label: 'Economics', id: 'economics' },
+   104→   104→  { label: 'Investigate', id: 'investigate' },
+   105→   105→  { label: 'Example', id: 'example' },
+   106→   106→  { label: 'Benchmark', id: 'benchmark' },
+   107→   107→  { label: 'Reproducible', id: 'reproducible' },
+   108→   108→]
+   109→   109→
+   110→   110→// ─── Section wrapper with scroll-triggered fade ───
+   111→   111→function Section({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+   112→   112→  const ref = useRef<HTMLDivElement>(null)
+   113→   113→  const isInView = useInView(ref, { once: true, margin: '-80px' })
+   114→   114→  return (
+   115→   115→    <motion.div
+   116→   116→      ref={ref}
+   117→   117→      initial={{ opacity: 0, y: 30 }}
+   118→   118→      animate={isInView ? { opacity: 1, y: 0 } : {}}
+   119→   119→      transition={{ duration: 0.6, ease: 'easeOut' }}
+   120→   120→      className={className}
+   121→   121→    >
+   122→   122→      {children}
+   123→   123→    </motion.div>
+   124→   124→  )
+   125→   125→}
+   126→   126→
+   127→   127→// ─── Stat counter ───
+   128→   128→function StatCounter({ icon: Icon, label, value, unit, color }: {
+   129→   129→  icon: React.ElementType; label: string; value: string | number; unit?: string; color?: string
+   130→   130→}) {
+   131→   131→  const [displayVal, setDisplayVal] = useState(0)
+   132→   132→  const prev = useRef(0)
+   133→   133→  useEffect(() => {
+   134→   134→    const t = typeof value === 'number' ? value : parseFloat(String(value)) || 0
+   135→   135→    const s = prev.current, d = t - s
+   136→   136→    if (d === 0) return
+   137→   137→    const start = Date.now()
+   138→   138→    const tick = () => {
+   139→   139→      const p = Math.min((Date.now() - start) / 400, 1)
+   140→   140→      setDisplayVal(s + d * (1 - Math.pow(1 - p, 3)))
+   141→   141→      if (p < 1) requestAnimationFrame(tick); else prev.current = t
+   142→   142→    }
+   143→   143→    requestAnimationFrame(tick)
+   144→   144→  }, [value])
+   145→   145→  const f = typeof value === 'string' ? value :
+   146→   146→    Number.isInteger(value) ? Math.round(displayVal).toLocaleString() : displayVal.toFixed(1)
+   147→   147→  return (
+   148→   148→    <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/40 border border-border/30">
+   149→   149→      <div className={`p-2 rounded-md ${color || 'bg-primary/10 text-primary'}`}><Icon className="w-4 h-4" /></div>
+   150→   150→      <div className="min-w-0">
+   151→   151→        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{label}</p>
+   152→   152→        <p className={`font-terminal text-lg font-bold ${color || 'text-foreground'}`}>{f}{unit && <span className="text-xs text-muted-foreground ml-0.5">{unit}</span>}</p>
+   153→   153→      </div>
+   154→   154→    </div>
+   155→   155→  )
+   156→   156→}
+   157→   157→
+   158→   158→// ─── Hypothesis item (with depth indentation) ───
+   159→   159→function HypothesisItem({ hyp, isExpanded, onToggle }: { hyp: HypothesisEvent; isExpanded: boolean; onToggle: () => void }) {
+   160→   160→  const vc = VERDICT_COLORS[hyp.verdict || ''] || 'border-muted-foreground/30'
+   161→   161→  const vb = VERDICT_BG[hyp.verdict || ''] || 'bg-muted/20'
+   162→   162→  const depth = hyp.depth || 0
+   163→   163→  return (
+   164→   164→    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }} className={depth > 0 ? `relative pl-6` : ''}>
+   165→   165→      {/* Vertical connecting line for child hypotheses */}
+   166→   166→      {depth > 0 && (
+   167→   167→        <div className="absolute left-3 top-0 bottom-0 w-px bg-gradient-to-b from-primary/30 via-primary/20 to-transparent" />
+   168→   168→      )}
+   169→   169→      {/* Depth badge */}
+   170→   170→      {depth > 0 && (
+   171→   171→        <Badge variant="outline" className="absolute left-1.5 top-3.5 -translate-x-1/2 text-[9px] px-1 py-0 font-terminal border-primary/30 text-primary/60 bg-background z-10">
+   172→   172→          D{depth}
+   173→   173→        </Badge>
+   174→   174→      )}
+   175→   175→      <div className={`border rounded-lg overflow-hidden ${vc} ${vb} animate-slide-in`}>
+   176→   176→        <button onClick={onToggle} className="w-full text-left p-3 flex items-start gap-3 hover:bg-white/[0.02] transition-colors">
+   177→   177→          <div className="mt-0.5 shrink-0">{VERDICT_ICONS[hyp.verdict || ''] || <HelpCircle className="w-4 h-4 text-muted-foreground" />}</div>
+   178→   178→          <div className="flex-1 min-w-0">
+   179→   179→            <div className="flex items-center gap-2 flex-wrap">
+   180→   180→              <span className="font-terminal text-xs text-muted-foreground">Q{hyp.queryNum}</span>
+   181→   181→              {hyp.verdict && <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${vc}`}>{hyp.verdict}</Badge>}
+   182→   182→              {hyp.confidence !== undefined && hyp.confidence > 0 && <span className="font-terminal text-xs text-muted-foreground">{Math.round(hyp.confidence * 100)}%</span>}
+   183→   183→            </div>
+   184→   184→            <p className="text-sm mt-1 leading-relaxed">{hyp.statement}</p>
+   185→   185→            {hyp.reasoning && !isExpanded && <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{hyp.reasoning}</p>}
+   186→   186→          </div>
+   187→   187→          <ChevronDown className={`w-4 h-4 text-muted-foreground shrink-0 mt-1 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+   188→   188→        </button>
+   189→   189→        <AnimatePresence>
+   190→   190→          {isExpanded && (
+   191→   191→            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
+   192→   192→              <div className="px-3 pb-3 space-y-3">
+   193→   193→                {hyp.sql && <div><p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">SQL</p><div className="rounded-md overflow-hidden bg-black/30 max-h-48 overflow-y-auto"><SyntaxHighlighter language="sql" style={oneDark} customStyle={{ margin: 0, fontSize: '12px', background: 'transparent' }}>{hyp.sql}</SyntaxHighlighter></div></div>}
+   194→   194→                {hyp.resultSummary && <div><p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">Result</p><pre className="text-xs font-terminal text-muted-foreground bg-black/20 rounded-md p-2 overflow-x-auto max-h-32 overflow-y-auto whitespace-pre">{hyp.resultSummary}</pre></div>}
+   195→   195→                {hyp.reasoning && <div><p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 font-medium">Reasoning</p><p className="text-sm text-muted-foreground">{hyp.reasoning}</p></div>}
+   196→   196→                {hyp.dbMs !== undefined && <div className="flex gap-4 text-xs text-muted-foreground font-terminal"><span>{hyp.dbMs.toFixed(1)}ms</span>{hyp.rowsReturned !== undefined && <span>{hyp.rowsReturned} rows</span>}{hyp.rowsScanned !== undefined && <span>{(hyp.rowsScanned / 1e6).toFixed(0)}M scanned</span>}</div>}
+   197→   197→              </div>
+   198→   198→            </motion.div>
+   199→   199→          )}
+   200→   200→        </AnimatePresence>
+   201→   201→      </div>
+   202→   202→    </motion.div>
+   203→   203→  )
+   204→   204→}
+   205→   205→
+   206→   206→// ─── Benchmark Chart ───
+   207→   207→function BenchmarkChart() {
+   208→   208→  return (
+   209→   209→    <div className="h-72 w-full">
+   210→   210→      <ResponsiveContainer width="100%" height="100%">
+   211→   211→        <BarChart data={BENCHMARK_DATA} layout="vertical" margin={{ left: 90, right: 20, top: 10, bottom: 10 }}>
+   212→   212→          <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.17 0.006 270)" horizontal={false} />
+   213→   213→          <XAxis type="number" tick={{ fontSize: 11, fill: 'oklch(0.55 0.01 270)' }} axisLine={{ stroke: 'oklch(0.17 0.006 270)' }} unit="ms" />
+   214→   214→          <YAxis type="category" dataKey="shape" tick={{ fontSize: 12, fill: 'oklch(0.7 0 0)' }} width={85} />
+   215→   215→          <RTooltip contentStyle={{ background: 'oklch(0.1 0.007 270)', border: '1px solid oklch(0.17 0.006 270)', borderRadius: '8px', fontSize: '12px' }} itemStyle={{ color: 'oklch(0.93 0 0)' }} formatter={(v: number) => `${v}ms`} />
+   216→   216→          <Bar dataKey="duckdbMs" name="DuckDB" fill="oklch(0.35 0.01 270)" radius={[0, 4, 4, 0]} barSize={22} />
+   217→   217→          <Bar dataKey="exasolMs" name="Exasol" fill="oklch(0.78 0.17 72)" radius={[0, 4, 4, 0]} barSize={22} />
+   218→   218→        </BarChart>
+   219→   219→      </ResponsiveContainer>
+   220→   220→    </div>
+   221→   221→  )
+   222→   222→}
+   223→   223→
+   224→   224→// ─── Case File View ───
+   225→   225→function CaseFileView({ caseFile, isDemo }: { caseFile: CaseFile; isDemo?: boolean }) {
+   226→   226→  const [showAllE, setShowAllE] = useState(false)
+   227→   227→  const [showAllR, setShowAllR] = useState(false)
+   228→   228→  const ev = caseFile.evidenceChain || []
+   229→   229→  const ru = caseFile.ruledOut || []
+   230→   230→  const s = caseFile.summary
+   231→   231→
+   232→   232→  // Export to Markdown
+   233→   233→  const exportMarkdown = () => {
+   234→   234→    let md = `# CASEFILE — Investigation Report\n\n`
+   235→   235→    md += `**Run ID:** \`${caseFile.runId}\`\n`
+   236→   236→    md += `**Question:** ${caseFile.question}\n\n`
+   237→   237→    md += `## Finding (Confidence: ${Math.round(caseFile.finalConfidence * 100)}%)\n\n${caseFile.finding}\n\n`
+   238→   238→    md += `## Investigation Summary\n\n`
+   239→   239→    md += `- Queries Executed: ${s.queriesExecuted}\n`
+   240→   240→    md += `- Rows In Scope: ${(s.rowsInScope / 1e6).toFixed(0)}M\n`
+   241→   241→    md += `- Total DB Time: ${(s.totalDbMs / 1000).toFixed(1)}s\n`
+   242→   242→    md += `- Elapsed: ${s.elapsedSeconds.toFixed(1)}s\n`
+   243→   243→    md += `- Hypotheses Refuted: ${s.hypothesesRefuted}\n`
+   244→   244→    md += `- Max Depth: ${s.maxDepth}\n\n`
+   245→   245→    md += `## Evidence Chain\n\n`
+   246→   246→    for (const e of ev) {
+   247→   247→      md += `### Q${e.queryNum} — ${e.verdict} (${Math.round(e.confidence * 100)}%)\n\n`
+   248→   248→      md += `**Statement:** ${e.statement}\n\n`
+   249→   249→      if (e.sql) md += `**SQL:**\n\`\`\`sql\n${e.sql}\n\`\`\`\n\n`
+   250→   250→      if (e.resultSummary) md += `**Result:** ${e.resultSummary}\n\n`
+   251→   251→      if (e.reasoning) md += `**Reasoning:** ${e.reasoning}\n\n`
+   252→   252→    }
+   253→   253→    if (ru.length > 0) {
+   254→   254→      md += `## Ruled Out (${ru.length})\n\n`
+   255→   255→      for (const r of ru) {
+   256→   256→        md += `- ~~${r.statement}~~\n  - *${r.reasoning}*\n\n`
+   257→   257→      }
+   258→   258→    }
+   259→   259→    const blob = new Blob([md], { type: 'text/markdown' })
+   260→   260→    const url = URL.createObjectURL(blob)
+   261→   261→    const a = document.createElement('a')
+   262→   262→    a.href = url
+   263→   263→    a.download = `casefile-${caseFile.runId}.md`
+   264→   264→    a.click()
+   265→   265→    URL.revokeObjectURL(url)
+   266→   266→  }
+   267→   267→
+   268→   268→  return (
+   269→   269→    <div className="space-y-4">
+   270→   270→      {isDemo && <div className="flex items-center gap-2 text-xs text-primary mb-2"><FlaskConical className="w-3.5 h-3.5" /><span className="font-medium">EXAMPLE OUTPUT — from a completed investigation on 320M rows</span></div>}
+   271→   271→      {!isDemo && (
+   272→   272→        <div className="flex items-center justify-between mb-2">
+   273→   273→          <div className="flex items-center gap-2 text-xs text-[oklch(0.7_0.15_160)]"><CheckCircle2 className="w-3.5 h-3.5" /><span className="font-medium">Investigation Complete</span></div>
+   274→   274→          <Button variant="outline" size="sm" className="h-8 text-xs border-border/60 hover:bg-secondary" onClick={exportMarkdown}>
+   275→   275→            <Download className="w-3.5 h-3.5 mr-1.5" />Export .md
+   276→   276→          </Button>
+   277→   277→        </div>
+   278→   278→      )}
+   279→   279→      <Card className="border-[oklch(0.7_0.15_160/0.25)] glow-confirmed">
+   280→   280→        <CardHeader className="pb-3"><div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-[oklch(0.7_0.15_160)]" /><CardTitle className="text-base">Finding</CardTitle><Badge className="ml-auto bg-[oklch(0.7_0.15_160/0.15)] text-[oklch(0.7_0.15_160)] border-[oklch(0.7_0.15_160/0.25)]">confidence {(caseFile.finalConfidence * 100).toFixed(0)}%</Badge></div></CardHeader>
+   281→   281→        <CardContent><p className="text-sm leading-relaxed">{caseFile.finding}</p></CardContent>
+   282→   282→      </Card>
+   283→   283→      <Card className="border-border/50"><CardContent className="p-4">
+   284→   284→        <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3">Investigation Summary</h3>
+   285→   285→        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+   286→   286→          {[
+   287→   287→            { v: s.queriesExecuted, l: 'queries', c: 'text-primary' },
+   288→   288→            { v: (s.rowsInScope / 1e6).toFixed(0) + 'M', l: 'rows in scope', c: '' },
+   289→   289→            { v: (s.totalDbMs / 1000).toFixed(1) + 's', l: 'DB time', c: 'text-[oklch(0.7_0.15_160)]' },
+   290→   290→            { v: s.hypothesesRefuted, l: 'refuted', c: 'text-destructive' },
+   291→   291→            { v: s.maxDepth, l: 'max depth', c: '' },
+   292→   292→            { v: s.elapsedSeconds.toFixed(1) + 's', l: 'elapsed', c: '' },
+   293→   293→          ].map((x) => (
+   294→   294→            <div key={x.l} className="text-center"><span className={`font-terminal text-xl font-bold ${x.c}`}>{x.v}</span><p className="text-[10px] text-muted-foreground mt-0.5">{x.l}</p></div>
+   295→   295→          ))}
+   296→   296→        </div>
+   297→   297→      </CardContent></Card>
+   298→   298→      <Card className="border-border/50"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium">Evidence Chain</CardTitle></CardHeader>
+   299→   299→        <CardContent className="space-y-2">
+   300→   300→          {(showAllE ? ev : ev.slice(0, 3)).map((e, i) => (
+   301→   301→            <div key={i} className={`p-3 rounded-lg border ${VERDICT_COLORS[e.verdict] || ''} ${VERDICT_BG[e.verdict] || ''}`}>
+   302→   302→              <div className="flex items-center gap-2 mb-1"><span className="font-terminal text-xs text-muted-foreground">Q{e.queryNum}</span><Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${VERDICT_COLORS[e.verdict] || ''}`}>{e.verdict} {e.confidence.toFixed(2)}</Badge></div>
+   303→   303→              <p className="text-sm">{e.statement}</p>
+   304→   304→              {e.reasoning && <p className="text-xs text-muted-foreground mt-1">{e.reasoning}</p>}
+   305→   305→            </div>
+   306→   306→          ))}
+   307→   307→          {ev.length > 3 && <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground" onClick={() => setShowAllE(!showAllE)}>{showAllE ? 'Show less' : `Show ${ev.length - 3} more`}</Button>}
+   308→   308→        </CardContent>
+   309→   309→      </Card>
+   310→   310→      {ru.length > 0 && (
+   311→   311→        <Card className="border-[oklch(0.65_0.25_25/0.25)]"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium flex items-center gap-2"><XCircle className="w-4 h-4 text-[oklch(0.65_0.25_25)]" />Ruled Out ({ru.length})</CardTitle></CardHeader>
+   312→   312→          <CardContent className="space-y-2">
+   313→   313→            {(showAllR ? ru : ru.slice(0, 4)).map((r, i) => (
+   314→   314→              <div key={i} className="p-2.5 rounded-lg bg-[oklch(0.65_0.25_25/0.04)] border border-[oklch(0.65_0.25_25/0.12)]"><p className="text-sm line-through text-muted-foreground">{r.statement}</p>{r.reasoning && <p className="text-xs text-[oklch(0.65_0.25_25)] mt-0.5">{r.reasoning}</p>}</div>
+   315→   315→            ))}
+   316→   316→            {ru.length > 4 && <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground" onClick={() => setShowAllR(!showAllR)}>{showAllR ? 'Show less' : `Show ${ru.length - 4} more`}</Button>}
+   317→   317→          </CardContent>
+   318→   318→        </Card>
+   319→   319→      )}
+   320→   320→    </div>
+   321→   321→  )
+   322→   322→}
+   323→   323→
+   324→   324→// ─── Animated Pipeline Connector ───
+   325→   325→function PipelineConnector() {
+   326→   326→  return (
+   327→   327→    <div className="hidden lg:flex items-center justify-center w-8 shrink-0">
+   328→   328→      <svg width="32" height="16" className="overflow-visible">
+   329→   329→        <line x1="0" y1="8" x2="28" y2="8" stroke="oklch(0.78 0.17 72 / 0.4)" strokeWidth="2" strokeDasharray="6 4" className="animate-pipeline-flow" />
+   330→   330→        <polygon points="26,4 32,8 26,12" fill="oklch(0.78 0.17 72 / 0.6)" />
+   331→   331→      </svg>
+   332→   332→    </div>
+   333→   333→  )
+   334→   334→}
+   335→   335→
+   336→   336→// ═══════════════════════════════════════════════════════════════
+   337→   337→// MAIN PAGE
+   338→   338→// ═══════════════════════════════════════════════════════════════
+   339→   339→export default function HomePage() {
+   340→   340→  const store = useInvestigationStore()
+   341→   341→  const socketRef = useRef<any>(null)
+   342→   342→  const [socketConnected, setSocketConnected] = useState(false)
+   343→   343→  const [mobileMenu, setMobileMenu] = useState(false)
+   344→   344→  const [expandedHyps, setExpandedHyps] = useState<Set<string>>(new Set())
+   345→   345→  const [showExample, setShowExample] = useState(false)
+   346→   346→  const [activeSection, setActiveSection] = useState('')
+   347→   347→  const [placeholderText, setPlaceholderText] = useState('')
+   348→   348→  const [isTyping, setIsTyping] = useState(true)
+   349→   349→  const timelineRef = useRef<HTMLDivElement>(null)
+   350→   350→  const startTimeRef = useRef(0)
+   351→   351→  const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null)
+   352→   352→  const placeholderRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+   353→   353→
+   354→   354→  // ─── Scroll progress ───
+   355→   355→  const { scrollYProgress } = useScroll()
+   356→   356→
+   357→   357→  // ─── Parallax for hero stats ───
+   358→   358→  const { scrollY } = useScroll()
+   359→   359→  const heroStatsY = useTransform(scrollY, [0, 400], [0, -60])
+   360→   360→
+   361→   361→  // ─── Scroll-spy with IntersectionObserver ───
+   362→   362→  useEffect(() => {
+   363→   363→    const observers: IntersectionObserver[] = []
+   364→   364→    NAV_SECTIONS.forEach(({ id }) => {
+   365→   365→      const el = document.getElementById(id)
+   366→   366→      if (!el) return
+   367→   367→      const obs = new IntersectionObserver(
+   368→   368→        ([entry]) => {
+   369→   369→          if (entry.isIntersecting) setActiveSection(id)
+   370→   370→        },
+   371→   371→        { rootMargin: '-20% 0px -60% 0px', threshold: 0 }
+   372→   372→      )
+   373→   373→      obs.observe(el)
+   374→   374→      observers.push(obs)
+   375→   375→    })
+   376→   376→    return () => observers.forEach(o => o.disconnect())
+   377→   377→  }, [])
+   378→   378→
+   379→   379→  // ─── Placeholder typing animation ───
+   380→   380→  useEffect(() => {
+   381→   381→    let exampleIdx = 0
+   382→   382→    let charIdx = 0
+   383→   383→    let deleting = false
+   384→   384→    const type = () => {
+   385→   385→      const current = PLACEHOLDER_EXAMPLES[exampleIdx]
+   386→   386→      if (!deleting) {
+   387→   387→        charIdx++
+   388→   388→        setPlaceholderText(current.slice(0, charIdx))
+   389→   389→        if (charIdx >= current.length) {
+   390→   390→          deleting = true
+   391→   391→          placeholderRef.current = setTimeout(type, 2000)
+   392→   392→          return
+   393→   393→        }
+   394→   394→        placeholderRef.current = setTimeout(type, 50 + Math.random() * 40)
+   395→   395→      } else {
+   396→   396→        charIdx--
+   397→   397→        setPlaceholderText(current.slice(0, charIdx))
+   398→   398→        if (charIdx <= 0) {
+   399→   399→          deleting = false
+   400→   400→          exampleIdx = (exampleIdx + 1) % PLACEHOLDER_EXAMPLES.length
+   401→   401→          placeholderRef.current = setTimeout(type, 400)
+   402→   402→          return
+   403→   403→        }
+   404→   404→        placeholderRef.current = setTimeout(type, 25)
+   405→   405→      }
+   406→   406→    }
+   407→   407→    placeholderRef.current = setTimeout(type, 1000)
+   408→   408→    return () => { if (placeholderRef.current) clearTimeout(placeholderRef.current) }
+   409→   409→  }, [])
+   410→   410→
+   411→   411→  const toggleHyp = useCallback((id: string) => {
+   412→   412→    setExpandedHyps(p => {
+   413→   413→      const n = new Set(p)
+   414→   414→      if (n.has(id)) { n.delete(id) } else { n.add(id) }
+   415→   415→      return n
+   416→   416→    })
+   417→   417→  }, [])
+   418→   418→
+   419→   419→  // Smooth scroll with offset
+   420→   420→  const scrollToSection = (id: string) => {
+   421→   421→    const el = document.getElementById(id)
+   422→   422→    if (el) {
+   423→   423→      const y = el.getBoundingClientRect().top + window.scrollY - 80
+   424→   424→      window.scrollTo({ top: y, behavior: 'smooth' })
+   425→   425→    }
+   426→   426→    setMobileMenu(false)
+   427→   427→  }
+   428→   428→
+   429→   429→  // Socket
+   430→   430→  useEffect(() => {
+   431→   431→    let cancelled = false, s: any = null
+   432→   432→    const init = async () => {
+   433→   433→      const { io } = await import('socket.io-client')
+   434→   434→      if (cancelled) return
+   435→   435→      s = io('/?XTransformPort=' + SERVICE_PORT, { path: '/', transports: ['polling', 'websocket'], forceNew: true, reconnection: true, reconnectionAttempts: 5, timeout: 30000 })
+   436→   436→      socketRef.current = s
+   437→   437→      s.on('connect', () => setSocketConnected(true))
+   438→   438→      s.on('connect_error', () => setSocketConnected(false))
+   439→   439→      s.on('disconnect', () => setSocketConnected(false))
+   440→   440→      s.on('investigation', (ev: any) => {
+   441→   441→        const { type, data } = ev
+   442→   442→        switch (type) {
+   443→   443→          case 'started': { store.setPhase('running'); store.setCaseFile(null as any); startTimeRef.current = Date.now(); store.addLog('system', `Investigation ${data.runId} started`); if (elapsedRef.current) clearInterval(elapsedRef.current); elapsedRef.current = setInterval(() => store.updateStats({ elapsedMs: Date.now() - startTimeRef.current }), 100); break }
+   444→   444→          case 'root_hypotheses': { store.addLog('hypothesis', `Generated ${data.hypotheses.length} root hypotheses`); for (const h of data.hypotheses) store.addHypothesis({ hypId: h.hypId, parentId: null, depth: 0, statement: h.statement, rationale: h.rationale, queryNum: 0, timestamp: ev.timestamp }); break }
+   445→   445→          case 'progress': store.setPhase('running'); break
+   446→   446→          case 'planned': store.updateHypothesis(data.hypId, { sql: data.sql, queryNum: data.queryNum }); store.addLog('sql', `Q${data.queryNum}: SQL planned`); break
+   447→   447→          case 'executed': store.updateHypothesis(data.hypId, { dbMs: data.dbMs, rowsReturned: data.rowsReturned, rowsScanned: data.rowsScanned }); store.updateStats({ queriesExecuted: data.totalQueries, rowsInScope: (store.stats.rowsInScope || 0) + (data.rowsScanned || 0), totalDbMs: data.totalDbMs }); break
+   448→   448→          case 'judged': store.updateHypothesis(data.hypId, { verdict: data.verdict, confidence: data.confidence, reasoning: data.reasoning }); if (data.verdict === 'CONFIRMED') store.updateStats({ hypothesesConfirmed: data.confirmed }); else if (data.verdict === 'REFUTED') store.updateStats({ hypothesesKilled: data.killed }); store.addLog('verdict', `Q${data.queryNum}: ${data.verdict} (${Math.round(data.confidence * 100)}%) — ${data.statement.substring(0, 60)}...`); break
+   449→   449→          case 'refuted': store.addLog('killed', `Killed: ${data.statement.substring(0, 60)}...`); break
+   450→   450→          case 'children': store.addLog('branch', `Spawned ${data.children.length} follow-ups`); break
+   451→   451→          case 'completed': { if (elapsedRef.current) { clearInterval(elapsedRef.current); elapsedRef.current = null } store.updateStats({ elapsedMs: Date.now() - startTimeRef.current }); store.setCaseFile(data); store.addLog('system', `Investigation completed: ${data.summary.queriesExecuted} queries, ${(data.summary.totalDbMs / 1000).toFixed(1)}s DB time`); break }
+   452→   452→          case 'error': { if (elapsedRef.current) { clearInterval(elapsedRef.current); elapsedRef.current = null } store.setPhase('error'); store.addLog('error', data.message); break }
+   453→   453→        }
+   454→   454→        if (timelineRef.current) timelineRef.current.scrollTop = timelineRef.current.scrollHeight
+   455→   455→      })
+   456→   456→    }
+   457→   457→    init()
+   458→   458→    return () => { cancelled = true; s?.disconnect(); if (elapsedRef.current) clearInterval(elapsedRef.current) }
+   459→   459→  }, [])
+   460→   460→
+   461→   461→  const startInvestigation = () => { if (!store.question.trim() || !socketRef.current?.connected) return; store.reset(); store.setPhase('connecting'); setExpandedHyps(new Set()); setShowExample(false); socketRef.current.emit('start-investigation', { question: store.question }) }
+   462→   462→  const stopInvestigation = () => { if (elapsedRef.current) { clearInterval(elapsedRef.current); elapsedRef.current = null }; store.setPhase('idle'); socketRef.current?.disconnect() }
+   463→   463→  const isRunning = store.phase === 'running' || store.phase === 'connecting'
+   464→   464→  const isCompleted = store.phase === 'completed'
+   465→   465→
+   466→   466→  // Keyboard shortcut: Ctrl/Cmd+Enter
+   467→   467→  useEffect(() => {
+   468→   468→    const handler = (e: KeyboardEvent) => {
+   469→   469→      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && !isRunning) {
+   470→   470→        e.preventDefault()
+   471→   471→        startInvestigation()
+   472→   472→      }
+   473→   473→    }
+   474→   474→    window.addEventListener('keydown', handler)
+   475→   475→    return () => window.removeEventListener('keydown', handler)
+   476→   476→  }, [isRunning, store.question, socketConnected])
+   477→   477→
+   478→   478→  // Budget progress bar color
+   479→   479→  const budgetUsed = store.stats.queriesExecuted
+   480→   480→  const budgetPct = Math.min((budgetUsed / BUDGET_MAX) * 100, 100)
+   481→   481→  const budgetColor = budgetPct < 50 ? 'bg-[oklch(0.7_0.15_160)]' : budgetPct < 80 ? 'bg-[oklch(0.78_0.17_72)]' : 'bg-[oklch(0.65_0.25_25)]'
+   482→   482→  const budgetBarColor = budgetPct < 50 ? 'oklch(0.7_0.15_160)' : budgetPct < 80 ? 'oklch(0.78_0.17_72)' : 'oklch(0.65_0.25_25)'
+   483→   483→
+   484→   484→  return (
+   485→   485→    <TooltipProvider>
+   486→   486→    <div className="min-h-screen flex flex-col bg-background">
+   487→   487→
+   488→   488→      {/* ═══ SCROLL PROGRESS BAR ═══ */}
+   489→   489→      <motion.div
+   490→   490→        className="fixed top-0 left-0 right-0 h-[2px] z-[60] origin-left"
+   491→   491→        style={{
+   492→   492→          scaleX: scrollYProgress,
+   493→   493→          background: 'oklch(0.78 0.17 72)',
+   494→   494→          boxShadow: '0 0 8px oklch(0.78 0.17 72 / 0.6), 0 0 20px oklch(0.78 0.17 72 / 0.3)',
+   495→   495→        }}
+   496→   496→      />
+   497→   497→
+   498→   498→      {/* ═══ HEADER ═══ */}
+   499→   499→      <header className="sticky top-0 z-50 border-b border-border/40 backdrop-blur-xl bg-background/70">
+   500→   500→        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+   501→   501→          <div className="flex items-center gap-3">
+   502→   502→            <div className="relative"><Fingerprint className="w-6 h-6 text-primary" /><div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary animate-pulse-amber" /></div>
+   503→   503→            <span className="font-terminal font-bold text-lg tracking-tight">CASEFILE</span>
+   504→   504→            <Badge variant="outline" className="text-[10px] border-primary/30 text-primary/70 hidden sm:inline-flex">EXASOL AI CHALLENGE 2026</Badge>
+   505→   505→          </div>
+   506→   506→          <div className="hidden md:flex items-center gap-6 text-sm">
+   507→   507→            {NAV_SECTIONS.map(s => (
+   508→   508→              <button
+   509→   509→                key={s.id}
+   510→   510→                onClick={() => scrollToSection(s.id)}
+   511→   511→                className={`relative transition-colors duration-200 ${activeSection === s.id ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+   512→   512→              >
+   513→   513→                {s.label}
+   514→   514→                <span className={`absolute -bottom-1 left-0 h-px bg-primary transition-all duration-300 ${activeSection === s.id ? 'w-full' : 'w-0'}`} />
+   515→   515→              </button>
+   516→   516→            ))}
+   517→   517→          </div>
+   518→   518→          <button className="md:hidden p-2 text-muted-foreground hover:text-foreground" onClick={() => setMobileMenu(!mobileMenu)}>
+   519→   519→            {mobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+   520→   520→          </button>
+   521→   521→        </div>
+   522→   522→        {/* Mobile menu with backdrop */}
+   523→   523→        <AnimatePresence>
+   524→   524→          {mobileMenu && (
+   525→   525→            <>
+   526→   526→              {/* Backdrop overlay */}
+   527→   527→              <motion.div
+   528→   528→                initial={{ opacity: 0 }}
+   529→   529→                animate={{ opacity: 1 }}
+   530→   530→                exit={{ opacity: 0 }}
+   531→   531→                transition={{ duration: 0.2 }}
+   532→   532→                className="fixed inset-0 top-14 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+   533→   533→                onClick={() => setMobileMenu(false)}
+   534→   534→              />
+   535→   535→              <motion.div
+   536→   536→                initial={{ height: 0, opacity: 0 }}
+   537→   537→                animate={{ height: 'auto', opacity: 1 }}
+   538→   538→                exit={{ height: 0, opacity: 0 }}
+   539→   539→                transition={{ duration: 0.25, ease: 'easeInOut' }}
+   540→   540→                className="md:hidden border-t border-border/40 overflow-hidden relative z-50 bg-background/95 backdrop-blur-xl"
+   541→   541→              >
+   542→   542→                <nav className="flex flex-col p-4 gap-1 text-sm">
+   543→   543→                  {NAV_SECTIONS.map(s => (
+   544→   544→                    <button
+   545→   545→                      key={s.id}
+   546→   546→                      onClick={() => scrollToSection(s.id)}
+   547→   547→                      className={`text-left px-3 py-2.5 rounded-lg transition-colors ${activeSection === s.id ? 'text-primary bg-primary/10 font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`}
+   548→   548→                    >
+   549→   549→                      {s.label}
+   550→   550→                    </button>
+   551→   551→                  ))}
+   552→   552→                </nav>
+   553→   553→              </motion.div>
+   554→   554→            </>
+   555→   555→          )}
+   556→   556→        </AnimatePresence>
+   557→   557→      </header>
+   558→   558→
+   559→   559→      <main className="flex-1">
+   560→   560→
+   561→   561→        {/* ═══ HERO ═══ */}
+   562→   562→        <section className="relative overflow-hidden">
+   563→   563→          <div className="absolute inset-0 bg-grid opacity-25" />
+   564→   564→          <div className="absolute inset-0 bg-noise" />
+   565→   565→          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-primary/[0.04] blur-[150px]" />
+   566→   566→          <div className="absolute bottom-0 right-1/4 w-[400px] h-[300px] rounded-full bg-[oklch(0.7_0.15_160/0.03)] blur-[120px]" />
+   567→   567→          {/* Animated radial gradient pulse behind headline */}
+   568→   568→          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full animate-hero-glow opacity-40" />
+   569→   569→          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-20 text-center">
+   570→   570→            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+   571→   571→              <Badge variant="outline" className="mb-6 border-primary/30 text-primary/80 animate-border-glow"><Zap className="w-3 h-3 mr-1.5" />AI for Autonomous Agents — Exasol Build Challenge 2026</Badge>
+   572→   572→              <h1 className="text-3xl sm:text-5xl lg:text-[3.4rem] font-bold tracking-tight leading-[1.08] mb-6">
+   573→   573→                Single-shot text-to-SQL answers the question you{' '}<span className="text-gradient-amber">already knew</span>{' '}how to ask.
+   574→   574→              </h1>
+   575→   575→              <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
+   576→   576→                CASEFILE is an agent that forms hypotheses, tests them, kills the wrong ones,
+   577→   577→                and follows the evidence across hundreds of millions of rows — and it only works
+   578→   578→                because Exasol answers each step{' '}<span className="text-foreground font-semibold">fast enough to make the loop affordable</span>.
+   579→   579→              </p>
+   580→   580→              <div className="flex flex-wrap items-center justify-center gap-4">
+   581→   581→                <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8 shadow-lg shadow-primary/20" onClick={() => scrollToSection('investigate')}><Play className="w-4 h-4 mr-2" />Run an Investigation</Button>
+   582→   582→                <Button variant="outline" size="lg" className="border-border hover:bg-secondary" onClick={() => scrollToSection('example')}><Eye className="w-4 h-4 mr-2" />See Example Output</Button>
+   583→   583→              </div>
+   584→   584→            </motion.div>
+   585→   585→            {/* Hero stats with parallax */}
+   586→   586→            <motion.div style={{ y: heroStatsY }} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto">
+   587→   587→              {[
+   588→   588→                { label: 'Rows Analyzed', value: '320M+', icon: Database, sub: 'NYC TLC 2022–2024' },
+   589→   589→                { label: 'Query Latency', value: '<500ms', icon: Zap, sub: 'sub-second median' },
+   590→   590→                { label: 'Investigation Depth', value: '4 levels', icon: GitBranch, sub: 'best-first search' },
+   591→   591→                { label: 'Verdicts', value: '3 states', icon: Shield, sub: 'confirmed/refuted/...' },
+   592→   592→              ].map(s => (
+   593→   593→                <div key={s.label} className="group relative flex flex-col items-center p-4 rounded-xl border border-border/40 bg-card/60 backdrop-blur-sm card-hover overflow-hidden">
+   594→   594→                  <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+   595→   595→                  <s.icon className="w-5 h-5 text-primary mb-2 relative" /><span className="font-terminal font-bold text-xl relative">{s.value}</span>
+   596→   596→                  <span className="text-xs text-muted-foreground mt-1 relative">{s.label}</span>
+   597→   597→                  <span className="text-[10px] text-muted-foreground/60 mt-0.5 relative">{s.sub}</span>
+   598→   598→                </div>
+   599→   599→              ))}
+   600→   600→            </motion.div>
+   601→   601→          </div>
+   602→   602→        </section>
+   603→   603→
+   604→   604→        {/* ═══ HOW IT WORKS ═══ */}
+   605→   605→        <section className="py-12 section-divider">
+   606→   606→          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+   607→   607→            <Section>
+   608→   608→              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-3">
+   609→   609→                {[
+   610→   610→                  { step: '1', label: 'Ask a question', icon: MessageSquare, desc: 'Any open-ended data question' },
+   611→   611→                  { step: '2', label: 'Watch the agent investigate', icon: Activity, desc: '40–60 dependent queries in real-time' },
+   612→   612→                  { step: '3', label: 'Get a reproducible case file', icon: ScrollText, desc: 'Every finding backed by SQL' },
+   613→   613→                ].map((item, i) => (
+   614→   614→                  <div key={item.step} className="flex items-center gap-3 sm:gap-0">
+   615→   615→                    <div className="flex items-center gap-3 p-3 rounded-xl border border-border/40 bg-card/60 card-hover min-w-[200px]">
+   616→   616→                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary shrink-0">
+   617→   617→                        <item.icon className="w-4 h-4" />
+   618→   618→                      </div>
+   619→   619→                      <div>
+   620→   620→                        <p className="text-sm font-medium">{item.label}</p>
+   621→   621→                        <p className="text-[10px] text-muted-foreground hidden sm:block">{item.desc}</p>
+   622→   622→                      </div>
+   623→   623→                    </div>
+   624→   624→                    {i < 2 && (
+   625→   625→                      <ChevronRight className="w-5 h-5 text-primary/40 shrink-0 hidden sm:block" />
+   626→   626→                    )}
+   627→   627→                  </div>
+   628→   628→                ))}
+   629→   629→              </div>
+   630→   630→            </Section>
+   631→   631→          </div>
+   632→   632→        </section>
+   633→   633→
+   634→   634→        {/* ═══ ARCHITECTURE ═══ */}
+   635→   635→        <section id="architecture" className="py-20 section-divider">
+   636→   636→          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+   637→   637→            <Section><div className="text-center mb-14">
+   638→   638→              <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><Layers className="w-3 h-3 mr-1.5" />SYSTEM DESIGN</Badge>
+   639→   639→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">The Investigation Loop</h2>
+   640→   640→              <p className="text-muted-foreground max-w-2xl mx-auto">An investigation is not one query. It is 40–60 <span className="text-foreground font-medium">dependent</span> queries, where each is chosen based on what the previous one returned.</p>
+   641→   641→            </div>
+   642→   642→            {/* Pipeline with animated connectors on lg+ */}
+   643→   643→            <div className="max-w-5xl mx-auto">
+   644→   644→              <div className="flex flex-col lg:flex-row items-stretch gap-3">
+   645→   645→                {[
+   646→   646→                  { title: 'Hypothesis Engine', desc: 'LLM generates competing, falsifiable explanations', icon: Brain, color: 'text-primary', bg: 'from-primary/10' },
+   647→   647→                  { title: 'SQL Planner', desc: 'Each hypothesis becomes a testable query', icon: Terminal, color: 'text-[oklch(0.7_0.15_160)]', bg: 'from-[oklch(0.7_0.15_160/0.1)]' },
+   648→   648→                  { title: 'Exasol Personal', desc: 'Executes in milliseconds against 320M+ rows', icon: Database, color: 'text-primary', bg: 'from-primary/10' },
+   649→   649→                  { title: 'Verdict Engine', desc: 'CONFIRMED / REFUTED / INCONCLUSIVE', icon: Shield, color: 'text-[oklch(0.75_0.15_85)]', bg: 'from-[oklch(0.75_0.15_85/0.1)]' },
+   650→   650→                  { title: 'Case File', desc: 'Evidence chain + ruled-out list', icon: FileSearch, color: 'text-[oklch(0.7_0.15_160)]', bg: 'from-[oklch(0.7_0.15_160/0.1)]' },
+   651→   651→                ].map((step, i) => (
+   652→   652→                  <div key={step.title} className="flex items-stretch flex-1 min-w-0">
+   653→   653→                    <Card className="bg-card/80 border-border/40 hover:border-primary/30 transition-all duration-300 card-hover w-full">
+   654→   654→                      <CardContent className="p-4">
+   655→   655→                        <div className="flex items-center gap-2 mb-2">
+   656→   656→                          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-[10px] font-terminal font-bold text-muted-foreground">{i + 1}</span>
+   657→   657→                          <step.icon className={`w-4 h-4 ${step.color}`} />
+   658→   658→                        </div>
+   659→   659→                        <h3 className="font-semibold text-sm mb-1">{step.title}</h3>
+   660→   660→                        <p className="text-xs text-muted-foreground leading-relaxed">{step.desc}</p>
+   661→   661→                      </CardContent>
+   662→   662→                    </Card>
+   663→   663→                    {i < 4 && <PipelineConnector />}
+   664→   664→                  </div>
+   665→   665→                ))}
+   666→   666→              </div>
+   667→   667→            </div>
+   668→   668→            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+   669→   669→              {[
+   670→   670→                { state: 'CONFIRMED', icon: CheckCircle2, color: 'text-[oklch(0.7_0.15_160)]', border: 'border-[oklch(0.7_0.15_160/0.25)]', bg: 'from-[oklch(0.7_0.15_160/0.05)]', desc: 'Data supports the hypothesis. Spawn 2–3 narrower children. Depth is where insight lives.' },
+   671→   671→                { state: 'REFUTED', icon: XCircle, color: 'text-[oklch(0.65_0.25_25)]', border: 'border-[oklch(0.65_0.25_25/0.25)]', bg: 'from-[oklch(0.65_0.25_25/0.05)]', desc: 'Kill the branch and log it. The ruled-out list is half the value of a real investigation.' },
+   672→   672→                { state: 'INCONCLUSIVE', icon: HelpCircle, color: 'text-[oklch(0.75_0.15_85)]', border: 'border-[oklch(0.75_0.15_85/0.25)]', bg: 'from-[oklch(0.75_0.15_85/0.05)]', desc: 'Retry once with reformulation, then kill. Never loop forever on a broken query.' },
+   673→   673→                { state: 'BUDGET EXHAUSTED', icon: AlertTriangle, color: 'text-[oklch(0.75_0.15_85)]', border: 'border-[oklch(0.75_0.15_85/0.25)]', bg: 'from-[oklch(0.75_0.15_85/0.05)]', desc: 'Hard cap at 60 queries. Emit whatever confidence was reached. Never let a demo hang.' },
+   674→   674→              ].map(s => (
+   675→   675→                <Card key={s.state} className={`bg-gradient-to-br ${s.bg} to-card/50 ${s.border} hover:to-card/80 transition-all duration-300`}>
+   676→   676→                  <CardContent className="p-4"><div className="flex items-center gap-2 mb-2"><s.icon className={`w-4 h-4 ${s.color}`} /><h4 className={`font-terminal text-sm font-semibold ${s.color}`}>{s.state}</h4></div><p className="text-xs text-muted-foreground leading-relaxed">{s.desc}</p></CardContent>
+   677→   677→                </Card>
+   678→   678→              ))}
+   679→   679→            </div></Section>
+   680→   680→          </div>
+   681→   681→        </section>
+   682→   682→
+   683→   683→        {/* ═══ ECONOMICS ═══ */}
+   684→   684→        <section id="economics" className="py-20 section-divider">
+   685→   685→          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+   686→   686→            <Section><div className="text-center mb-12">
+   687→   687→              <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><BarChart3 className="w-3 h-3 mr-1.5" />THE CORE ARGUMENT</Badge>
+   688→   688→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">The Speed Is Not a Nice-to-Have</h2>
+   689→   689→              <p className="text-muted-foreground max-w-2xl mx-auto">It is the thing that converts a chatbot into an analyst.</p>
+   690→   690→            </div>
+   691→   691→            <Card className="max-w-3xl mx-auto border-primary/20 glow-amber">
+   692→   692→              <CardContent className="p-0"><div className="overflow-x-auto">
+   693→   693→                <table className="w-full"><thead><tr className="border-b border-border/40"><th className="text-left p-4 text-sm font-medium text-muted-foreground">Engine</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Per-query</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">47-query run</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Outcome</th></tr></thead>
+   694→   694→                <tbody>
+   695→   695→                  <tr className="border-b border-border/20"><td className="p-4 text-sm">Typical cloud warehouse</td><td className="p-4 font-terminal text-sm text-muted-foreground">8–12 s</td><td className="p-4 font-terminal text-sm text-destructive font-medium">6–9 min</td><td className="p-4 text-sm text-destructive">Agent times out, user leaves</td></tr>
+   696→   696→                  <tr className="bg-primary/[0.06]"><td className="p-4 text-sm font-bold text-primary">Exasol Personal</td><td className="p-4 font-terminal text-sm text-primary font-medium">sub-second</td><td className="p-4 font-terminal text-sm text-[oklch(0.7_0.15_160)] font-medium">under 30 s</td><td className="p-4 text-sm text-[oklch(0.7_0.15_160)] font-medium">Investigation feels instant</td></tr>
+   697→   697→                </tbody></table>
+   698→   698→              </div></CardContent>
+   699→   699→            </Card>
+   700→   700→            <p className="text-center text-sm text-muted-foreground mt-6 max-w-xl mx-auto">Each query blocks the next. You cannot parallelize them. The dependent query loop makes database latency the <span className="text-foreground font-semibold">enabling condition</span> for the entire agent.</p></Section>
+   701→   701→          </div>
+   702→   702→        </section>
+   703→   703→
+   704→   704→        {/* ═══ WHY WE BEAT THEM ═══ */}
+   705→   705→        <section className="py-20 section-divider">
+   706→   706→          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+   707→   707→            <Section><div className="text-center mb-12">
+   708→   708→              <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><Trophy className="w-3 h-3 mr-1.5" />COMPETITIVE ANALYSIS</Badge>
+   709→   709→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Why We Beat Every Other Submission</h2>
+   710→   710→              <p className="text-muted-foreground max-w-2xl mx-auto">Most teams show Exasol as infrastructure. We show it as the <span className="text-foreground font-medium">enabling condition</span>.</p>
+   711→   711→            </div>
+   712→   712→            <div className="space-y-3">
+   713→   713→              {[
+   714→   714→                { sub: '"Chat with your data" dashboard', why: 'This is a feature Exasol already ships. You are showing them their own product.', Icon: Search, iconBg: 'bg-muted/50', iconColor: 'text-muted-foreground' },
+   715→   715→                { sub: 'RAG over documents, Exasol as vector store', why: 'Exasol is interchangeable with Postgres + pgvector. Judges will notice.', Icon: FileText, iconBg: 'bg-muted/50', iconColor: 'text-muted-foreground' },
+   716→   716→                { sub: 'ML model trained in a UDF', why: 'Fine, but it is a batch job. No agency, no loop, no story.', Icon: FlaskConical, iconBg: 'bg-muted/50', iconColor: 'text-muted-foreground' },
+   717→   717→                { sub: 'BI copilot with pretty charts', why: 'Judged on the chart library, not the database.', Icon: BarChart3, iconBg: 'bg-muted/50', iconColor: 'text-muted-foreground' },
+   718→   718→                { sub: 'CASEFILE', why: 'The database\'s core property is the enabling condition. Cannot be ported without breaking.', Icon: CircuitBoard, iconBg: 'bg-primary/15', iconColor: 'text-primary', highlight: true },
+   719→   719→              ].map((r, i) => (
+   720→   720→                <Card key={i} className={`border-border/40 ${r.highlight ? 'border-primary/30 bg-primary/[0.04] glow-amber' : 'hover:bg-secondary/50'} transition-all duration-200`}>
+   721→   721→                  <CardContent className="p-4 flex items-start gap-4">
+   722→   722→                    <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${r.iconBg} shrink-0 mt-0.5`}>
+   723→   723→                      <r.Icon className={`w-5 h-5 ${r.iconColor}`} />
+   724→   724→                    </div>
+   725→   725→                    <div className="flex-1 min-w-0">
+   726→   726→                      <p className={`text-sm ${r.highlight ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>{r.sub}</p>
+   727→   727→                      <p className="text-xs text-muted-foreground/80 mt-1">{r.why}</p>
+   728→   728→                    </div>
+   729→   729→                  </CardContent>
+   730→   730→                </Card>
+   731→   731→              ))}
+   732→   732→            </div></Section>
+   733→   733→          </div>
+   734→   734→        </section>
+   735→   735→
+   736→   736→        {/* ═══ LIVE INVESTIGATION ═══ */}
+   737→   737→        <section id="investigate" className="py-20 section-divider">
+   738→   738→          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+   739→   739→            <Section><div className="text-center mb-10">
+   740→   740→              <Badge variant="outline" className="mb-4 border-primary/30 text-primary/80"><Crosshair className="w-3 h-3 mr-1.5" />LIVE DEMO</Badge>
+   741→   741→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Run an Investigation</h2>
+   742→   742→              <p className="text-muted-foreground max-w-2xl mx-auto">Type an open-ended question. The agent will form hypotheses, test them against 320M+ rows, kill the wrong ones, and assemble a case file.</p>
+   743→   743→            </div></Section>
+   744→   744→            {/* Input */}
+   745→   745→            <Card className="max-w-4xl mx-auto border-border/40 mb-8">
+   746→   746→              <CardContent className="p-4 sm:p-6">
+   747→   747→                <div className="flex flex-col sm:flex-row gap-3">
+   748→   748→                  <div className="flex-1 relative">
+   749→   749→                    <Bot className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+   750→   750→                    <Input
+   751→   751→                      value={store.question}
+   752→   752→                      onChange={e => store.setQuestion(e.target.value)}
+   753→   753→                      onKeyDown={e => e.key === 'Enter' && !isRunning && startInvestigation()}
+   754→   754→                      placeholder={store.question ? '' : placeholderText || 'Ask an open-ended data question...'}
+   755→   755→                      className={`pl-10 h-12 bg-secondary/40 border-border/40 font-terminal text-sm transition-shadow duration-300 focus-visible:ring-primary/30 ${!store.question ? 'placeholder:font-terminal' : ''}`}
+   756→   756→                      disabled={isRunning}
+   757→   757→                      style={!store.question ? { textShadow: '0 0 0 transparent' } : undefined}
+   758→   758→                    />
+   759→   759→                    {/* Focus glow effect */}
+   760→   760→                    <div className="absolute inset-0 rounded-md pointer-events-none opacity-0 focus-within:opacity-100 transition-opacity duration-300" style={{ boxShadow: '0 0 0 3px oklch(0.78 0.17 72 / 0.15), 0 0 20px oklch(0.78 0.17 72 / 0.08)' }} />
+   761→   761→                  </div>
+   762→   762→                  <div className="flex gap-2">
+   763→   763→                    {isRunning ? <Button variant="destructive" onClick={stopInvestigation} className="h-12 px-6"><Square className="w-4 h-4 mr-2" />Stop</Button> : (
+   764→   764→                      <>
+   765→   765→                        <Button onClick={startInvestigation} disabled={!socketConnected || !store.question.trim()} className="h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
+   766→   766→                          <Play className="w-4 h-4 mr-2" />Investigate
+   767→   767→                          <Tooltip><TooltipTrigger asChild><span className="hidden lg:inline-flex items-center ml-2 text-xs opacity-60 font-normal"><Keyboard className="w-3 h-3 mr-0.5" />⌘↵</span></TooltipTrigger><TooltipContent side="bottom"><p>Press Ctrl+Enter or ⌘+Enter to start</p></TooltipContent></Tooltip>
+   768→   768→                        </Button>
+   769→   769→                        {isCompleted && <Button variant="outline" onClick={() => store.reset()} className="h-12 px-6 border-border"><RotateCcw className="w-4 h-4 mr-2" />Reset</Button>}
+   770→   770→                      </>
+   771→   771→                    )}
+   772→   772→                  </div>
+   773→   773→                </div>
+   774→   774→                <div className="flex items-center gap-2 mt-2"><div className={`w-2 h-2 rounded-full transition-colors ${socketConnected ? 'bg-[oklch(0.7_0.15_160)]' : 'bg-destructive/60 animate-pulse-amber'}`} /><span className="text-xs text-muted-foreground">{socketConnected ? 'Investigation engine connected' : 'Connecting to engine...'}</span></div>
+   775→   775→                {/* Sample question presets */}
+   776→   776→                <div className="mt-3 flex flex-wrap gap-1.5">
+   777→   777→                  <span className="text-[10px] text-muted-foreground/60 self-center mr-1">TRY:</span>
+   778→   778→                  {SAMPLE_QUESTIONS.map((q, i) => (
+   779→   779→                    <button key={i} onClick={() => store.setQuestion(q)} disabled={isRunning} className="text-[10px] px-2 py-1 rounded-md border border-border/30 bg-secondary/30 text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-primary/5 transition-colors truncate max-w-[200px] disabled:opacity-40 disabled:pointer-events-none" title={q}>{q.length > 40 ? q.substring(0, 40) + '...' : q}</button>
+   780→   780→                  ))}
+   781→   781→                </div>
+   782→   782→              </CardContent>
+   783→   783→            </Card>
+   784→   784→            {/* Layout: receipts + timeline */}
+   785→   785→            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+   786→   786→              <div className="lg:col-span-4 xl:col-span-3">
+   787→   787→                <Card className="border-border/40 sticky top-20"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium flex items-center gap-2"><Activity className="w-4 h-4 text-primary" />Receipts{isRunning && <span className="ml-auto flex items-center gap-1.5 text-xs text-primary"><span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-amber" />LIVE</span>}</CardTitle></CardHeader>
+   788→   788→                  <CardContent className="space-y-2 p-4 pt-0">
+   789→   789→                    {/* Budget progress bar */}
+   790→   790→                    <div className="mb-2">
+   791→   791→                      <div className="flex items-center justify-between mb-1.5">
+   792→   792→                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium font-terminal">BUDGET {budgetUsed}/{BUDGET_MAX}</span>
+   793→   793→                        <span className="font-terminal text-[10px] text-muted-foreground">{Math.round(budgetPct)}%</span>
+   794→   794→                      </div>
+   795→   795→                      <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+   796→   796→                        <motion.div
+   797→   797→                          className={`h-full rounded-full ${budgetColor}`}
+   798→   798→                          initial={{ width: 0 }}
+   799→   799→                          animate={{ width: `${budgetPct}%` }}
+   800→   800→                          transition={{ duration: 0.5, ease: 'easeOut' }}
+   801→   801→                          style={{ boxShadow: `0 0 6px ${budgetBarColor}40` }}
+   802→   802→                        />
+   803→   803→                      </div>
+   804→   804→                    </div>
+   805→   805→                    <StatCounter icon={Terminal} label="Queries Executed" value={store.stats.queriesExecuted} color="text-primary" />
+   806→   806→                    <StatCounter icon={Hash} label="Rows In Scope" value={store.stats.rowsInScope > 0 ? (store.stats.rowsInScope / 1e6).toFixed(1) : 0} unit="M" color="text-[oklch(0.7_0.15_160)]" />
+   807→   807→                    <StatCounter icon={Clock} label="Cumulative DB Time" value={store.stats.totalDbMs > 0 ? (store.stats.totalDbMs / 1000).toFixed(1) : 0} unit="s" color="text-[oklch(0.75_0.15_85)]" />
+   808→   808→                    <StatCounter icon={TrendingDown} label="Hypotheses Killed" value={store.stats.hypothesesKilled} color="text-[oklch(0.65_0.25_25)]" />
+   809→   809→                    <StatCounter icon={CheckCircle2} label="Hypotheses Confirmed" value={store.stats.hypothesesConfirmed} color="text-[oklch(0.7_0.15_160)]" />
+   810→   810→                    <StatCounter icon={GitBranch} label="Max Depth" value={store.stats.maxDepth} />
+   811→   811→                    <Separator className="my-2" /><div className="flex items-center gap-2 text-xs text-muted-foreground"><Clock className="w-3 h-3" /><span>Elapsed: {((store.stats.elapsedMs || 0) / 1000).toFixed(1)}s</span></div>
+   812→   812→                  </CardContent></Card>
+   813→   813→              </div>
+   814→   814→              <div className="lg:col-span-8 xl:col-span-9">
+   815→   815→                <Tabs defaultValue="timeline" className="w-full"><TabsList className="bg-secondary/40 border border-border/40 w-full justify-start"><TabsTrigger value="timeline" className="text-xs"><GitBranch className="w-3 h-3 mr-1.5" />Hypothesis Timeline</TabsTrigger><TabsTrigger value="casefile" className="text-xs" disabled={!isCompleted && !showExample}><FileSearch className="w-3 h-3 mr-1.5" />Case File</TabsTrigger><TabsTrigger value="logs" className="text-xs"><Terminal className="w-3 h-3 mr-1.5" />Event Log</TabsTrigger></TabsList>
+   816→   816→                  <TabsContent value="timeline" className="mt-4"><Card className="border-border/40"><CardContent className="p-4">{store.hypotheses.length === 0 && !isRunning ? (<div className="text-center py-16 text-muted-foreground"><Search className="w-10 h-10 mx-auto mb-3 opacity-20" /><p className="text-sm">Start an investigation to see hypotheses appear here.</p><p className="text-xs mt-1 opacity-60">Each hypothesis is planned, executed, and judged in real-time.</p></div>) : (<ScrollArea className="max-h-[600px]" ref={timelineRef as any}><div className="space-y-2 pr-3">{store.hypotheses.map(h => <HypothesisItem key={h.hypId} hyp={h} isExpanded={expandedHyps.has(h.hypId)} onToggle={() => toggleHyp(h.hypId)} />)}{isRunning && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 p-3 text-muted-foreground text-sm"><div className="w-4 h-4 border-2 border-primary/50 border-t-primary rounded-full animate-spin" /><span>Investigating...</span></motion.div>}</div></ScrollArea>)}</CardContent></Card></TabsContent>
+   817→   817→                  <TabsContent value="casefile" className="mt-4">{store.caseFile ? <CaseFileView caseFile={store.caseFile} /> : showExample ? <CaseFileView caseFile={EXAMPLE_CASE} isDemo /> : <Card className="border-border/40"><CardContent className="p-8 text-center text-muted-foreground"><FileText className="w-10 h-10 mx-auto mb-3 opacity-20" /><p className="text-sm">Case file will appear when the investigation completes.</p><Button variant="link" className="mt-3 text-xs" onClick={() => setShowExample(true)}>Or view an example output</Button></CardContent></Card>}</TabsContent>
+   818→   818→                  <TabsContent value="logs" className="mt-4"><Card className="border-border/40"><CardContent className="p-4"><ScrollArea className="max-h-[600px]"><div className="space-y-1 font-terminal text-xs bg-noise rounded-lg p-3">{store.logs.length === 0 ? <p className="text-muted-foreground py-8 text-center">No events yet.</p> : store.logs.map((l, i) => <div key={i} className={`flex gap-2 py-1 px-2 rounded ${l.type === 'error' ? 'bg-destructive/10 text-destructive' : l.type === 'killed' ? 'text-[oklch(0.65_0.25_25)]' : l.type === 'verdict' && l.message.includes('CONFIRMED') ? 'text-[oklch(0.7_0.15_160)]' : 'text-muted-foreground'}`}><span className="text-muted-foreground/40 shrink-0">{new Date(l.timestamp).toLocaleTimeString()}</span><span className="shrink-0 w-16">[{l.type}]</span><span className="break-all">{l.message}</span></div>)}</div></ScrollArea></CardContent></Card></TabsContent>
+   819→   819→                </Tabs>
+   820→   820→              </div>
+   821→   821→            </div>
+   822→   822→          </div>
+   823→   823→        </section>
+   824→   824→
+   825→   825→        {/* ═══ EXAMPLE OUTPUT ═══ */}
+   826→   826→        <section id="example" className="py-20 section-divider">
+   827→   827→          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+   828→   828→            <Section><div className="text-center mb-10">
+   829→   829→              <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><FileText className="w-3 h-3 mr-1.5" />EXAMPLE OUTPUT</Badge>
+   830→   830→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">What a Case File Looks Like</h2>
+   831→   831→              <p className="text-muted-foreground max-w-2xl mx-auto">A finding with no trail is a hallucination with a chart. A finding with 47 reproducible queries attached is analysis.</p>
+   832→   832→            </div></Section>
+   833→   833→            <CaseFileView caseFile={EXAMPLE_CASE} isDemo />
+   834→   834→          </div>
+   835→   835→        </section>
+   836→   836→
+   837→   837→        {/* ═══ BENCHMARK ═══ */}
+   838→   838→        <section id="benchmark" className="py-20 section-divider">
+   839→   839→          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+   840→   840→            <Section><div className="text-center mb-12">
+   841→   841→              <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><BarChart3 className="w-3 h-3 mr-1.5" />BENCHMARK</Badge>
+   842→   842→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Same Trace, Two Engines</h2>
+   843→   843→              <p className="text-muted-foreground max-w-2xl mx-auto">The agent generated these queries before we knew what the benchmark would look like. That is a naturally-occurring workload, not a tuned one.</p>
+   844→   844→            </div>
+   845→   845→            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
+   846→   846→              <Card className="border-border/40"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium">Latency by Query Shape</CardTitle></CardHeader><CardContent><BenchmarkChart /></CardContent></Card>
+   847→   847→              <Card className="border-border/40"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium">Summary Table</CardTitle></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><table className="w-full"><thead><tr className="border-b border-border/40"><th className="text-left p-3 text-xs font-medium text-muted-foreground">Shape</th><th className="text-right p-3 text-xs font-medium text-muted-foreground">Count</th><th className="text-right p-3 text-xs font-medium text-primary">Exasol</th><th className="text-right p-3 text-xs font-medium text-muted-foreground">DuckDB</th><th className="text-right p-3 text-xs font-medium text-muted-foreground">Ratio</th></tr></thead><tbody>
+   848→   848→                {BENCHMARK_DATA.map(r => <tr key={r.shape} className="border-b border-border/15 hover:bg-secondary/20 transition-colors"><td className="p-3 text-xs">{r.shape}</td><td className="p-3 text-xs font-terminal text-right text-muted-foreground">{r.count}</td><td className="p-3 text-xs font-terminal text-right text-primary font-semibold">{r.exasolMs}ms</td><td className="p-3 text-xs font-terminal text-right text-muted-foreground">{r.duckdbMs}ms</td><td className="p-3 text-xs font-terminal text-right text-[oklch(0.7_0.15_160)] bg-[oklch(0.7_0.15_160/0.06)]">{(r.duckdbMs / r.exasolMs).toFixed(1)}x</td></tr>)}
+   849→   849→                <tr className="bg-primary/[0.06] font-semibold"><td className="p-3 text-xs">Total (47 queries)</td><td className="p-3 text-xs font-terminal text-right">47</td><td className="p-3 text-xs font-terminal text-right text-primary">21.4s</td><td className="p-3 text-xs font-terminal text-right text-muted-foreground">4m 12s</td><td className="p-3 text-xs font-terminal text-right text-[oklch(0.7_0.15_160)] bg-[oklch(0.7_0.15_160/0.1)] font-bold">11.8x</td></tr>
+   850→   850→              </tbody></table></div></CardContent></Card>
+   851→   851→            </div>
+   852→   852→            <p className="text-center text-sm text-muted-foreground mt-6 max-w-xl mx-auto">The gap widens on multi-join queries — exactly the shapes an investigating agent generates most — because testing a hypothesis always requires a comparison against a baseline.</p></Section>
+   853→   853→          </div>
+   854→   854→        </section>
+   855→   855→
+   856→   856→        {/* ═══ REPRODUCIBLE ANALYSIS ═══ */}
+   857→   857→        <section id="reproducible" className="py-20 section-divider">
+   858→   858→          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+   859→   859→            <Section>
+   860→   860→              <div className="text-center mb-12">
+   861→   861→                <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><Terminal className="w-3 h-3 mr-1.5" />REPRODUCIBILITY</Badge>
+   862→   862→                <h2 className="text-2xl sm:text-3xl font-bold mb-3">Every Finding Has Reproducible SQL</h2>
+   863→   863→                <p className="text-muted-foreground max-w-2xl mx-auto">No black boxes. Every hypothesis in the evidence chain carries the exact query that tested it. Copy, paste, verify.</p>
+   864→   864→              </div>
+   865→   865→              <div className="max-w-4xl mx-auto space-y-4">
+   866→   866→                {EXAMPLE_CASE.evidenceChain.slice(0, 3).map((e, i) => (
+   867→   867→                  <Card key={i} className={`border-border/40 ${VERDICT_BG[e.verdict] || ''}`}>
+   868→   868→                    <CardContent className="p-5">
+   869→   869→                      <div className="flex items-center gap-3 mb-3">
+   870→   870→                        <span className="flex items-center justify-center w-7 h-7 rounded-full bg-secondary text-[11px] font-terminal font-bold text-muted-foreground">Q{e.queryNum}</span>
+   871→   871→                        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${VERDICT_COLORS[e.verdict] || ''}`}>{e.verdict} {e.confidence.toFixed(0)}%</Badge>
+   872→   872→                        <span className="text-sm font-medium flex-1">{e.statement}</span>
+   873→   873→                      </div>
+   874→   874→                      {e.sql && (
+   875→   875→                        <div className="relative group">
+   876→   876→                          <div className="absolute top-0 left-0 flex items-center gap-2">
+   877→   877→                            <Badge variant="secondary" className="text-[9px] font-terminal">SQL</Badge>
+   878→   878→                          </div>
+   879→   879→                          <button
+   880→   880→                            onClick={() => { navigator.clipboard.writeText(e.sql || '') }}
+   881→   881→                            className="absolute top-0 right-0 flex items-center gap-1 text-[10px] text-muted-foreground/60 hover:text-primary transition-colors opacity-0 group-hover:opacity-100 px-2 py-1 rounded-md hover:bg-secondary/50"
+   882→   882→                            title="Copy SQL to clipboard"
+   883→   883→                          >
+   884→   884→                            <Download className="w-3 h-3" />Copy
+   885→   885→                          </button>
+   886→   886→                          <div className="rounded-lg overflow-hidden bg-black/40 border border-border/20">
+   887→   887→                            <SyntaxHighlighter language="sql" style={oneDark} customStyle={{ margin: 0, fontSize: '13px', background: 'transparent', padding: '16px' }}>
+   888→   888→                              {e.sql}
+   889→   889→                            </SyntaxHighlighter>
+   890→   890→                          </div>
+   891→   891→                        </div>
+   892→   892→                      )}
+   893→   893→                      {e.resultSummary && (
+   894→   894→                        <div className="mt-3 p-3 rounded-lg bg-secondary/30 border border-border/20">
+   895→   895→                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1">Result Summary</p>
+   896→   896→                          <pre className="text-xs font-terminal text-muted-foreground whitespace-pre-wrap">{e.resultSummary}</pre>
+   897→   897→                        </div>
+   898→   898→                      )}
+   899→   899→                    </CardContent>
+   900→   900→                  </Card>
+   901→   901→                ))}
+   902→   902→                <p className="text-center text-sm text-muted-foreground mt-6 max-w-xl mx-auto">These are the actual queries the agent generated — not hand-picked demos. The full case file contains all 47 queries with their results.</p>
+   903→   903→              </div>
+   904→   904→            </Section>
+   905→   905→          </div>
+   906→   906→        </section>
+   907→   907→
+   908→   908→        {/* ═══ WHY EXASOL ═══ */}
+   909→   909→        <section className="py-20 section-divider">
+   910→   910→          <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+   911→   911→            <Section>
+   912→   912→              <Database className="w-12 h-12 text-primary mx-auto mb-6" />
+   913→   913→              <h2 className="text-2xl sm:text-3xl font-bold mb-4">Why Exasol Specifically</h2>
+   914→   914→              <p className="text-muted-foreground leading-relaxed mb-8">The agent design is a direct consequence of the latency budget. At sub-second query latency, a 25-step dependent investigation completes in under 30 seconds. At 8 seconds per query, the same investigation takes over 3 minutes and users abandon it. The database&apos;s core property is the enabling condition. This cannot be ported to a slower engine without breaking the user experience.</p>
+   915→   915→              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+   916→   916→                {[
+   917→   917→                  { label: 'Parquet Ingest', desc: 'GLOB pattern + schema inference, one statement', icon: CircuitBoard },
+   918→   918→                  { label: 'Sub-second Loops', desc: 'Dependent query chains feel instant', icon: Zap },
+   919→   919→                  { label: 'Queryable Audit Trail', desc: 'Agent reasoning is itself SQL-table data', icon: FileSearch },
+   920→   920→                ].map(item => (
+   921→   921→                  <Card key={item.label} className="border-border/40 card-hover"><CardContent className="p-5"><item.icon className="w-5 h-5 text-primary mx-auto mb-2" /><h3 className="font-semibold text-sm mb-1 text-primary">{item.label}</h3><p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p></CardContent></Card>
+   922→   922→                ))}
+   923→   923→              </div>
+   924→   924→            </Section>
+   925→   925→          </div>
+   926→   926→        </section>
+   927→   927→      </main>
+   928→   928→
+   929→   929→      {/* ═══ FOOTER ═══ */}
+   930→   930→      <footer className="border-t border-border/30 py-10 mt-auto bg-noise">
+   931→   931→        <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+   932→   932→          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+   933→   933→            {/* Column 1: Branding */}
+   934→   934→            <div className="col-span-2 md:col-span-1">
+   935→   935→              <div className="flex items-center gap-2 mb-3">
+   936→   936→                <Fingerprint className="w-5 h-5 text-primary" />
+   937→   937→                <span className="font-terminal font-bold tracking-tight">CASEFILE</span>
+   938→   938→              </div>
+   939→   939→              <p className="text-xs text-muted-foreground leading-relaxed">An autonomous investigation agent for Exasol. Built for the AI Build Challenge 2026.</p>
+   940→   940→            </div>
+   941→   941→            {/* Column 2: Project */}
+   942→   942→            <div>
+   943→   943→              <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3">Project</h4>
+   944→   944→              <ul className="space-y-2.5 text-sm text-muted-foreground">
+   945→   945→                <li><a href="#" className="hover:text-foreground transition-colors inline-flex items-center gap-1.5"><Github className="w-3.5 h-3.5" />Source Code</a></li>
+   946→   946→                <li><a href="#" className="hover:text-foreground transition-colors inline-flex items-center gap-1.5"><ExternalLink className="w-3.5 h-3.5" />Live Demo</a></li>
+   947→   947→                <li><span className="inline-flex items-center gap-1.5">MIT License</span></li>
+   948→   948→              </ul>
+   949→   949→            </div>
+   950→   950→            {/* Column 3: Architecture */}
+   951→   951→            <div>
+   952→   952→              <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3">Architecture</h4>
+   953→   953→              <ul className="space-y-2.5 text-sm text-muted-foreground">
+   954→   954→                <li>Next.js 16 + App Router</li>
+   955→   955→                <li>Socket.IO real-time</li>
+   956→   956→                <li>Exasol Personal DB</li>
+   957→   957→                <li>Zustand state mgmt</li>
+   958→   958→              </ul>
+   959→   959→            </div>
+   960→   960→            {/* Column 4: Data Source */}
+   961→   961→            <div>
+   962→   962→              <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3">Data Source</h4>
+   963→   963→              <ul className="space-y-2.5 text-sm text-muted-foreground">
+   964→   964→                <li className="font-medium text-foreground/80">NYC TLC Trip Records</li>
+   965→   965→                <li>320M+ rows (2022–2024)</li>
+   966→   966→                <li>Parquet format on Exasol</li>
+   967→   967→                <li><a href="#" className="hover:text-foreground transition-colors inline-flex items-center gap-1"><ExternalLink className="w-3 h-3" />NYC Open Data</a></li>
+   968→   968→              </ul>
+   969→   969→            </div>
+   970→   970→          </div>
+   971→   971→          <Separator className="my-6 opacity-30" />
+   972→   972→          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground/70">
+   973→   973→            <span>Exasol AI Build Challenge 2026 — Track: AI for Autonomous Agents</span>
+   974→   974→            <span>Every finding backed by reproducible SQL</span>
+   975→   975→          </div>
+   976→   976→        </div>
+   977→   977→      </footer>
+   978→   978→
+   979→   979→      {/* ═══ INLINE STYLES FOR ANIMATIONS ═══ */}
+   980→   980→      <style jsx>{`
+   981→   981→        @keyframes pipeline-flow {
+   982→   982→          0% { stroke-dashoffset: 0; }
+   983→   983→          100% { stroke-dashoffset: -20; }
+   984→   984→        }
+   985→   985→        .animate-pipeline-flow {
+   986→   986→          animation: pipeline-flow 1s linear infinite;
+   987→   987→        }
+   988→   988→        @keyframes hero-glow {
+   989→   989→          0%, 100% { 
+   990→   990→            background: radial-gradient(circle, oklch(0.78 0.17 72 / 0.08) 0%, transparent 70%);
+   991→   991→            transform: scale(1);
+   992→   992→          }
+   993→   993→          50% { 
+   994→   994→            background: radial-gradient(circle, oklch(0.78 0.17 72 / 0.15) 0%, transparent 70%);
+   995→   995→            transform: scale(1.05);
+   996→   996→          }
+   997→   997→        }
+   998→   998→        .animate-hero-glow {
+   999→   999→          animation: hero-glow 4s ease-in-out infinite;
+  1000→  1000→        }
+  1001→  1001→      `}</style>
+  1002→  1002→    </div>
+  1003→  1003→    </TooltipProvider>
+  1004→  1004→  )
+  1005→  1005→}

@@ -48,23 +48,23 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.065 0.006 270);
-  --foreground: oklch(0.93 0 0);
-  --card: oklch(0.09 0.007 270);
+  --background: oklch(0.07 0.005 270);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.1 0.007 270);
   --card-foreground: oklch(0.93 0 0);
   --popover: oklch(0.09 0.007 270);
   --popover-foreground: oklch(0.93 0 0);
   --primary: oklch(0.78 0.17 72);
   --primary-foreground: oklch(0.12 0.02 270);
-  --secondary: oklch(0.14 0.006 270);
-  --secondary-foreground: oklch(0.88 0 0);
-  --muted: oklch(0.14 0.006 270);
-  --muted-foreground: oklch(0.55 0.01 270);
+  --secondary: oklch(0.15 0.007 270);
+  --secondary-foreground: oklch(0.9 0 0);
+  --muted: oklch(0.15 0.007 270);
+  --muted-foreground: oklch(0.62 0.008 270);
   --accent: oklch(0.14 0.01 270);
   --accent-foreground: oklch(0.88 0 0);
   --destructive: oklch(0.65 0.25 25);
-  --border: oklch(0.17 0.006 270);
-  --input: oklch(0.17 0.006 270);
+  --border: oklch(0.2 0.007 270);
+  --input: oklch(0.2 0.007 270);
   --ring: oklch(0.78 0.17 72);
   --chart-1: oklch(0.78 0.17 72);
   --chart-2: oklch(0.65 0.25 25);
@@ -168,16 +168,17 @@
   left: 10%;
   right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, oklch(0.78 0.17 72 / 0.2), transparent);
+  background: linear-gradient(90deg, transparent, oklch(0.78 0.17 72 / 0.15), transparent);
 }
 
 /* Card hover lift */
 .card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 .card-hover:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 30px oklch(0 0 0 / 0.3);
+  border-color: oklch(0.78 0.17 72 / 0.25);
 }
 
 /* Gradient text */
@@ -200,4 +201,70 @@
   width: 2px;
   height: 24px;
   background: linear-gradient(to bottom, oklch(0.78 0.17 72 / 0.4), transparent);
+}
+
+/* Diagonal line pattern (distinct from grid) */
+.bg-diagonal-lines {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 14px,
+    oklch(0.17 0.006 270 / 0.08) 14px,
+    oklch(0.17 0.006 270 / 0.08) 15px
+  );
+}
+
+/* Breathing amber glow border */
+@keyframes border-breathe {
+  0%, 100% {
+    border-color: oklch(0.78 0.17 72 / 0.2);
+    box-shadow: 0 0 15px oklch(0.78 0.17 72 / 0.05), inset 0 0 15px oklch(0.78 0.17 72 / 0.02);
+  }
+  50% {
+    border-color: oklch(0.78 0.17 72 / 0.5);
+    box-shadow: 0 0 30px oklch(0.78 0.17 72 / 0.15), inset 0 0 30px oklch(0.78 0.17 72 / 0.04);
+  }
+}
+.animate-border-breathe {
+  animation: border-breathe 3s ease-in-out infinite;
+}
+
+/* Fade-in number (slide down + fade) */
+@keyframes fade-in-number {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-number {
+  animation: fade-in-number 0.8s ease-out forwards;
+}
+
+/* Bouncing dot for typing indicators */
+@keyframes bounce-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+.animate-bounce-dot {
+  animation: bounce-dot 1.4s ease-in-out infinite;
+}
+
+/* Pulsing ring for stat counters */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.15); opacity: 0; }
+}
+.animate-pulse-ring {
+  animation: pulse-ring 0.6s ease-out forwards;
+}
+
+/* Idle button glow pulse */
+@keyframes glow-idle {
+  0%, 100% {
+    box-shadow: 0 0 8px oklch(0.78 0.17 72 / 0.2), 0 0 24px oklch(0.78 0.17 72 / 0.06);
+  }
+  50% {
+    box-shadow: 0 0 16px oklch(0.78 0.17 72 / 0.35), 0 0 40px oklch(0.78 0.17 72 / 0.12);
+  }
+}
+.animate-glow-idle {
+  animation: glow-idle 2.5s ease-in-out infinite;
 }

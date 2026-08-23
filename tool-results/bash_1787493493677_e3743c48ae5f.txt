@@ -1,0 +1,743 @@
+[log] [HMR] connected
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 198ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 165ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 183ms
+[log] [Fast Refresh] rebuilding
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[log] [Fast Refresh] rebuilding
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[log] [Fast Refresh] rebuilding
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[log] [Fast Refresh] rebuilding
+[clear] console.clear
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[log] [Fast Refresh] rebuilding
+[clear] console.clear
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[error] ./src/app/page.tsx:7:1
+Export MessageSquareQuestion doesn't exist in target module
+   5 | import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+   6 | import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+>  7 | import {
+     | ^^^^^^^^
+>  8 |   Search, Zap, FileSearch, Shield, Terminal, Database,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  9 |   CheckCircle2, XCircle, HelpCircle, ChevronDown,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 10 |   Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   ArrowDown, Play, Square, RotateCcw, Bot, Brain, X, Menu,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 |   BarChart3, Layers, Fingerprint, Trophy, Eye,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |   Download, ChevronRight, Keyboard, MessageSquareQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |   MonitorDot, ScrollText, ArrowRight, Github, ExternalLink,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 | } from 'lucide-react'
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+  19 | import { Badge } from '@/components/ui/badge'
+
+The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import MessageSquareQuote?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[log] [Fast Refresh] rebuilding
+[clear] console.clear
+[error] ./src/app/page.tsx:15:3
+Ecmascript file had an error
+  13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+  14 |   Download, ChevronRight, Keyboard, MessageSquare,
+> 15 |   Activity, ScrollText, ArrowRight, Github, ExternalLink,
+     |   ^^^^^^^^
+  16 | } from 'lucide-react'
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+the name `Activity` is defined multiple times
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[log] [Fast Refresh] rebuilding
+[clear] console.clear
+[error] ./src/app/page.tsx:15:3
+Ecmascript file had an error
+  13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+  14 |   Download, ChevronRight, Keyboard, MessageSquare,
+> 15 |   Activity, ScrollText, ArrowRight, Github, ExternalLink,
+     |   ^^^^^^^^
+  16 | } from 'lucide-react'
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+the name `Activity` is defined multiple times
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[error] ./src/app/page.tsx:15:3
+Ecmascript file had an error
+  13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+  14 |   Download, ChevronRight, Keyboard, MessageSquare,
+> 15 |   Activity, ScrollText, ArrowRight, Github, ExternalLink,
+     |   ^^^^^^^^
+  16 | } from 'lucide-react'
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+the name `Activity` is defined multiple times
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[clear] console.clear
+[error] ./src/app/page.tsx:15:3
+Ecmascript file had an error
+  13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+  14 |   Download, ChevronRight, Keyboard, MessageSquare,
+> 15 |   Activity, ScrollText, ArrowRight, Github, ExternalLink,
+     |   ^^^^^^^^
+  16 | } from 'lucide-react'
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+the name `Activity` is defined multiple times
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[clear] console.clear
+[error] ./src/app/page.tsx:15:3
+Ecmascript file had an error
+  13 |   Crosshair, FlaskConical, CircuitBoard, FileText,
+  14 |   Download, ChevronRight, Keyboard, MessageSquare,
+> 15 |   Activity, ScrollText, ArrowRight, Github, ExternalLink,
+     |   ^^^^^^^^
+  16 | } from 'lucide-react'
+  17 | import { Button } from '@/components/ui/button'
+  18 | import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+the name `Activity` is defined multiple times
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] rebuilding
+[clear] console.clear
+[log] [Fast Refresh] done in 170ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 147ms
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 184ms
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 211ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 222ms
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 221ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 203ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 230ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 294ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 623ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 143ms
+[log] [Fast Refresh] rebuilding
+[warning] [Fast Refresh] performing full reload because your application had an unrecoverable error
+[log] [Fast Refresh] done in 281ms
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 117ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 121ms
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 203ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 157ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 508ms
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 173ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 298ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 158ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 282ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 105ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 104ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 1318ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 134ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 235ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 414ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 174ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 131ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 208ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 149ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 118ms
+[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[log] [HMR] connected
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 174ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 252ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 167ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 265ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 174ms
+[log] [Fast Refresh] rebuilding
+[log] [Fast Refresh] done in 109ms

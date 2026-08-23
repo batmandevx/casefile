@@ -1,0 +1,512 @@
+     1→▲ Next.js 16.1.3 (Turbopack)
+     2→- Local:         http://localhost:3000
+     3→- Network:       http://21.0.19.199:3000
+     4→- Environments: .env
+     5→
+     6→✓ Starting...
+     7→Attention: Next.js now collects completely anonymous telemetry regarding usage.
+     8→This information is used to shape Next.js' roadmap and prioritize features.
+     9→You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+    10→https://nextjs.org/telemetry
+    11→
+    12→
+    13→  We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+    14→  The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+    15→
+    16→        - include was updated to add '.next/dev/types/**/*.ts'
+    17→
+    18→  The following mandatory changes were made to your tsconfig.json:
+    19→
+    20→        - jsx was set to react-jsx (next.js uses the React automatic runtime)
+    21→
+    22→✓ Ready in 681ms
+    23→○ Compiling / ...
+    24→ GET / 200 in 4.0s (compile: 3.8s, render: 141ms)
+    25→ GET / 200 in 3.9s (compile: 3.7s, render: 194ms)
+    26→ GET / 200 in 38ms (compile: 2ms, render: 36ms)
+    27→✓ Compiled in 222ms
+    28→✓ Compiled in 96ms
+    29→ GET / 200 in 48ms (compile: 30ms, render: 19ms)
+    30→✓ Compiled in 338ms
+    31→✓ Compiled in 8.3s
+    32→⨯ ./src/app/page.tsx:6:1
+    33→Export LightPrism doesn't exist in target module
+    34→[0m [90m 4 |[39m [36mimport[39m { io[33m,[39m [33mSocket[39m } [36mfrom[39m [32m'socket.io-client'[39m
+    35→ [90m 5 |[39m [36mimport[39m { motion[33m,[39m [33mAnimatePresence[39m } [36mfrom[39m [32m'framer-motion'[39m
+    36→[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { [33mLightPrism[39m [36mas[39m [33mPrism[39m } [36mfrom[39m [32m'react-syntax-highlighter'[39m
+    37→ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+    38→ [90m 7 |[39m [36mimport[39m { oneDark } [36mfrom[39m [32m'react-syntax-highlighter/dist/esm/styles/prism'[39m
+    39→ [90m 8 |[39m [36mimport[39m {
+    40→ [90m 9 |[39m   [33mSearch[39m[33m,[39m [33mZap[39m[33m,[39m [33mFileSearch[39m[33m,[39m [33mShield[39m[33m,[39m [33mTerminal[39m[33m,[39m [33mDatabase[39m[33m,[39m[0m
+    41→
+    42→The export LightPrism was not found in module [project]/node_modules/react-syntax-highlighter/dist/esm/index.js [app-client] (ecmascript).
+    43→Did you mean to import Light?
+    44→All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+    45→
+    46→Import traces:
+    47→  Client Component Browser:
+    48→    ./src/app/page.tsx [Client Component Browser]
+    49→    ./src/app/page.tsx [Server Component]
+    50→
+    51→  Client Component SSR:
+    52→    ./src/app/page.tsx [Client Component SSR]
+    53→    ./src/app/page.tsx [Server Component]
+    54→
+    55→
+    56→
+    57→./src/app/page.tsx:6:1
+    58→Export LightPrism doesn't exist in target module
+    59→[0m [90m 4 |[39m [36mimport[39m { io[33m,[39m [33mSocket[39m } [36mfrom[39m [32m'socket.io-client'[39m
+    60→ [90m 5 |[39m [36mimport[39m { motion[33m,[39m [33mAnimatePresence[39m } [36mfrom[39m [32m'framer-motion'[39m
+    61→[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { [33mLightPrism[39m [36mas[39m [33mPrism[39m } [36mfrom[39m [32m'react-syntax-highlighter'[39m
+    62→ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+    63→ [90m 7 |[39m [36mimport[39m { oneDark } [36mfrom[39m [32m'react-syntax-highlighter/dist/esm/styles/prism'[39m
+    64→ [90m 8 |[39m [36mimport[39m {
+    65→ [90m 9 |[39m   [33mSearch[39m[33m,[39m [33mZap[39m[33m,[39m [33mFileSearch[39m[33m,[39m [33mShield[39m[33m,[39m [33mTerminal[39m[33m,[39m [33mDatabase[39m[33m,[39m[0m
+    66→
+    67→The export LightPrism was not found in module [project]/node_modules/react-syntax-highlighter/dist/esm/index.js [app-ssr] (ecmascript).
+    68→Did you mean to import Light?
+    69→All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+    70→
+    71→Import traces:
+    72→  Client Component Browser:
+    73→    ./src/app/page.tsx [Client Component Browser]
+    74→    ./src/app/page.tsx [Server Component]
+    75→
+    76→  Client Component SSR:
+    77→    ./src/app/page.tsx [Client Component SSR]
+    78→    ./src/app/page.tsx [Server Component]
+    79→
+    80→
+    81→ GET / 500 in 1472ms (compile: 1365ms, render: 108ms)
+    82→⚠ Cross origin request detected from preview-chat-61a5b8fe-20ad-4be7-9016-a78a8b87a236.space-z.ai to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+    83→Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+    84→✓ Compiled in 1192ms
+    85→ GET / 200 in 1123ms (compile: 883ms, render: 240ms)
+    86→✓ Compiled in 153ms
+    87→✓ Compiled in 468ms
+    88→ GET / 200 in 51ms (compile: 28ms, render: 22ms)
+    89→ GET / 200 in 673ms (compile: 8ms, render: 665ms)
+    90→ GET / 200 in 89ms (compile: 11ms, render: 77ms)
+    91→ GET /?XTransformPort=3004&socket_path=%2Fsocket.io%2F&EIO=4&transport=polling 200 in 66ms (compile: 7ms, render: 59ms)
+    92→ GET / 200 in 309ms (compile: 26ms, render: 284ms)
+    93→ GET / 200 in 135ms (compile: 11ms, render: 124ms)
+    94→✓ Compiled in 867ms
+    95→✓ Compiled in 231ms
+    96→✓ Compiled in 793ms
+    97→ GET / 200 in 361ms (compile: 213ms, render: 148ms)
+    98→ GET / 200 in 101ms (compile: 14ms, render: 87ms)
+    99→ GET / 200 in 658ms (compile: 4ms, render: 653ms)
+   100→✓ Compiled in 187ms
+   101→ GET / 200 in 607ms (compile: 63ms, render: 544ms)
+   102→ GET / 200 in 247ms (compile: 29ms, render: 218ms)
+   103→ GET / 200 in 104ms (compile: 9ms, render: 94ms)
+   104→ GET /?XTransformPort=3004/socket.io/?EIO=4&transport=polling 200 in 74ms (compile: 6ms, render: 67ms)
+   105→✓ Compiled in 192ms
+   106→ GET / 200 in 610ms (compile: 69ms, render: 541ms)
+   107→ GET / 200 in 76ms (compile: 10ms, render: 66ms)
+   108→ GET / 200 in 393ms (compile: 8ms, render: 385ms)
+   109→ GET / 200 in 151ms (compile: 13ms, render: 138ms)
+   110→✓ Compiled in 181ms
+   111→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=sol0hsym 200 in 658ms (compile: 127ms, render: 531ms)
+   112→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=solyvykx 200 in 57ms (compile: 5ms, render: 52ms)
+   113→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=sony3q45 200 in 51ms (compile: 4ms, render: 47ms)
+   114→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=sopqx5vs 200 in 117ms (compile: 5ms, render: 112ms)
+   115→✓ Compiled in 162ms
+   116→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=soq6r9ww 200 in 704ms (compile: 154ms, render: 550ms)
+   117→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=soqbenj4 200 in 73ms (compile: 5ms, render: 67ms)
+   118→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=sorl3sm5 200 in 82ms (compile: 5ms, render: 77ms)
+   119→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=sosubyew 200 in 66ms (compile: 5ms, render: 61ms)
+   120→ GET / 200 in 576ms (compile: 33ms, render: 543ms)
+   121→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=soxsupyu 200 in 91ms (compile: 5ms, render: 87ms)
+   122→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=soygmmno 200 in 70ms (compile: 4ms, render: 65ms)
+   123→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=sozq6gct 200 in 54ms (compile: 4ms, render: 50ms)
+   124→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=sp3mohyr 200 in 83ms (compile: 8ms, render: 76ms)
+   125→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=sp7k2dls 200 in 53ms (compile: 4ms, render: 49ms)
+   126→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=spbgki6w 200 in 80ms (compile: 8ms, render: 72ms)
+   127→ GET /?XTransformPort=3004&EIO=4&transport=polling 200 in 73ms (compile: 9ms, render: 64ms)
+   128→✓ Compiled in 302ms
+   129→✓ Compiled in 0ms
+   130→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=srn2i0zn 200 in 868ms (compile: 114ms, render: 755ms)
+   131→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=srn8cvo1 200 in 67ms (compile: 5ms, render: 62ms)
+   132→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=sroqugeh 200 in 51ms (compile: 5ms, render: 46ms)
+   133→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=srpzziwc 200 in 67ms (compile: 4ms, render: 63ms)
+   134→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=srrturmx 200 in 98ms (compile: 8ms, render: 90ms)
+   135→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=srvrjsfz 200 in 68ms (compile: 4ms, render: 63ms)
+   136→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=srzoys0k 200 in 49ms (compile: 4ms, render: 45ms)
+   137→ GET / 200 in 230ms (compile: 5ms, render: 225ms)
+   138→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=ssahpbwq 200 in 108ms (compile: 34ms, render: 74ms)
+   139→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=ssb5va9s 200 in 55ms (compile: 5ms, render: 50ms)
+   140→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=ssdg85o7 200 in 57ms (compile: 5ms, render: 52ms)
+   141→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=sshcukvu 200 in 75ms (compile: 8ms, render: 67ms)
+   142→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=ssl9wbkz 200 in 65ms (compile: 4ms, render: 61ms)
+   143→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=ssp6nziz 200 in 52ms (compile: 4ms, render: 48ms)
+   144→ GET / 200 in 48ms (compile: 4ms, render: 44ms)
+   145→ GET / 200 in 202ms (compile: 25ms, render: 178ms)
+   146→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=szy6kcho 200 in 156ms (compile: 9ms, render: 147ms)
+   147→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=szyx527r 200 in 62ms (compile: 6ms, render: 57ms)
+   148→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t00bi7we 200 in 56ms (compile: 4ms, render: 52ms)
+   149→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t03qsn1r 200 in 190ms (compile: 32ms, render: 158ms)
+   150→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t07r4kfk 200 in 78ms (compile: 10ms, render: 68ms)
+   151→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t0bocdbo 200 in 78ms (compile: 6ms, render: 72ms)
+   152→ GET / 200 in 226ms (compile: 11ms, render: 214ms)
+   153→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t3pq5eb1 200 in 134ms (compile: 9ms, render: 125ms)
+   154→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t3qz9gan 200 in 77ms (compile: 5ms, render: 72ms)
+   155→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t3rw77iz 200 in 83ms (compile: 4ms, render: 79ms)
+   156→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t3u3htj2 200 in 73ms (compile: 4ms, render: 69ms)
+   157→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t3y0gg2b 200 in 70ms (compile: 4ms, render: 65ms)
+   158→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t41xe5tc 200 in 83ms (compile: 8ms, render: 76ms)
+   159→✓ Compiled in 290ms
+   160→ GET / 200 in 98ms (compile: 8ms, render: 90ms)
+   161→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t4jd0tr9 200 in 105ms (compile: 4ms, render: 101ms)
+   162→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t4jyc3ng 200 in 73ms (compile: 4ms, render: 70ms)
+   163→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t4mbl3ur 200 in 69ms (compile: 5ms, render: 64ms)
+   164→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t4q8jf8k 200 in 54ms (compile: 4ms, render: 50ms)
+   165→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t4u519ac 200 in 80ms (compile: 5ms, render: 75ms)
+   166→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=t4y28ads 200 in 134ms (compile: 20ms, render: 114ms)
+   167→✓ Compiled in 478ms
+   168→✓ Compiled in 6.5s
+   169→⨯ ReferenceError: Menu is not defined
+   170→    at HomePage (src/app/page.tsx:309:56)
+   171→  307 |           </div>
+   172→  308 |           <button className="md:hidden p-2 text-muted-foreground hover:text-foreground" onClick={() => setMobileMenu(!mobileMenu)}>
+   173→> 309 |             {mobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+   174→      |                                                        ^
+   175→  310 |           </button>
+   176→  311 |         </div>
+   177→  312 |         <AnimatePresence>{mobileMenu && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="md:hidden border-t border-border/40 overflow-hidden"><nav className="flex flex-col p-4 gap-3 text-sm">{['Architecture', 'Economics', 'Investigate', 'Benchmark'].map(s => <a key={s} href={`#${s.toLowerCase()}`} onClick={() => setMobileMenu(false)} className="text-muted-foreground hover:text-foreground">{s}</a>)}</nav></motion.div>}</AnimatePresence> {
+   178→  digest: '1893581127'
+   179→}
+   180→⨯ ReferenceError: Menu is not defined
+   181→    at HomePage (src/app/page.tsx:309:56)
+   182→  307 |           </div>
+   183→  308 |           <button className="md:hidden p-2 text-muted-foreground hover:text-foreground" onClick={() => setMobileMenu(!mobileMenu)}>
+   184→> 309 |             {mobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+   185→      |                                                        ^
+   186→  310 |           </button>
+   187→  311 |         </div>
+   188→  312 |         <AnimatePresence>{mobileMenu && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="md:hidden border-t border-border/40 overflow-hidden"><nav className="flex flex-col p-4 gap-3 text-sm">{['Architecture', 'Economics', 'Investigate', 'Benchmark'].map(s => <a key={s} href={`#${s.toLowerCase()}`} onClick={() => setMobileMenu(false)} className="text-muted-foreground hover:text-foreground">{s}</a>)}</nav></motion.div>}</AnimatePresence> {
+   189→  digest: '1893581127'
+   190→}
+   191→ GET / 500 in 912ms (compile: 180ms, render: 731ms)
+   192→✓ Compiled in 0ms
+   193→⨯ ReferenceError: Menu is not defined
+   194→    at HomePage (src/app/page.tsx:309:56)
+   195→  307 |           </div>
+   196→  308 |           <button className="md:hidden p-2 text-muted-foreground hover:text-foreground" onClick={() => setMobileMenu(!mobileMenu)}>
+   197→> 309 |             {mobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+   198→      |                                                        ^
+   199→  310 |           </button>
+   200→  311 |         </div>
+   201→  312 |         <AnimatePresence>{mobileMenu && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="md:hidden border-t border-border/40 overflow-hidden"><nav className="flex flex-col p-4 gap-3 text-sm">{['Architecture', 'Economics', 'Investigate', 'Benchmark'].map(s => <a key={s} href={`#${s.toLowerCase()}`} onClick={() => setMobileMenu(false)} className="text-muted-foreground hover:text-foreground">{s}</a>)}</nav></motion.div>}</AnimatePresence> {
+   202→  digest: '1893581127'
+   203→}
+   204→ GET / 500 in 70ms (compile: 5ms, render: 65ms)
+   205→✓ Compiled in 823ms
+   206→⚠ Fast Refresh had to perform a full reload due to a runtime error.
+   207→ GET / 200 in 649ms (compile: 66ms, render: 583ms)
+   208→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=tlpd85dl 200 in 148ms (compile: 7ms, render: 141ms)
+   209→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=tlqke8md 200 in 58ms (compile: 6ms, render: 53ms)
+   210→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=tlsq7l7x 200 in 587ms (compile: 319ms, render: 268ms)
+   211→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=tlv15lu3 200 in 254ms (compile: 25ms, render: 229ms)
+   212→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=tlz377u2 200 in 80ms (compile: 8ms, render: 73ms)
+   213→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=tm30ge44 200 in 84ms (compile: 8ms, render: 77ms)
+   214→✓ Compiled in 191ms
+   215→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=tm5tf73a 200 in 855ms (compile: 176ms, render: 679ms)
+   216→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=tm78xze0 200 in 86ms (compile: 6ms, render: 80ms)
+   217→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=tm908cit 200 in 109ms (compile: 22ms, render: 87ms)
+   218→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=tmcy9atd 200 in 293ms (compile: 5ms, render: 288ms)
+   219→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=tmh1fune 200 in 60ms (compile: 6ms, render: 54ms)
+   220→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=tmky4jip 200 in 115ms (compile: 12ms, render: 103ms)
+   221→ GET / 200 in 78ms (compile: 9ms, render: 70ms)
+   222→ GET / 200 in 89ms (compile: 9ms, render: 80ms)
+   223→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=u95niuan 200 in 187ms (compile: 9ms, render: 178ms)
+   224→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=u96mptlv 200 in 86ms (compile: 6ms, render: 80ms)
+   225→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=u97jttlk 200 in 83ms (compile: 5ms, render: 78ms)
+   226→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=u9ad9bz3 200 in 95ms (compile: 5ms, render: 90ms)
+   227→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=u9eaui88 200 in 92ms (compile: 5ms, render: 87ms)
+   228→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=u9i8fohh 200 in 82ms (compile: 4ms, render: 78ms)
+   229→⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+   230→▲ Next.js 16.1.3 (Turbopack)
+   231→- Local:         http://localhost:3000
+   232→- Network:       http://21.0.19.199:3000
+   233→- Environments: .env
+   234→
+   235→✓ Starting...
+   236→✓ Ready in 1600ms
+   237→○ Compiling / ...
+   238→ GET / 200 in 9.3s (compile: 8.6s, render: 784ms)
+   239→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=udvnxm4g 200 in 251ms (compile: 12ms, render: 239ms)
+   240→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=udwzs83v 200 in 74ms (compile: 7ms, render: 67ms)
+   241→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=udyfbkgt 200 in 61ms (compile: 6ms, render: 55ms)
+   242→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=ue1gqx0g 200 in 111ms (compile: 5ms, render: 106ms)
+   243→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=ue5esgbs 200 in 65ms (compile: 5ms, render: 60ms)
+   244→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=ue9blt1f 200 in 62ms (compile: 5ms, render: 58ms)
+   245→✓ Compiled in 22.3s
+   246→⨯ ./src/app/page.tsx:7:1
+   247→Export MessageSquareQuestion doesn't exist in target module
+   248→[0m [90m  5 |[39m [36mimport[39m [33mSyntaxHighlighter[39m [36mfrom[39m [32m'react-syntax-highlighter/dist/esm/prism'[39m
+   249→ [90m  6 |[39m [36mimport[39m { oneDark } [36mfrom[39m [32m'react-syntax-highlighter/dist/esm/styles/prism'[39m
+   250→[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m {
+   251→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   252→[31m[1m>[22m[39m[90m  8 |[39m   [33mSearch[39m[33m,[39m [33mZap[39m[33m,[39m [33mFileSearch[39m[33m,[39m [33mShield[39m[33m,[39m [33mTerminal[39m[33m,[39m [33mDatabase[39m[33m,[39m
+   253→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   254→[31m[1m>[22m[39m[90m  9 |[39m   [33mCheckCircle2[39m[33m,[39m [33mXCircle[39m[33m,[39m [33mHelpCircle[39m[33m,[39m [33mChevronDown[39m[33m,[39m
+   255→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   256→[31m[1m>[22m[39m[90m 10 |[39m   [33mActivity[39m[33m,[39m [33mClock[39m[33m,[39m [33mHash[39m[33m,[39m [33mTrendingDown[39m[33m,[39m [33mGitBranch[39m[33m,[39m [33mAlertTriangle[39m[33m,[39m
+   257→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   258→[31m[1m>[22m[39m[90m 11 |[39m   [33mArrowDown[39m[33m,[39m [33mPlay[39m[33m,[39m [33mSquare[39m[33m,[39m [33mRotateCcw[39m[33m,[39m [33mBot[39m[33m,[39m [33mBrain[39m[33m,[39m [33mX[39m[33m,[39m [33mMenu[39m[33m,[39m
+   259→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   260→[31m[1m>[22m[39m[90m 12 |[39m   [33mBarChart3[39m[33m,[39m [33mLayers[39m[33m,[39m [33mFingerprint[39m[33m,[39m [33mTrophy[39m[33m,[39m [33mEye[39m[33m,[39m
+   261→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   262→[31m[1m>[22m[39m[90m 13 |[39m   [33mCrosshair[39m[33m,[39m [33mFlaskConical[39m[33m,[39m [33mCircuitBoard[39m[33m,[39m [33mFileText[39m[33m,[39m
+   263→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   264→[31m[1m>[22m[39m[90m 14 |[39m   [33mDownload[39m[33m,[39m [33mChevronRight[39m[33m,[39m [33mKeyboard[39m[33m,[39m [33mMessageSquareQuestion[39m[33m,[39m
+   265→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   266→[31m[1m>[22m[39m[90m 15 |[39m   [33mMonitorDot[39m[33m,[39m [33mScrollText[39m[33m,[39m [33mArrowRight[39m[33m,[39m [33mGithub[39m[33m,[39m [33mExternalLink[39m[33m,[39m
+   267→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   268→[31m[1m>[22m[39m[90m 16 |[39m } [36mfrom[39m [32m'lucide-react'[39m
+   269→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   270→ [90m 17 |[39m [36mimport[39m { [33mButton[39m } [36mfrom[39m [32m'@/components/ui/button'[39m
+   271→ [90m 18 |[39m [36mimport[39m { [33mCard[39m[33m,[39m [33mCardContent[39m[33m,[39m [33mCardHeader[39m[33m,[39m [33mCardTitle[39m } [36mfrom[39m [32m'@/components/ui/card'[39m
+   272→ [90m 19 |[39m [36mimport[39m { [33mBadge[39m } [36mfrom[39m [32m'@/components/ui/badge'[39m[0m
+   273→
+   274→The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+   275→Did you mean to import MessageSquareQuote?
+   276→All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+   277→
+   278→Import traces:
+   279→  Client Component Browser:
+   280→    ./src/app/page.tsx [Client Component Browser]
+   281→    ./src/app/page.tsx [Server Component]
+   282→
+   283→  Client Component SSR:
+   284→    ./src/app/page.tsx [Client Component SSR]
+   285→    ./src/app/page.tsx [Server Component]
+   286→
+   287→
+   288→
+   289→./src/app/page.tsx:7:1
+   290→Export MessageSquareQuestion doesn't exist in target module
+   291→[0m [90m  5 |[39m [36mimport[39m [33mSyntaxHighlighter[39m [36mfrom[39m [32m'react-syntax-highlighter/dist/esm/prism'[39m
+   292→ [90m  6 |[39m [36mimport[39m { oneDark } [36mfrom[39m [32m'react-syntax-highlighter/dist/esm/styles/prism'[39m
+   293→[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m {
+   294→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   295→[31m[1m>[22m[39m[90m  8 |[39m   [33mSearch[39m[33m,[39m [33mZap[39m[33m,[39m [33mFileSearch[39m[33m,[39m [33mShield[39m[33m,[39m [33mTerminal[39m[33m,[39m [33mDatabase[39m[33m,[39m
+   296→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   297→[31m[1m>[22m[39m[90m  9 |[39m   [33mCheckCircle2[39m[33m,[39m [33mXCircle[39m[33m,[39m [33mHelpCircle[39m[33m,[39m [33mChevronDown[39m[33m,[39m
+   298→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   299→[31m[1m>[22m[39m[90m 10 |[39m   [33mActivity[39m[33m,[39m [33mClock[39m[33m,[39m [33mHash[39m[33m,[39m [33mTrendingDown[39m[33m,[39m [33mGitBranch[39m[33m,[39m [33mAlertTriangle[39m[33m,[39m
+   300→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   301→[31m[1m>[22m[39m[90m 11 |[39m   [33mArrowDown[39m[33m,[39m [33mPlay[39m[33m,[39m [33mSquare[39m[33m,[39m [33mRotateCcw[39m[33m,[39m [33mBot[39m[33m,[39m [33mBrain[39m[33m,[39m [33mX[39m[33m,[39m [33mMenu[39m[33m,[39m
+   302→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   303→[31m[1m>[22m[39m[90m 12 |[39m   [33mBarChart3[39m[33m,[39m [33mLayers[39m[33m,[39m [33mFingerprint[39m[33m,[39m [33mTrophy[39m[33m,[39m [33mEye[39m[33m,[39m
+   304→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   305→[31m[1m>[22m[39m[90m 13 |[39m   [33mCrosshair[39m[33m,[39m [33mFlaskConical[39m[33m,[39m [33mCircuitBoard[39m[33m,[39m [33mFileText[39m[33m,[39m
+   306→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   307→[31m[1m>[22m[39m[90m 14 |[39m   [33mDownload[39m[33m,[39m [33mChevronRight[39m[33m,[39m [33mKeyboard[39m[33m,[39m [33mMessageSquareQuestion[39m[33m,[39m
+   308→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   309→[31m[1m>[22m[39m[90m 15 |[39m   [33mMonitorDot[39m[33m,[39m [33mScrollText[39m[33m,[39m [33mArrowRight[39m[33m,[39m [33mGithub[39m[33m,[39m [33mExternalLink[39m[33m,[39m
+   310→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   311→[31m[1m>[22m[39m[90m 16 |[39m } [36mfrom[39m [32m'lucide-react'[39m
+   312→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   313→ [90m 17 |[39m [36mimport[39m { [33mButton[39m } [36mfrom[39m [32m'@/components/ui/button'[39m
+   314→ [90m 18 |[39m [36mimport[39m { [33mCard[39m[33m,[39m [33mCardContent[39m[33m,[39m [33mCardHeader[39m[33m,[39m [33mCardTitle[39m } [36mfrom[39m [32m'@/components/ui/card'[39m
+   315→ [90m 19 |[39m [36mimport[39m { [33mBadge[39m } [36mfrom[39m [32m'@/components/ui/badge'[39m[0m
+   316→
+   317→The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+   318→Did you mean to import MessageSquareQuote?
+   319→All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+   320→
+   321→Import traces:
+   322→  Client Component Browser:
+   323→    ./src/app/page.tsx [Client Component Browser]
+   324→    ./src/app/page.tsx [Server Component]
+   325→
+   326→  Client Component SSR:
+   327→    ./src/app/page.tsx [Client Component SSR]
+   328→    ./src/app/page.tsx [Server Component]
+   329→
+   330→
+   331→ GET / 500 in 671ms (compile: 381ms, render: 290ms)
+   332→⨯ ./src/app/page.tsx:7:1
+   333→Export MessageSquareQuestion doesn't exist in target module
+   334→[0m [90m  5 |[39m [36mimport[39m [33mSyntaxHighlighter[39m [36mfrom[39m [32m'react-syntax-highlighter/dist/esm/prism'[39m
+   335→ [90m  6 |[39m [36mimport[39m { oneDark } [36mfrom[39m [32m'react-syntax-highlighter/dist/esm/styles/prism'[39m
+   336→[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m {
+   337→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   338→[31m[1m>[22m[39m[90m  8 |[39m   [33mSearch[39m[33m,[39m [33mZap[39m[33m,[39m [33mFileSearch[39m[33m,[39m [33mShield[39m[33m,[39m [33mTerminal[39m[33m,[39m [33mDatabase[39m[33m,[39m
+   339→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   340→[31m[1m>[22m[39m[90m  9 |[39m   [33mCheckCircle2[39m[33m,[39m [33mXCircle[39m[33m,[39m [33mHelpCircle[39m[33m,[39m [33mChevronDown[39m[33m,[39m
+   341→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   342→[31m[1m>[22m[39m[90m 10 |[39m   [33mActivity[39m[33m,[39m [33mClock[39m[33m,[39m [33mHash[39m[33m,[39m [33mTrendingDown[39m[33m,[39m [33mGitBranch[39m[33m,[39m [33mAlertTriangle[39m[33m,[39m
+   343→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   344→[31m[1m>[22m[39m[90m 11 |[39m   [33mArrowDown[39m[33m,[39m [33mPlay[39m[33m,[39m [33mSquare[39m[33m,[39m [33mRotateCcw[39m[33m,[39m [33mBot[39m[33m,[39m [33mBrain[39m[33m,[39m [33mX[39m[33m,[39m [33mMenu[39m[33m,[39m
+   345→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   346→[31m[1m>[22m[39m[90m 12 |[39m   [33mBarChart3[39m[33m,[39m [33mLayers[39m[33m,[39m [33mFingerprint[39m[33m,[39m [33mTrophy[39m[33m,[39m [33mEye[39m[33m,[39m
+   347→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   348→[31m[1m>[22m[39m[90m 13 |[39m   [33mCrosshair[39m[33m,[39m [33mFlaskConical[39m[33m,[39m [33mCircuitBoard[39m[33m,[39m [33mFileText[39m[33m,[39m
+   349→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   350→[31m[1m>[22m[39m[90m 14 |[39m   [33mDownload[39m[33m,[39m [33mChevronRight[39m[33m,[39m [33mKeyboard[39m[33m,[39m [33mMessageSquareQuestion[39m[33m,[39m
+   351→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   352→[31m[1m>[22m[39m[90m 15 |[39m   [33mMonitorDot[39m[33m,[39m [33mScrollText[39m[33m,[39m [33mArrowRight[39m[33m,[39m [33mGithub[39m[33m,[39m [33mExternalLink[39m[33m,[39m
+   353→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   354→[31m[1m>[22m[39m[90m 16 |[39m } [36mfrom[39m [32m'lucide-react'[39m
+   355→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   356→ [90m 17 |[39m [36mimport[39m { [33mButton[39m } [36mfrom[39m [32m'@/components/ui/button'[39m
+   357→ [90m 18 |[39m [36mimport[39m { [33mCard[39m[33m,[39m [33mCardContent[39m[33m,[39m [33mCardHeader[39m[33m,[39m [33mCardTitle[39m } [36mfrom[39m [32m'@/components/ui/card'[39m
+   358→ [90m 19 |[39m [36mimport[39m { [33mBadge[39m } [36mfrom[39m [32m'@/components/ui/badge'[39m[0m
+   359→
+   360→The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+   361→Did you mean to import MessageSquareQuote?
+   362→All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+   363→
+   364→Import traces:
+   365→  Client Component Browser:
+   366→    ./src/app/page.tsx [Client Component Browser]
+   367→    ./src/app/page.tsx [Server Component]
+   368→
+   369→  Client Component SSR:
+   370→    ./src/app/page.tsx [Client Component SSR]
+   371→    ./src/app/page.tsx [Server Component]
+   372→
+   373→
+   374→
+   375→./src/app/page.tsx:7:1
+   376→Export MessageSquareQuestion doesn't exist in target module
+   377→[0m [90m  5 |[39m [36mimport[39m [33mSyntaxHighlighter[39m [36mfrom[39m [32m'react-syntax-highlighter/dist/esm/prism'[39m
+   378→ [90m  6 |[39m [36mimport[39m { oneDark } [36mfrom[39m [32m'react-syntax-highlighter/dist/esm/styles/prism'[39m
+   379→[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m {
+   380→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   381→[31m[1m>[22m[39m[90m  8 |[39m   [33mSearch[39m[33m,[39m [33mZap[39m[33m,[39m [33mFileSearch[39m[33m,[39m [33mShield[39m[33m,[39m [33mTerminal[39m[33m,[39m [33mDatabase[39m[33m,[39m
+   382→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   383→[31m[1m>[22m[39m[90m  9 |[39m   [33mCheckCircle2[39m[33m,[39m [33mXCircle[39m[33m,[39m [33mHelpCircle[39m[33m,[39m [33mChevronDown[39m[33m,[39m
+   384→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   385→[31m[1m>[22m[39m[90m 10 |[39m   [33mActivity[39m[33m,[39m [33mClock[39m[33m,[39m [33mHash[39m[33m,[39m [33mTrendingDown[39m[33m,[39m [33mGitBranch[39m[33m,[39m [33mAlertTriangle[39m[33m,[39m
+   386→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   387→[31m[1m>[22m[39m[90m 11 |[39m   [33mArrowDown[39m[33m,[39m [33mPlay[39m[33m,[39m [33mSquare[39m[33m,[39m [33mRotateCcw[39m[33m,[39m [33mBot[39m[33m,[39m [33mBrain[39m[33m,[39m [33mX[39m[33m,[39m [33mMenu[39m[33m,[39m
+   388→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   389→[31m[1m>[22m[39m[90m 12 |[39m   [33mBarChart3[39m[33m,[39m [33mLayers[39m[33m,[39m [33mFingerprint[39m[33m,[39m [33mTrophy[39m[33m,[39m [33mEye[39m[33m,[39m
+   390→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   391→[31m[1m>[22m[39m[90m 13 |[39m   [33mCrosshair[39m[33m,[39m [33mFlaskConical[39m[33m,[39m [33mCircuitBoard[39m[33m,[39m [33mFileText[39m[33m,[39m
+   392→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   393→[31m[1m>[22m[39m[90m 14 |[39m   [33mDownload[39m[33m,[39m [33mChevronRight[39m[33m,[39m [33mKeyboard[39m[33m,[39m [33mMessageSquareQuestion[39m[33m,[39m
+   394→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   395→[31m[1m>[22m[39m[90m 15 |[39m   [33mMonitorDot[39m[33m,[39m [33mScrollText[39m[33m,[39m [33mArrowRight[39m[33m,[39m [33mGithub[39m[33m,[39m [33mExternalLink[39m[33m,[39m
+   396→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   397→[31m[1m>[22m[39m[90m 16 |[39m } [36mfrom[39m [32m'lucide-react'[39m
+   398→ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   399→ [90m 17 |[39m [36mimport[39m { [33mButton[39m } [36mfrom[39m [32m'@/components/ui/button'[39m
+   400→ [90m 18 |[39m [36mimport[39m { [33mCard[39m[33m,[39m [33mCardContent[39m[33m,[39m [33mCardHeader[39m[33m,[39m [33mCardTitle[39m } [36mfrom[39m [32m'@/components/ui/card'[39m
+   401→ [90m 19 |[39m [36mimport[39m { [33mBadge[39m } [36mfrom[39m [32m'@/components/ui/badge'[39m[0m
+   402→
+   403→The export MessageSquareQuestion was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+   404→Did you mean to import MessageSquareQuote?
+   405→All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+   406→
+   407→Import traces:
+   408→  Client Component Browser:
+   409→    ./src/app/page.tsx [Client Component Browser]
+   410→    ./src/app/page.tsx [Server Component]
+   411→
+   412→  Client Component SSR:
+   413→    ./src/app/page.tsx [Client Component SSR]
+   414→    ./src/app/page.tsx [Server Component]
+   415→
+   416→
+   417→ GET / 500 in 86ms (compile: 59ms, render: 27ms)
+   418→⨯ ./src/app/page.tsx:15:3
+   419→Ecmascript file had an error
+   420→[0m [90m 13 |[39m   [33mCrosshair[39m[33m,[39m [33mFlaskConical[39m[33m,[39m [33mCircuitBoard[39m[33m,[39m [33mFileText[39m[33m,[39m
+   421→ [90m 14 |[39m   [33mDownload[39m[33m,[39m [33mChevronRight[39m[33m,[39m [33mKeyboard[39m[33m,[39m [33mMessageSquare[39m[33m,[39m
+   422→[31m[1m>[22m[39m[90m 15 |[39m   [33mActivity[39m[33m,[39m [33mScrollText[39m[33m,[39m [33mArrowRight[39m[33m,[39m [33mGithub[39m[33m,[39m [33mExternalLink[39m[33m,[39m
+   423→ [90m    |[39m   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   424→ [90m 16 |[39m } [36mfrom[39m [32m'lucide-react'[39m
+   425→ [90m 17 |[39m [36mimport[39m { [33mButton[39m } [36mfrom[39m [32m'@/components/ui/button'[39m
+   426→ [90m 18 |[39m [36mimport[39m { [33mCard[39m[33m,[39m [33mCardContent[39m[33m,[39m [33mCardHeader[39m[33m,[39m [33mCardTitle[39m } [36mfrom[39m [32m'@/components/ui/card'[39m[0m
+   427→
+   428→the name `Activity` is defined multiple times
+   429→
+   430→Import traces:
+   431→  Client Component Browser:
+   432→    ./src/app/page.tsx [Client Component Browser]
+   433→    ./src/app/page.tsx [Server Component]
+   434→
+   435→  Client Component SSR:
+   436→    ./src/app/page.tsx [Client Component SSR]
+   437→    ./src/app/page.tsx [Server Component]
+   438→
+   439→
+   440→ GET / 500 in 413ms (compile: 346ms, render: 68ms)
+   441→✓ Compiled in 176ms
+   442→ GET / 200 in 722ms (compile: 121ms, render: 601ms)
+   443→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=uyybpfo5 200 in 208ms (compile: 5ms, render: 203ms)
+   444→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=uyzezf28 200 in 214ms (compile: 7ms, render: 207ms)
+   445→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=uz11fehb 200 in 288ms (compile: 12ms, render: 276ms)
+   446→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=uz4yyifl 200 in 226ms (compile: 5ms, render: 221ms)
+   447→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=uz91f7t6 200 in 258ms (compile: 9ms, render: 249ms)
+   448→ GET / 200 in 285ms (compile: 5ms, render: 280ms)
+   449→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=uzdkkuu2 200 in 263ms (compile: 9ms, render: 255ms)
+   450→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=uzemvnph 200 in 294ms (compile: 12ms, render: 282ms)
+   451→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=uzguhu6i 200 in 140ms (compile: 5ms, render: 136ms)
+   452→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=uzktj63t 200 in 327ms (compile: 5ms, render: 322ms)
+   453→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=uzoy6kik 200 in 101ms (compile: 7ms, render: 94ms)
+   454→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=uzswdus7 200 in 113ms (compile: 5ms, render: 108ms)
+   455→ GET / 200 in 380ms (compile: 10ms, render: 371ms)
+   456→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v110ky2f 200 in 248ms (compile: 9ms, render: 239ms)
+   457→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v11yoc4l 200 in 181ms (compile: 5ms, render: 175ms)
+   458→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v145pabp 200 in 158ms (compile: 4ms, render: 154ms)
+   459→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v16mgj3q 200 in 93ms (compile: 4ms, render: 90ms)
+   460→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v1akbznp 200 in 172ms (compile: 7ms, render: 165ms)
+   461→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v1elfio5 200 in 129ms (compile: 6ms, render: 123ms)
+   462→✓ Compiled in 236ms
+   463→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v2pdrv0e 200 in 783ms (compile: 88ms, render: 695ms)
+   464→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v2qie4dh 200 in 107ms (compile: 5ms, render: 101ms)
+   465→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v2rj5l3e 200 in 91ms (compile: 6ms, render: 85ms)
+   466→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v2tnr20c 200 in 77ms (compile: 4ms, render: 73ms)
+   467→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v2xl3fx2 200 in 131ms (compile: 8ms, render: 123ms)
+   468→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v31k6ryt 200 in 195ms (compile: 4ms, render: 191ms)
+   469→✓ Compiled in 450ms
+   470→✓ Compiled in 250ms
+   471→⚠ Fast Refresh had to perform a full reload due to a runtime error.
+   472→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v3nb0fbt 200 in 179ms (compile: 42ms, render: 136ms)
+   473→ GET / 200 in 1692ms (compile: 163ms, render: 1529ms)
+   474→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v3pkgr6l 200 in 214ms (compile: 5ms, render: 209ms)
+   475→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v3qpvid5 200 in 165ms (compile: 7ms, render: 158ms)
+   476→ GET / 200 in 167ms (compile: 5ms, render: 162ms)
+   477→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v3skhcnl 200 in 175ms (compile: 4ms, render: 171ms)
+   478→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v3tbek4m 200 in 135ms (compile: 4ms, render: 131ms)
+   479→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v3vezvjt 200 in 95ms (compile: 4ms, render: 91ms)
+   480→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v3yis71p 200 in 252ms (compile: 15ms, render: 236ms)
+   481→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v42lup68 200 in 155ms (compile: 5ms, render: 150ms)
+   482→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v46m2yvg 200 in 90ms (compile: 5ms, render: 85ms)
+   483→ GET / 200 in 275ms (compile: 15ms, render: 259ms)
+   484→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v4i3rwgz 200 in 221ms (compile: 4ms, render: 217ms)
+   485→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v4iuaiov 200 in 215ms (compile: 12ms, render: 203ms)
+   486→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v4kf39tz 200 in 95ms (compile: 5ms, render: 91ms)
+   487→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v4n6styb 200 in 124ms (compile: 5ms, render: 119ms)
+   488→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v4r599zk 200 in 116ms (compile: 5ms, render: 111ms)
+   489→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v4va4aya 200 in 242ms (compile: 9ms, render: 234ms)
+   490→ GET / 200 in 147ms (compile: 5ms, render: 142ms)
+   491→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v67iu2ro 200 in 291ms (compile: 8ms, render: 283ms)
+   492→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v689wypm 200 in 256ms (compile: 5ms, render: 251ms)
+   493→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v6aud00n 200 in 121ms (compile: 6ms, render: 115ms)
+   494→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v6cs1xcw 200 in 114ms (compile: 4ms, render: 110ms)
+   495→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v6gqire6 200 in 126ms (compile: 4ms, render: 122ms)
+   496→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v6kqc143 200 in 255ms (compile: 5ms, render: 250ms)
+   497→✓ Compiled in 1312ms
+   498→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v8vugdz8 200 in 930ms (compile: 235ms, render: 695ms)
+   499→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v8xdybo4 200 in 77ms (compile: 5ms, render: 72ms)
+   500→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v8zqi94f 200 in 85ms (compile: 4ms, render: 82ms)
+   501→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v93hsuyt 200 in 188ms (compile: 8ms, render: 180ms)
+   502→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v97i011t 200 in 95ms (compile: 4ms, render: 92ms)
+   503→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v9bfwos5 200 in 165ms (compile: 7ms, render: 158ms)
+   504→✓ Compiled in 381ms
+   505→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v9xahfb4 200 in 889ms (compile: 108ms, render: 781ms)
+   506→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=v9z26dak 200 in 180ms (compile: 6ms, render: 175ms)
+   507→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=va18u83q 200 in 113ms (compile: 4ms, render: 109ms)
+   508→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=va37a1nr 200 in 113ms (compile: 4ms, render: 109ms)
+   509→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=va78973t 200 in 263ms (compile: 9ms, render: 254ms)
+   510→ GET /?XTransformPort=3004&EIO=4&transport=polling&t=vabi5k1l 200 in 422ms (compile: 5ms, render: 418ms)
+   511→ GET / 200 in 128ms (compile: 6ms, render: 122ms)
+   512→

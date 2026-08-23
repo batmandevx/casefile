@@ -114,8 +114,93 @@ Stage Summary:
 
 ## Priority Recommendations for Next Phase
 1. Test full investigation flow through preview panel with real LLM calls
-2. Add dark/light theme toggle (mentioned in original spec)
-3. Consider adding investigation history persistence (localStorage or API)
-4. Add more animated transitions between sections
-5. Create a demo video recording for submission
-6. Prepare README.md and submission deck
+2. Create a demo video recording for submission
+3. Prepare README.md and submission deck
+4. Consider adding dark/light theme toggle
+5. Add investigation result comparison (side-by-side two runs)
+
+---
+Task ID: 3
+Agent: Main Developer (coordinated full-stack-developer + frontend-styling-expert subagents)
+Task: V3 comprehensive rewrite — bug fixes, 5 new features, styling overhaul, QA
+
+Work Log:
+- **QA Assessment (Pre-fix):** VLM scored page 5.5/10 with critical whitespace gap between hero and next sections
+- **Critical Bug Fixes:**
+  - Fixed massive whitespace gap: reduced hero padding from `pt-24 sm:pt-32 pb-20` → `pt-12 sm:pt-16 pb-8`
+  - Reduced all 8 section paddings from `py-20` → `py-12`
+  - Reduced 'How It Works' from `py-12` → `py-6`
+  - Tightened hero stats grid margin from `mt-16` → `mt-10`
+  - Brightened `--muted-foreground` from `oklch(0.55)` → `oklch(0.62)` for better contrast
+  - Brightened `--background` from `oklch(0.065)` → `oklch(0.07)`
+  - Brightened `--card` from `oklch(0.09)` → `oklch(0.1)`
+  - Increased `--border` from `oklch(0.17)` → `oklch(0.2)` for better visibility
+  - Improved card hover effect with border-color transition
+
+- **5 New Features Added:**
+  1. **Investigation History Panel** — Collapsible panel above investigation input, persists past investigations in localStorage (up to 5 entries), stores question/runId/timestamp/summary/final finding, clickable to restore past results
+  2. **Hypothesis Tree Visualization** — New 'Tree' tab with SVG-based tree showing parent-child hypothesis relationships, root at top with children branching down, color-coded nodes by verdict (green/red/amber/gray), confidence % displayed in nodes
+  3. **Query Timing Sparkline** — SVG sparkline/area chart in Receipts sidebar showing query execution times (dbMs) over time, gradient fill, dots at data points
+  4. **Real-time Stats Pulse Animation** — Pulsing ring animation around 'Queries Executed' counter when value increments during live investigation
+  5. **Section Reveal Counters** — Animated numbered labels (01–08) at top-right of each section (hidden on mobile), fade-in slide-down animation
+
+- **Styling Improvements (10 items):**
+  1. Breathing amber glow border on investigation input Card when socket connected (`animate-border-breathe`)
+  2. Staggered hero stat card animations (delays: 0.4s, 0.5s, 0.6s, 0.7s)
+  3. Subtle parallax offset on 'Why Exasol' Database icon
+  4. Gradient left borders on 'How It Works' step cards
+  5. Step numbers (01, 02, 03) on How It Works cards
+  6. Enlarged pipeline connector arrows (SVG 40×20 → 56×28, thicker strokes)
+  7. Typing dots animation (3 bouncing dots with staggered delays)
+  8. Smooth height transitions on evidence chain and ruled-out sections (AnimatePresence)
+  9. Idle glow pulse on Investigate button when socket connected and question entered
+  10. Float animation on empty timeline search icon
+
+- **New CSS Animations Added to globals.css:**
+  - `bg-diagonal-lines` — Diagonal line pattern background
+  - `animate-border-breathe` — Breathing amber border glow (3s cycle)
+  - `animate-fade-in-number` — Slide-down fade-in for section numbers
+  - `animate-bounce-dot` — Bouncing animation for typing indicators
+  - `animate-pulse-ring` — Scale + fade ring for stat counter pulses
+  - `animate-glow-idle` — Subtle amber box-shadow pulse for buttons
+
+- **QA Testing (Post-fix):**
+  - Desktop VLM score: 8.5/10 (up from 5.5/10)
+  - Mobile VLM score: 8.5/10 (375×812 viewport)
+  - Hero: 9/10, Architecture: 8/10, Economics: 8/10, Investigation Demo: 9/10
+  - ESLint: 0 errors, 0 warnings
+  - Dev server: clean compilation, all 200 responses
+  - Browser console: 0 JavaScript errors
+  - No layout breaks, no horizontal scroll, text readable
+  - File grew from 1005 lines → 1393 lines
+
+Stage Summary:
+- Critical whitespace gap bug fully resolved
+- Contrast issues fixed with brighter CSS variables
+- 5 new interactive features added
+- 10 micro-interaction/styling improvements applied
+- 6 new CSS animations in globals.css
+- VLM score improved 5.5 → 8.5/10
+- All lint clean, no console errors, mobile responsive
+
+---
+
+## Current Project Status
+- **Phase**: V3 complete — production-quality landing page with live investigation demo
+- **File changes**: `src/app/page.tsx` (1005→1393 lines, major rewrite), `src/app/globals.css` (6 new animations, contrast fixes)
+- **Unchanged files**: `src/lib/investigation-store.ts`, `mini-services/investigation-service/index.ts`, `src/app/layout.tsx`
+
+## Known Limitations
+- Socket.io connection requires Caddy gateway (port 81) — shows 'Connecting to engine...' in agent-browser direct access but works for real users through preview panel
+- Investigation service must be started manually before live investigation works
+- No actual Exasol database — uses simulated query results
+
+## Unresolved Issues / Risks
+- None critical. All identified visual issues from VLM QA have been addressed.
+
+## Priority Recommendations for Next Phase
+1. Test full investigation flow through preview panel with real LLM calls
+2. Create a demo video recording for submission
+3. Prepare README.md and submission deck
+4. Consider adding dark/light theme toggle
+5. Add investigation result comparison (side-by-side two runs)
