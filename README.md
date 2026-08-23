@@ -3,15 +3,15 @@
 > **Powered by Exasol Personal In-Memory Analytics Engine**
 
 <p align="center">
-  <img src="screenshot-hero-final.png" alt="CASEFILE Hero Dashboard Final" width="800"/>
+  <img src="assets/screenshot-hero-final.png" alt="CASEFILE Hero Dashboard Final" width="800"/>
   <br/>
-  <img src="screenshot-hero.png" alt="CASEFILE Hero Dashboard Alternative" width="800"/>
+  <img src="assets/screenshot-hero.png" alt="CASEFILE Hero Dashboard Alternative" width="800"/>
   <br/>
-  <img src="screenshot-investigation-final.png" alt="CASEFILE Investigation Timeline Final" width="800"/>
+  <img src="assets/screenshot-investigation-final.png" alt="CASEFILE Investigation Timeline Final" width="800"/>
   <br/>
-  <img src="screenshot-investigation.png" alt="CASEFILE Investigation Timeline Alternative" width="800"/>
+  <img src="assets/screenshot-investigation.png" alt="CASEFILE Investigation Timeline Alternative" width="800"/>
   <br/>
-  <img src="screenshot-benchmark-final.png" alt="Exasol Benchmark Results" width="800"/>
+  <img src="assets/screenshot-benchmark-final.png" alt="Exasol Benchmark Results" width="800"/>
 </p>
 
 **CASEFILE** is an autonomous AI-powered data investigation platform designed for high-speed anomaly detection, fraud analysis, and root-cause discovery across massive datasets. Instead of data analysts manually writing dozens of complex SQL queries, CASEFILE deploys autonomous AI agents that formulate hypotheses, generate analytical SQL queries, execute them concurrently on **Exasol**, and synthesize interactive visual timelines and evidence cards.
