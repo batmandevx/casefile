@@ -1,0 +1,402 @@
+   801→                  {NAV_SECTIONS.map(s => (
+   802→                    <button
+   803→                      key={s.id}
+   804→                      onClick={() => scrollToSection(s.id)}
+   805→                      className={`text-left px-3 py-2.5 rounded-lg transition-colors ${activeSection === s.id ? 'text-primary bg-primary/10 font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`}
+   806→                    >
+   807→                      {s.label}
+   808→                    </button>
+   809→                  ))}
+   810→                </nav>
+   811→              </motion.div>
+   812→            </>
+   813→          )}
+   814→        </AnimatePresence>
+   815→      </header>
+   816→
+   817→      <main className="flex-1">
+   818→
+   819→        {/* ═══ HERO ═══ */}
+   820→        <section className="relative overflow-hidden">
+   821→          <div className="absolute inset-0 bg-grid opacity-25" />
+   822→          <div className="absolute inset-0 bg-noise" />
+   823→          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-primary/[0.04] blur-[150px]" />
+   824→          <div className="absolute bottom-0 right-1/4 w-[400px] h-[300px] rounded-full bg-[oklch(0.7_0.15_160/0.03)] blur-[120px]" />
+   825→          {/* Animated radial gradient pulse behind headline */}
+   826→          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full animate-hero-glow opacity-40" />
+   827→          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8 text-center">
+   828→            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+   829→              <Badge variant="outline" className="mb-6 border-primary/30 text-primary/80 animate-border-glow"><Zap className="w-3 h-3 mr-1.5" />AI for Autonomous Agents \u2014 Exasol Build Challenge 2026</Badge>
+   830→              <h1 className="text-3xl sm:text-5xl lg:text-[3.4rem] font-bold tracking-tight leading-[1.08] mb-6">
+   831→                Single-shot text-to-SQL answers the question you{' '}<span className="text-gradient-amber text-shimmer-hover">already knew</span>{' '}how to ask.
+   832→              </h1>
+   833→              <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
+   834→                CASEFILE is an agent that forms hypotheses, tests them, kills the wrong ones,
+   835→                and follows the evidence across hundreds of millions of rows \u2014 and it only works
+   836→                because Exasol answers each step{' '}<span className="text-foreground font-semibold">fast enough to make the loop affordable</span>.
+   837→              </p>
+   838→              <div className="flex flex-wrap items-center justify-center gap-4">
+   839→                <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8 shadow-lg shadow-primary/20" onClick={() => scrollToSection('investigate')}><Play className="w-4 h-4 mr-2" />Run an Investigation</Button>
+   840→                <Button variant="outline" size="lg" className="border-border hover:bg-secondary" onClick={() => scrollToSection('example')}><Eye className="w-4 h-4 mr-2" />See Example Output</Button>
+   841→              </div>
+   842→            </motion.div>
+   843→            {/* Hero stats with parallax and staggered animation */}
+   844→            <motion.div style={{ y: heroStatsY }} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto">
+   845→              {[
+   846→                { label: 'Rows Analyzed', value: '320M+', icon: Database, sub: 'NYC TLC 2022\u20132024' },
+   847→                { label: 'Query Latency', value: '<500ms', icon: Zap, sub: 'sub-second median' },
+   848→                { label: 'Investigation Depth', value: '4 levels', icon: GitBranch, sub: 'best-first search' },
+   849→                { label: 'Verdicts', value: '3 states', icon: Shield, sub: 'confirmed/refuted/...' },
+   850→              ].map((s, i) => (
+   851→                <motion.div
+   852→                  key={s.label}
+   853→                  initial={{ opacity: 0, y: 20 }}
+   854→                  animate={{ opacity: 1, y: 0 }}
+   855→                  transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
+   856→                  className="group relative flex flex-col items-center p-4 rounded-xl border border-border/40 bg-card/50 backdrop-blur-md card-hover overflow-hidden"
+   857→                >
+   858→                  <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+   859→                  <s.icon className="w-5 h-5 text-primary mb-2 relative" /><span className="font-terminal font-bold text-xl relative">{s.value}</span>
+   860→                  <span className="text-xs text-muted-foreground mt-1 relative">{s.label}</span>
+   861→                  <span className="text-[10px] text-muted-foreground/60 mt-0.5 relative">{s.sub}</span>
+   862→                </motion.div>
+   863→              ))}
+   864→            </motion.div>
+   865→          </div>
+   866→        </section>
+   867→
+   868→        {/* ═══ HOW IT WORKS (py-6) ═══ */}
+   869→        <section className="py-6 section-divider">
+   870→          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+   871→            <Section>
+   872→              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-3">
+   873→                {[
+   874→                  { step: '01', label: 'Ask a question', icon: MessageSquare, desc: 'Any open-ended data question' },
+   875→                  { step: '02', label: 'Watch the agent investigate', icon: Activity, desc: '40\u201360 dependent queries in real-time' },
+   876→                  { step: '03', label: 'Get a reproducible case file', icon: ScrollText, desc: 'Every finding backed by SQL' },
+   877→                ].map((item, i) => (
+   878→                  <div key={item.step} className="flex items-center gap-3 sm:gap-0">
+   879→                    <div className={`flex items-stretch gap-0 rounded-xl border border-border/40 border-l-2 border-l-primary/30 bg-card/60 card-hover min-w-[220px] overflow-hidden`}>
+   880→                      <div className="flex items-center justify-center w-10 shrink-0 bg-gradient-to-b from-primary/20 to-primary/5">
+   881→                        <span className="font-terminal text-xs font-bold text-primary">{item.step}</span>
+   882→                      </div>
+   883→                      <div className="flex items-center gap-3 p-3 flex-1">
+   884→                        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary shrink-0">
+   885→                          <item.icon className="w-4 h-4" />
+   886→                        </div>
+   887→                        <div>
+   888→                          <p className="text-sm font-medium">{item.label}</p>
+   889→                          <p className="text-[10px] text-muted-foreground hidden sm:block">{item.desc}</p>
+   890→                        </div>
+   891→                      </div>
+   892→                    </div>
+   893→                    {i < 2 && (
+   894→                      <ChevronRight className="w-5 h-5 text-primary/40 shrink-0 hidden sm:block" />
+   895→                    )}
+   896→                  </div>
+   897→                ))}
+   898→              </div>
+   899→            </Section>
+   900→          </div>
+   901→        </section>
+   902→
+   903→        {/* ═══ ARCHITECTURE (py-12) ═══ */}
+   904→        <section id="architecture" className="py-12 section-divider">
+   905→          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+   906→            <Section number={1}><div className="text-center mb-14">
+   907→              <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><Layers className="w-3 h-3 mr-1.5" />SYSTEM DESIGN</Badge>
+   908→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">The Investigation Loop</h2>
+   909→              <p className="text-muted-foreground max-w-2xl mx-auto">An investigation is not one query. It is 40\u201360 <span className="text-foreground font-medium">dependent</span> queries, where each is chosen based on what the previous one returned.</p>
+   910→            </div>
+   911→            {/* Pipeline with animated connectors on lg+ */}
+   912→            <div className="max-w-5xl mx-auto">
+   913→              <div className="flex flex-col lg:flex-row items-stretch gap-3">
+   914→                {[
+   915→                  { title: 'Hypothesis Engine', desc: 'LLM generates competing, falsifiable explanations', icon: Brain, color: 'text-primary', bg: 'from-primary/10' },
+   916→                  { title: 'SQL Planner', desc: 'Each hypothesis becomes a testable query', icon: Terminal, color: 'text-[oklch(0.7_0.15_160)]', bg: 'from-[oklch(0.7_0.15_160/0.1)]' },
+   917→                  { title: 'Exasol Personal', desc: 'Executes in milliseconds against 320M+ rows', icon: Database, color: 'text-primary', bg: 'from-primary/10' },
+   918→                  { title: 'Verdict Engine', desc: 'CONFIRMED / REFUTED / INCONCLUSIVE', icon: Shield, color: 'text-[oklch(0.75_0.15_85)]', bg: 'from-[oklch(0.75_0.15_85/0.1)]' },
+   919→                  { title: 'Case File', desc: 'Evidence chain + ruled-out list', icon: FileSearch, color: 'text-[oklch(0.7_0.15_160)]', bg: 'from-[oklch(0.7_0.15_160/0.1)]' },
+   920→                ].map((step, i) => (
+   921→                  <div key={step.title} className="flex items-stretch flex-1 min-w-0">
+   922→                    <Card className="bg-card/80 border-border/40 hover:border-primary/30 transition-all duration-300 card-hover w-full">
+   923→                      <CardContent className="p-4">
+   924→                        <div className="flex items-center gap-2 mb-2">
+   925→                          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-secondary text-[10px] font-terminal font-bold text-muted-foreground">{i + 1}</span>
+   926→                          <step.icon className={`w-4 h-4 ${step.color}`} />
+   927→                        </div>
+   928→                        <h3 className="font-semibold text-sm mb-1">{step.title}</h3>
+   929→                        <p className="text-xs text-muted-foreground leading-relaxed">{step.desc}</p>
+   930→                      </CardContent>
+   931→                    </Card>
+   932→                    {i < 4 && <PipelineConnector />}
+   933→                  </div>
+   934→                ))}
+   935→              </div>
+   936→            </div>
+   937→            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+   938→              {[
+   939→                { state: 'CONFIRMED', icon: CheckCircle2, color: 'text-[oklch(0.7_0.15_160)]', border: 'border-[oklch(0.7_0.15_160/0.25)]', bg: 'from-[oklch(0.7_0.15_160/0.05)]', desc: 'Data supports the hypothesis. Spawn 2\u20133 narrower children. Depth is where insight lives.' },
+   940→                { state: 'REFUTED', icon: XCircle, color: 'text-[oklch(0.65_0.25_25)]', border: 'border-[oklch(0.65_0.25_25/0.25)]', bg: 'from-[oklch(0.65_0.25_25/0.05)]', desc: 'Kill the branch and log it. The ruled-out list is half the value of a real investigation.' },
+   941→                { state: 'INCONCLUSIVE', icon: HelpCircle, color: 'text-[oklch(0.75_0.15_85)]', border: 'border-[oklch(0.75_0.15_85/0.25)]', bg: 'from-[oklch(0.75_0.15_85/0.05)]', desc: 'Retry once with reformulation, then kill. Never loop forever on a broken query.' },
+   942→                { state: 'BUDGET EXHAUSTED', icon: AlertTriangle, color: 'text-[oklch(0.75_0.15_85)]', border: 'border-[oklch(0.75_0.15_85/0.25)]', bg: 'from-[oklch(0.75_0.15_85/0.05)]', desc: 'Hard cap at 60 queries. Emit whatever confidence was reached. Never let a demo hang.' },
+   943→              ].map(s => (
+   944→                <Card key={s.state} className={`relative overflow-hidden bg-gradient-to-br ${s.bg} to-card/50 ${s.border} hover:to-card/80 transition-all duration-300`}>
+   945→                  <CardContent className="p-4 relative"><div className={`absolute inset-0 pointer-events-none ${s.state === 'CONFIRMED' ? 'verdict-glow-confirmed' : s.state === 'REFUTED' ? 'verdict-glow-refuted' : 'verdict-glow-inconclusive'}`} /><div className="flex items-center gap-2 mb-2 relative"><s.icon className={`w-4 h-4 ${s.color}`} /><h4 className={`font-terminal text-sm font-semibold ${s.color}`}>{s.state}</h4></div><p className="text-xs text-muted-foreground leading-relaxed relative">{s.desc}</p></CardContent>
+   946→                </Card>
+   947→              ))}
+   948→            </div></Section>
+   949→          </div>
+   950→        </section>
+   951→
+   952→        {/* ═══ ECONOMICS (py-12, diagonal bg) ═══ */}
+   953→        <section id="economics" className="py-12 section-divider">
+   954→          <div className="absolute inset-0 bg-diagonal-lines opacity-[0.03] pointer-events-none" />
+   955→          <div className="max-w-5xl mx-auto px-4 sm:px-6 relative">
+   956→            <Section number={2}><div className="text-center mb-12">
+   957→              <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><BarChart3 className="w-3 h-3 mr-1.5" />THE CORE ARGUMENT</Badge>
+   958→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">The Speed Is Not a Nice-to-Have</h2>
+   959→              <p className="text-muted-foreground max-w-2xl mx-auto">It is the thing that converts a chatbot into an analyst.</p>
+   960→            </div>
+   961→            <Card className="max-w-3xl mx-auto border-primary/20 glow-amber">
+   962→              <CardContent className="p-0"><div className="overflow-x-auto">
+   963→                <table className="w-full"><thead><tr className="border-b border-border/40"><th className="text-left p-4 text-sm font-medium text-muted-foreground">Engine</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Per-query</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">47-query run</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Outcome</th></tr></thead>
+   964→                <tbody>
+   965→                  <tr className="border-b border-border/20"><td className="p-4 text-sm">Typical cloud warehouse</td><td className="p-4 font-terminal text-sm text-muted-foreground">8\u201312 s</td><td className="p-4 font-terminal text-sm text-destructive font-medium">6\u20139 min</td><td className="p-4 text-sm text-destructive">Agent times out, user leaves</td></tr>
+   966→                  <tr className="animate-exasol-pulse"><td className="p-4 text-sm font-bold text-primary">Exasol Personal</td><td className="p-4 font-terminal text-sm text-primary font-medium">sub-second</td><td className="p-4 font-terminal text-sm text-[oklch(0.7_0.15_160)] font-medium">under 30 s</td><td className="p-4 text-sm text-[oklch(0.7_0.15_160)] font-medium">Investigation feels instant</td></tr>
+   967→                </tbody></table>
+   968→              </div></CardContent>
+   969→            </Card>
+   970→            <p className="text-center text-sm text-muted-foreground mt-6 max-w-xl mx-auto">Each query blocks the next. You cannot parallelize them. The dependent query loop makes database latency the <span className="text-foreground font-semibold">enabling condition</span> for the entire agent.</p></Section>
+   971→          </div>
+   972→        </section>
+   973→
+   974→        {/* ═══ WHY WE BEAT THEM (py-12) ═══ */}
+   975→        <section className="py-12 section-divider">
+   976→          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+   977→            <Section number={3}><div className="text-center mb-12">
+   978→              <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><Trophy className="w-3 h-3 mr-1.5" />COMPETITIVE ANALYSIS</Badge>
+   979→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Why We Beat Every Other Submission</h2>
+   980→              <p className="text-muted-foreground max-w-2xl mx-auto">Most teams show Exasol as infrastructure. We show it as the <span className="text-foreground font-medium">enabling condition</span>.</p>
+   981→            </div>
+   982→            <div className="space-y-3">
+   983→              {[
+   984→                { sub: '"Chat with your data" dashboard', why: 'This is a feature Exasol already ships. You are showing them their own product.', Icon: Search, iconBg: 'bg-muted/50', iconColor: 'text-muted-foreground' },
+   985→                { sub: 'RAG over documents, Exasol as vector store', why: 'Exasol is interchangeable with Postgres + pgvector. Judges will notice.', Icon: FileText, iconBg: 'bg-muted/50', iconColor: 'text-muted-foreground' },
+   986→                { sub: 'ML model trained in a UDF', why: 'Fine, but it is a batch job. No agency, no loop, no story.', Icon: FlaskConical, iconBg: 'bg-muted/50', iconColor: 'text-muted-foreground' },
+   987→                { sub: 'BI copilot with pretty charts', why: 'Judged on the chart library, not the database.', Icon: BarChart3, iconBg: 'bg-muted/50', iconColor: 'text-muted-foreground' },
+   988→                { sub: 'CASEFILE', why: 'The database\'s core property is the enabling condition. Cannot be ported without breaking.', Icon: CircuitBoard, iconBg: 'bg-primary/15', iconColor: 'text-primary', highlight: true },
+   989→              ].map((r, i) => (
+   990→                <Card key={i} className={`border-border/40 ${r.highlight ? 'border-primary/30 bg-primary/[0.04] glow-amber' : 'competitor-card hover:bg-secondary/50'} transition-all duration-200`}>
+   991→                  <CardContent className="p-4 flex items-start gap-4">
+   992→                    <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${r.iconBg} shrink-0 mt-0.5`}>
+   993→                      <r.Icon className={`w-5 h-5 ${r.iconColor}`} />
+   994→                    </div>
+   995→                    <div className="flex-1 min-w-0">
+   996→                      <p className={`text-sm ${r.highlight ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>{r.highlight ? r.sub : <span className="competitor-name">{r.sub}</span>}</p>
+   997→                      <p className="text-xs text-muted-foreground/80 mt-1">{r.why}</p>
+   998→                    </div>
+   999→                  </CardContent>
+  1000→                </Card>
+  1001→              ))}
+  1002→            </div></Section>
+  1003→          </div>
+  1004→        </section>
+  1005→
+  1006→        {/* ═══ LIVE INVESTIGATION (py-12) ═══ */}
+  1007→        <section id="investigate" className="py-12 section-divider">
+  1008→          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+  1009→            <Section number={4}><div className="text-center mb-10">
+  1010→              <Badge variant="outline" className="mb-4 border-primary/30 text-primary/80"><Crosshair className="w-3 h-3 mr-1.5" />LIVE DEMO</Badge>
+  1011→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Run an Investigation</h2>
+  1012→              <p className="text-muted-foreground max-w-2xl mx-auto">Type an open-ended question. The agent will form hypotheses, test them against 320M+ rows, kill the wrong ones, and assemble a case file.</p>
+  1013→            </div></Section>
+  1014→
+  1015→            {/* ═══ Investigation History Panel ═══ */}
+  1016→            {historyItems.length > 0 && (
+  1017→              <div className="max-w-4xl mx-auto mb-4">
+  1018→                <Card className="border-border/40">
+  1019→                  <button
+  1020→                    className="w-full flex items-center justify-between p-3 text-left hover:bg-secondary/30 transition-colors rounded-t-lg"
+  1021→                    onClick={() => setHistoryOpen(!historyOpen)}
+  1022→                  >
+  1023→                    <div className="flex items-center gap-2 text-sm font-medium">
+  1024→                      <History className="w-4 h-4 text-primary" />
+  1025→                      <span>History</span>
+  1026→                      <Badge variant="secondary" className="text-[10px] px-1.5">{historyItems.length}</Badge>
+  1027→                    </div>
+  1028→                    <ChevronUp className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${historyOpen ? '' : 'rotate-180'}`} />
+  1029→                  </button>
+  1030→                  <AnimatePresence>
+  1031→                    {historyOpen && (
+  1032→                      <motion.div
+  1033→                        initial={{ height: 0, opacity: 0 }}
+  1034→                        animate={{ height: 'auto', opacity: 1 }}
+  1035→                        exit={{ height: 0, opacity: 0 }}
+  1036→                        transition={{ duration: 0.2 }}
+  1037→                        className="overflow-hidden"
+  1038→                      >
+  1039→                        <div className="px-3 pb-3 space-y-1.5 max-h-48 overflow-y-auto">
+  1040→                          {historyItems.map((entry, i) => (
+  1041→                            <button
+  1042→                              key={entry.runId + i}
+  1043→                              onClick={() => restoreFromHistory(entry)}
+  1044→                              className="w-full text-left p-2.5 rounded-lg border border-border/30 bg-secondary/20 hover:bg-secondary/40 hover:border-primary/20 transition-colors group"
+  1045→                            >
+  1046→                              <div className="flex items-start justify-between gap-2">
+  1047→                                <p className="text-xs font-medium line-clamp-1 flex-1 group-hover:text-primary transition-colors">{entry.question}</p>
+  1048→                                <span className="text-[10px] text-muted-foreground/60 shrink-0 font-terminal">{new Date(entry.timestamp).toLocaleDateString()}</span>
+  1049→                              </div>
+  1050→                              <div className="flex items-center gap-3 mt-1 text-[10px] text-muted-foreground font-terminal">
+  1051→                                <span>{entry.caseFile.summary.queriesExecuted} queries</span>
+  1052→                                <span>{Math.round(entry.caseFile.finalConfidence * 100)}% conf</span>
+  1053→                                <span>{(entry.caseFile.summary.totalDbMs / 1000).toFixed(1)}s DB</span>
+  1054→                              </div>
+  1055→                            </button>
+  1056→                          ))}
+  1057→                        </div>
+  1058→                      </motion.div>
+  1059→                    )}
+  1060→                  </AnimatePresence>
+  1061→                </Card>
+  1062→              </div>
+  1063→            )}
+  1064→
+  1065→            {/* Input with breathing border when connected */}
+  1066→            <Card className={`max-w-4xl mx-auto mb-8 transition-all duration-500 ${socketConnected ? 'border-primary/30 animate-border-breathe' : 'border-border/40'}`}>
+  1067→              <CardContent className="p-4 sm:p-6">
+  1068→                <div className="flex flex-col sm:flex-row gap-3">
+  1069→                  <div className="flex-1 relative">
+  1070→                    <Bot className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+  1071→                    <Input
+  1072→                      value={store.question}
+  1073→                      onChange={e => store.setQuestion(e.target.value)}
+  1074→                      onKeyDown={e => e.key === 'Enter' && !isRunning && startInvestigation()}
+  1075→                      placeholder={store.question ? '' : placeholderText || 'Ask an open-ended data question...'}
+  1076→                      className={`pl-10 h-12 bg-secondary/40 border-border/40 font-terminal text-sm transition-shadow duration-300 focus-visible:ring-primary/30 ${!store.question ? 'placeholder:font-terminal' : ''}`}
+  1077→                      disabled={isRunning}
+  1078→                      style={!store.question ? { textShadow: '0 0 0 transparent' } : undefined}
+  1079→                    />
+  1080→                    {/* Focus glow effect */}
+  1081→                    <div className="absolute inset-0 rounded-md pointer-events-none opacity-0 focus-within:opacity-100 transition-opacity duration-300" style={{ boxShadow: '0 0 0 3px oklch(0.78 0.17 72 / 0.15), 0 0 20px oklch(0.78 0.17 72 / 0.08)' }} />
+  1082→                  </div>
+  1083→                  <div className="flex gap-2">
+  1084→                    {isRunning ? <Button variant="destructive" onClick={stopInvestigation} className="h-12 px-6"><Square className="w-4 h-4 mr-2" />Stop</Button> : (
+  1085→                      <>
+  1086→                        <Button onClick={startInvestigation} disabled={!socketConnected || !store.question.trim()} className={`h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold ${!isRunning && socketConnected && store.question.trim() ? 'animate-glow-idle' : ''}`}>
+  1087→                          <Play className="w-4 h-4 mr-2" />Investigate
+  1088→                          <Tooltip><TooltipTrigger asChild><span className="hidden lg:inline-flex items-center ml-2 text-xs opacity-60 font-normal"><Keyboard className="w-3 h-3 mr-0.5" />\u2318\u21a9</span></TooltipTrigger><TooltipContent side="bottom"><p>Press Ctrl+Enter or \u2318+Enter to start</p></TooltipContent></Tooltip>
+  1089→                        </Button>
+  1090→                        {isCompleted && <Button variant="outline" onClick={() => store.reset()} className="h-12 px-6 border-border"><RotateCcw className="w-4 h-4 mr-2" />Reset</Button>}
+  1091→                      </>
+  1092→                    )}
+  1093→                  </div>
+  1094→                </div>
+  1095→                <div className="flex items-center gap-2 mt-2"><div className={`w-2 h-2 rounded-full transition-colors ${socketConnected ? 'bg-[oklch(0.7_0.15_160)]' : 'bg-destructive/60 animate-pulse-amber'}`} /><span className="text-xs text-muted-foreground">{socketConnected ? 'Investigation engine connected' : 'Connecting to engine...'}</span></div>
+  1096→                {/* Sample question presets */}
+  1097→                <div className="mt-3 flex flex-wrap gap-1.5">
+  1098→                  <span className="text-[10px] text-muted-foreground/60 self-center mr-1">TRY:</span>
+  1099→                  {SAMPLE_QUESTIONS.map((q, i) => (
+  1100→                    <button key={i} onClick={() => store.setQuestion(q)} disabled={isRunning} className="text-[10px] px-2 py-1 rounded-md border border-border/30 bg-secondary/30 text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-primary/5 transition-colors truncate max-w-[200px] disabled:opacity-40 disabled:pointer-events-none" title={q}>{q.length > 40 ? q.substring(0, 40) + '...' : q}</button>
+  1101→                  ))}
+  1102→                </div>
+  1103→              </CardContent>
+  1104→            </Card>
+  1105→            {/* Layout: receipts + timeline */}
+  1106→            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+  1107→              <div className="lg:col-span-4 xl:col-span-3">
+  1108→                <Card className="glass backdrop-blur-md border-border/30 sticky top-20"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium flex items-center gap-2"><Activity className="w-4 h-4 text-primary" />Receipts{isRunning && <span className="ml-auto flex items-center gap-1.5 text-xs text-primary"><span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-amber" />LIVE</span>}</CardTitle></CardHeader>
+  1109→                  <CardContent className="space-y-2 p-4 pt-0">
+  1110→                    {/* Budget progress bar */}
+  1111→                    <div className="mb-2">
+  1112→                      <div className="flex items-center justify-between mb-1.5">
+  1113→                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium font-terminal">BUDGET {budgetUsed}/{BUDGET_MAX}</span>
+  1114→                        <span className="font-terminal text-[10px] text-muted-foreground">{Math.round(budgetPct)}%</span>
+  1115→                      </div>
+  1116→                      <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+  1117→                        <motion.div
+  1118→                          className={`h-full rounded-full ${budgetColor}`}
+  1119→                          initial={{ width: 0 }}
+  1120→                          animate={{ width: `${budgetPct}%` }}
+  1121→                          transition={{ duration: 0.5, ease: 'easeOut' }}
+  1122→                          style={{ boxShadow: `0 0 6px ${budgetBarColor}40` }}
+  1123→                        />
+  1124→                      </div>
+  1125→                    </div>
+  1126→                    <StatCounter icon={Terminal} label="Queries Executed" value={store.stats.queriesExecuted} color="text-primary" pulse={isRunning && pulseQuery} />
+  1127→                    <StatCounter icon={Hash} label="Rows In Scope" value={store.stats.rowsInScope > 0 ? (store.stats.rowsInScope / 1e6).toFixed(1) : 0} unit="M" color="text-[oklch(0.7_0.15_160)]" />
+  1128→                    <StatCounter icon={Clock} label="Cumulative DB Time" value={store.stats.totalDbMs > 0 ? (store.stats.totalDbMs / 1000).toFixed(1) : 0} unit="s" color="text-[oklch(0.75_0.15_85)]" />
+  1129→                    <StatCounter icon={TrendingDown} label="Hypotheses Killed" value={store.stats.hypothesesKilled} color="text-[oklch(0.65_0.25_25)]" />
+  1130→                    <StatCounter icon={CheckCircle2} label="Hypotheses Confirmed" value={store.stats.hypothesesConfirmed} color="text-[oklch(0.7_0.15_160)]" />
+  1131→                    <StatCounter icon={GitBranch} label="Max Depth" value={store.stats.maxDepth} />
+  1132→                    <Separator className="my-2" /><div className="flex items-center gap-2 text-xs text-muted-foreground"><Clock className="w-3 h-3" /><span>Elapsed: {((store.stats.elapsedMs || 0) / 1000).toFixed(1)}s</span></div>
+  1133→                    {/* Query Timing Sparkline */}
+  1134→                    <QueryTimingChart data={queryTimes} />
+  1135→                  </CardContent></Card>
+  1136→              </div>
+  1137→              <div className="lg:col-span-8 xl:col-span-9">
+  1138→                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full"><TabsList className="bg-secondary/40 border border-border/40 w-full justify-start"><TabsTrigger value="timeline" className={`text-xs ${activeTab === 'timeline' ? 'tab-active-indicator' : ''}`}><GitBranch className="w-3 h-3 mr-1.5" />Hypothesis Timeline</TabsTrigger><TabsTrigger value="tree" className={`text-xs ${activeTab === 'tree' ? 'tab-active-indicator' : ''}`}><Network className="w-3 h-3 mr-1.5" />Tree</TabsTrigger><TabsTrigger value="casefile" className={`text-xs ${activeTab === 'casefile' ? 'tab-active-indicator' : ''}`} disabled={!isCompleted && !showExample}><FileSearch className="w-3 h-3 mr-1.5" />Case File</TabsTrigger><TabsTrigger value="logs" className={`text-xs ${activeTab === 'logs' ? 'tab-active-indicator' : ''}`}><Terminal className="w-3 h-3 mr-1.5" />Event Log</TabsTrigger></TabsList>
+  1139→                  <TabsContent value="timeline" className="mt-4"><Card className="border-border/40"><CardContent className="p-4">{store.hypotheses.length === 0 && !isRunning ? (<div className="relative text-center py-16 text-muted-foreground">
+  1140→                  <svg viewBox="0 0 500 50" className="w-full h-12 mb-4 opacity-60">
+  1141→                    <path d="M0,25 Q62.5,5 125,25 T250,25 T375,25 T500,25" fill="none" stroke="oklch(0.78 0.17 72)" strokeWidth="1.5" className="animate-spectral-opacity" style={{ animationDelay: '0s' }} />
+  1142→                    <path d="M0,25 Q62.5,45 125,25 T250,25 T375,25 T500,25" fill="none" stroke="oklch(0.7 0.15 160)" strokeWidth="1" className="animate-spectral-opacity" style={{ animationDelay: '1s' }} />
+  1143→                    <path d="M0,25 Q62.5,10 125,25 T250,25 T375,25 T500,25" fill="none" stroke="oklch(0.55 0 270)" strokeWidth="0.8" className="animate-spectral-opacity" style={{ animationDelay: '2s' }} />
+  1144→                  </svg>
+  1145→                  <Search className="w-12 h-12 mx-auto mb-3 opacity-20 animate-float" />
+  1146→                  <p className="text-sm">Awaiting signal — start an investigation to see hypotheses emerge.</p>
+  1147→                  <p className="text-xs mt-1 opacity-60">Each hypothesis is planned, executed, and judged in real-time.</p>
+  1148→                </div>) : (<ScrollArea className="max-h-[600px]" ref={timelineRef as any}><div className="space-y-2 pr-3">{store.hypotheses.map(h => <HypothesisItem key={h.hypId} hyp={h} isExpanded={expandedHyps.has(h.hypId)} onToggle={() => toggleHyp(h.hypId)} />)}{isRunning && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 p-3 text-muted-foreground text-sm"><div className="w-4 h-4 border-2 border-primary/50 border-t-primary rounded-full animate-spin" /><span>Investigating...</span><TypingDots /></motion.div>}</div></ScrollArea>)}</CardContent></Card></TabsContent>
+  1149→                  <TabsContent value="tree" className="mt-4"><Card className="border-border/40"><CardContent className="p-4"><HypothesisTreeView hypotheses={store.hypotheses} /></CardContent></Card></TabsContent>
+  1150→                  <TabsContent value="casefile" className="mt-4">{store.caseFile ? <CaseFileView caseFile={store.caseFile} /> : showExample ? <CaseFileView caseFile={EXAMPLE_CASE} isDemo /> : <Card className="border-border/40"><CardContent className="p-8 text-center text-muted-foreground"><FileText className="w-10 h-10 mx-auto mb-3 opacity-20" /><p className="text-sm">Case file will appear when the investigation completes.</p><Button variant="link" className="mt-3 text-xs" onClick={() => setShowExample(true)}>Or view an example output</Button></CardContent></Card>}</TabsContent>
+  1151→                  <TabsContent value="logs" className="mt-4"><Card className="border-border/40"><CardContent className="p-4"><ScrollArea className="max-h-[600px]"><div className="space-y-1 font-terminal text-xs bg-noise rounded-lg p-3">{store.logs.length === 0 ? <p className="text-muted-foreground py-8 text-center">No events yet.</p> : store.logs.map((l, i) => <div key={i} className={`flex gap-2 py-1 px-2 rounded ${l.type === 'error' ? 'bg-destructive/10 text-destructive' : l.type === 'killed' ? 'text-[oklch(0.65_0.25_25)]' : l.type === 'verdict' && l.message.includes('CONFIRMED') ? 'text-[oklch(0.7_0.15_160)]' : 'text-muted-foreground'}`}><span className="text-muted-foreground/40 shrink-0">{new Date(l.timestamp).toLocaleTimeString()}</span><span className="shrink-0 w-16">[{l.type}]</span><span className="break-all">{l.message}</span></div>)}</div></ScrollArea></CardContent></Card></TabsContent>
+  1152→                </Tabs>
+  1153→              </div>
+  1154→            </div>
+  1155→          </div>
+  1156→        </section>
+  1157→
+  1158→        {/* ═══ EXAMPLE OUTPUT (py-12) ═══ */}
+  1159→        <section id="example" className="py-12 section-divider">
+  1160→          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+  1161→            <Section number={5}><div className="text-center mb-10">
+  1162→              <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><FileText className="w-3 h-3 mr-1.5" />EXAMPLE OUTPUT</Badge>
+  1163→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">What a Case File Looks Like</h2>
+  1164→              <p className="text-muted-foreground max-w-2xl mx-auto">A finding with no trail is a hallucination with a chart. A finding with 47 reproducible queries attached is analysis.</p>
+  1165→            </div></Section>
+  1166→            <CaseFileView caseFile={EXAMPLE_CASE} isDemo />
+  1167→          </div>
+  1168→        </section>
+  1169→
+  1170→        {/* ═══ BENCHMARK (py-12) ═══ */}
+  1171→        <section id="benchmark" className="py-12 section-divider">
+  1172→          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+  1173→            <Section number={6}><div className="text-center mb-12">
+  1174→              <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><BarChart3 className="w-3 h-3 mr-1.5" />BENCHMARK</Badge>
+  1175→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Same Trace, Two Engines</h2>
+  1176→              <p className="text-muted-foreground max-w-2xl mx-auto">The agent generated these queries before we knew what the benchmark would look like. That is a naturally-occurring workload, not a tuned one.</p>
+  1177→            </div>
+  1178→            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
+  1179→              <Card className="border-border/40"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium">Latency by Query Shape</CardTitle></CardHeader><CardContent><BenchmarkChart /></CardContent></Card>
+  1180→              <Card className="border-border/40"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium">Summary Table</CardTitle></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><table className="w-full"><thead><tr className="border-b border-border/40"><th className="text-left p-3 text-xs font-medium text-muted-foreground">Shape</th><th className="text-right p-3 text-xs font-medium text-muted-foreground">Count</th><th className="text-right p-3 text-xs font-medium text-primary">Exasol</th><th className="text-right p-3 text-xs font-medium text-muted-foreground">DuckDB</th><th className="text-right p-3 text-xs font-medium text-muted-foreground">Ratio</th></tr></thead><tbody>
+  1181→                {BENCHMARK_DATA.map(r => (
+  1182→                  <Tooltip key={r.shape}>
+  1183→                    <TooltipTrigger asChild>
+  1184→                      <tr className="border-b border-border/15 hover:bg-secondary/20 transition-colors cursor-default"><td className="p-3 text-xs">{r.shape}</td><td className="p-3 text-xs font-terminal text-right text-muted-foreground">{r.count}</td><td className="p-3 text-xs font-terminal text-right text-primary font-semibold">{r.exasolMs}ms</td><td className="p-3 text-xs font-terminal text-right text-muted-foreground">{r.duckdbMs}ms</td><td className="p-3 text-xs font-terminal text-right text-[oklch(0.7_0.15_160)] bg-[oklch(0.7_0.15_160/0.06)]">{(r.duckdbMs / r.exasolMs).toFixed(1)}x</td></tr>
+  1185→                    </TooltipTrigger>
+  1186→                    <TooltipContent side="bottom" className="max-w-xs">
+  1187→                      <p className="text-xs font-medium">{r.shape}</p>
+  1188→                      <p className="text-xs text-muted-foreground mt-1">{r.count} queries of this shape in the investigation trace.</p>
+  1189→                      <p className="text-xs mt-1">Exasol: <span className="text-primary font-terminal">{r.exasolMs}ms</span> avg | DuckDB: <span className="font-terminal">{r.duckdbMs}ms</span> avg</p>
+  1190→                    </TooltipContent>
+  1191→                  </Tooltip>
+  1192→                ))}
+  1193→                <Tooltip>
+  1194→                  <TooltipTrigger asChild>
+  1195→                    <tr className="bg-primary/[0.06] font-semibold cursor-default"><td className="p-3 text-xs">Total (47 queries)</td><td className="p-3 text-xs font-terminal text-right">47</td><td className="p-3 text-xs font-terminal text-right text-primary">21.4s</td><td className="p-3 text-xs font-terminal text-right text-muted-foreground">4m 12s</td><td className="p-3 text-xs font-terminal text-right text-[oklch(0.7_0.15_160)] bg-[oklch(0.7_0.15_160/0.1)] font-bold">11.8x</td></tr>
+  1196→                  </TooltipTrigger>
+  1197→                  <TooltipContent side="bottom">
+  1198→                    <p className="text-xs font-medium">Total Investigation Time</p>
+  1199→                    <p className="text-xs text-muted-foreground mt-1">Cumulative across all 47 dependent queries in the investigation.</p>
+  1200→                    <p className="text-xs mt-1">Exasol completes in <span className="text-primary font-terminal">21.4s</span> vs DuckDB <span className="font-terminal">4m 12s</span></p>
+
+[showing lines 801-1200 of 1403; use offset=1201 with limit to continue reading]

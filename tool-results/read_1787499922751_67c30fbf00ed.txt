@@ -1,0 +1,376 @@
+  1028→                    <ChevronUp className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${historyOpen ? '' : 'rotate-180'}`} />
+  1029→                  </button>
+  1030→                  <AnimatePresence>
+  1031→                    {historyOpen && (
+  1032→                      <motion.div
+  1033→                        initial={{ height: 0, opacity: 0 }}
+  1034→                        animate={{ height: 'auto', opacity: 1 }}
+  1035→                        exit={{ height: 0, opacity: 0 }}
+  1036→                        transition={{ duration: 0.2 }}
+  1037→                        className="overflow-hidden"
+  1038→                      >
+  1039→                        <div className="px-3 pb-3 space-y-1.5 max-h-48 overflow-y-auto">
+  1040→                          {historyItems.map((entry, i) => (
+  1041→                            <button
+  1042→                              key={entry.runId + i}
+  1043→                              onClick={() => restoreFromHistory(entry)}
+  1044→                              className="w-full text-left p-2.5 rounded-lg border border-border/30 bg-secondary/20 hover:bg-secondary/40 hover:border-primary/20 transition-colors group"
+  1045→                            >
+  1046→                              <div className="flex items-start justify-between gap-2">
+  1047→                                <p className="text-xs font-medium line-clamp-1 flex-1 group-hover:text-primary transition-colors">{entry.question}</p>
+  1048→                                <span className="text-[10px] text-muted-foreground/60 shrink-0 font-terminal">{new Date(entry.timestamp).toLocaleDateString()}</span>
+  1049→                              </div>
+  1050→                              <div className="flex items-center gap-3 mt-1 text-[10px] text-muted-foreground font-terminal">
+  1051→                                <span>{entry.caseFile.summary.queriesExecuted} queries</span>
+  1052→                                <span>{Math.round(entry.caseFile.finalConfidence * 100)}% conf</span>
+  1053→                                <span>{(entry.caseFile.summary.totalDbMs / 1000).toFixed(1)}s DB</span>
+  1054→                              </div>
+  1055→                            </button>
+  1056→                          ))}
+  1057→                        </div>
+  1058→                      </motion.div>
+  1059→                    )}
+  1060→                  </AnimatePresence>
+  1061→                </Card>
+  1062→              </div>
+  1063→            )}
+  1064→
+  1065→            {/* Input with breathing border when connected */}
+  1066→            <Card className={`max-w-4xl mx-auto mb-8 transition-all duration-500 ${socketConnected ? 'border-primary/30 animate-border-breathe' : 'border-border/40'}`}>
+  1067→              <CardContent className="p-4 sm:p-6">
+  1068→                <div className="flex flex-col sm:flex-row gap-3">
+  1069→                  <div className="flex-1 relative">
+  1070→                    <Bot className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+  1071→                    <Input
+  1072→                      value={store.question}
+  1073→                      onChange={e => store.setQuestion(e.target.value)}
+  1074→                      onKeyDown={e => e.key === 'Enter' && !isRunning && startInvestigation()}
+  1075→                      placeholder={store.question ? '' : placeholderText || 'Ask an open-ended data question...'}
+  1076→                      className={`pl-10 h-12 bg-secondary/40 border-border/40 font-terminal text-sm transition-shadow duration-300 focus-visible:ring-primary/30 ${!store.question ? 'placeholder:font-terminal' : ''}`}
+  1077→                      disabled={isRunning}
+  1078→                      style={!store.question ? { textShadow: '0 0 0 transparent' } : undefined}
+  1079→                    />
+  1080→                    {/* Focus glow effect */}
+  1081→                    <div className="absolute inset-0 rounded-md pointer-events-none opacity-0 focus-within:opacity-100 transition-opacity duration-300" style={{ boxShadow: '0 0 0 3px oklch(0.78 0.17 72 / 0.15), 0 0 20px oklch(0.78 0.17 72 / 0.08)' }} />
+  1082→                  </div>
+  1083→                  <div className="flex gap-2">
+  1084→                    {isRunning ? <Button variant="destructive" onClick={stopInvestigation} className="h-12 px-6"><Square className="w-4 h-4 mr-2" />Stop</Button> : (
+  1085→                      <>
+  1086→                        <Button onClick={startInvestigation} disabled={!socketConnected || !store.question.trim()} className={`h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold ${!isRunning && socketConnected && store.question.trim() ? 'animate-glow-idle' : ''}`}>
+  1087→                          <Play className="w-4 h-4 mr-2" />Investigate
+  1088→                          <Tooltip><TooltipTrigger asChild><span className="hidden lg:inline-flex items-center ml-2 text-xs opacity-60 font-normal"><Keyboard className="w-3 h-3 mr-0.5" />\u2318\u21a9</span></TooltipTrigger><TooltipContent side="bottom"><p>Press Ctrl+Enter or \u2318+Enter to start</p></TooltipContent></Tooltip>
+  1089→                        </Button>
+  1090→                        {isCompleted && <Button variant="outline" onClick={() => store.reset()} className="h-12 px-6 border-border"><RotateCcw className="w-4 h-4 mr-2" />Reset</Button>}
+  1091→                      </>
+  1092→                    )}
+  1093→                  </div>
+  1094→                </div>
+  1095→                <div className="flex items-center gap-2 mt-2"><div className={`w-2 h-2 rounded-full transition-colors ${socketConnected ? 'bg-[oklch(0.7_0.15_160)]' : 'bg-destructive/60 animate-pulse-amber'}`} /><span className="text-xs text-muted-foreground">{socketConnected ? 'Investigation engine connected' : 'Connecting to engine...'}</span></div>
+  1096→                {/* Sample question presets */}
+  1097→                <div className="mt-3 flex flex-wrap gap-1.5">
+  1098→                  <span className="text-[10px] text-muted-foreground/60 self-center mr-1">TRY:</span>
+  1099→                  {SAMPLE_QUESTIONS.map((q, i) => (
+  1100→                    <button key={i} onClick={() => store.setQuestion(q)} disabled={isRunning} className="text-[10px] px-2 py-1 rounded-md border border-border/30 bg-secondary/30 text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-primary/5 transition-colors truncate max-w-[200px] disabled:opacity-40 disabled:pointer-events-none" title={q}>{q.length > 40 ? q.substring(0, 40) + '...' : q}</button>
+  1101→                  ))}
+  1102→                </div>
+  1103→              </CardContent>
+  1104→            </Card>
+  1105→            {/* Layout: receipts + timeline */}
+  1106→            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+  1107→              <div className="lg:col-span-4 xl:col-span-3">
+  1108→                <Card className="glass backdrop-blur-md border-border/30 sticky top-20"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium flex items-center gap-2"><Activity className="w-4 h-4 text-primary" />Receipts{isRunning && <span className="ml-auto flex items-center gap-1.5 text-xs text-primary"><span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-amber" />LIVE</span>}</CardTitle></CardHeader>
+  1109→                  <CardContent className="space-y-2 p-4 pt-0">
+  1110→                    {/* Budget progress bar */}
+  1111→                    <div className="mb-2">
+  1112→                      <div className="flex items-center justify-between mb-1.5">
+  1113→                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium font-terminal">BUDGET {budgetUsed}/{BUDGET_MAX}</span>
+  1114→                        <span className="font-terminal text-[10px] text-muted-foreground">{Math.round(budgetPct)}%</span>
+  1115→                      </div>
+  1116→                      <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+  1117→                        <motion.div
+  1118→                          className={`h-full rounded-full ${budgetColor}`}
+  1119→                          initial={{ width: 0 }}
+  1120→                          animate={{ width: `${budgetPct}%` }}
+  1121→                          transition={{ duration: 0.5, ease: 'easeOut' }}
+  1122→                          style={{ boxShadow: `0 0 6px ${budgetBarColor}40` }}
+  1123→                        />
+  1124→                      </div>
+  1125→                    </div>
+  1126→                    <StatCounter icon={Terminal} label="Queries Executed" value={store.stats.queriesExecuted} color="text-primary" pulse={isRunning && pulseQuery} />
+  1127→                    <StatCounter icon={Hash} label="Rows In Scope" value={store.stats.rowsInScope > 0 ? (store.stats.rowsInScope / 1e6).toFixed(1) : 0} unit="M" color="text-[oklch(0.7_0.15_160)]" />
+  1128→                    <StatCounter icon={Clock} label="Cumulative DB Time" value={store.stats.totalDbMs > 0 ? (store.stats.totalDbMs / 1000).toFixed(1) : 0} unit="s" color="text-[oklch(0.75_0.15_85)]" />
+  1129→                    <StatCounter icon={TrendingDown} label="Hypotheses Killed" value={store.stats.hypothesesKilled} color="text-[oklch(0.65_0.25_25)]" />
+  1130→                    <StatCounter icon={CheckCircle2} label="Hypotheses Confirmed" value={store.stats.hypothesesConfirmed} color="text-[oklch(0.7_0.15_160)]" />
+  1131→                    <StatCounter icon={GitBranch} label="Max Depth" value={store.stats.maxDepth} />
+  1132→                    <Separator className="my-2" /><div className="flex items-center gap-2 text-xs text-muted-foreground"><Clock className="w-3 h-3" /><span>Elapsed: {((store.stats.elapsedMs || 0) / 1000).toFixed(1)}s</span></div>
+  1133→                    {/* Query Timing Sparkline */}
+  1134→                    <QueryTimingChart data={queryTimes} />
+  1135→                  </CardContent></Card>
+  1136→              </div>
+  1137→              <div className="lg:col-span-8 xl:col-span-9">
+  1138→                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full"><TabsList className="bg-secondary/40 border border-border/40 w-full justify-start"><TabsTrigger value="timeline" className={`text-xs ${activeTab === 'timeline' ? 'tab-active-indicator' : ''}`}><GitBranch className="w-3 h-3 mr-1.5" />Hypothesis Timeline</TabsTrigger><TabsTrigger value="tree" className={`text-xs ${activeTab === 'tree' ? 'tab-active-indicator' : ''}`}><Network className="w-3 h-3 mr-1.5" />Tree</TabsTrigger><TabsTrigger value="casefile" className={`text-xs ${activeTab === 'casefile' ? 'tab-active-indicator' : ''}`} disabled={!isCompleted && !showExample}><FileSearch className="w-3 h-3 mr-1.5" />Case File</TabsTrigger><TabsTrigger value="logs" className={`text-xs ${activeTab === 'logs' ? 'tab-active-indicator' : ''}`}><Terminal className="w-3 h-3 mr-1.5" />Event Log</TabsTrigger></TabsList>
+  1139→                  <TabsContent value="timeline" className="mt-4"><Card className="border-border/40"><CardContent className="p-4">{store.hypotheses.length === 0 && !isRunning ? (<div className="relative text-center py-16 text-muted-foreground">
+  1140→                  <svg viewBox="0 0 500 50" className="w-full h-12 mb-4 opacity-60">
+  1141→                    <path d="M0,25 Q62.5,5 125,25 T250,25 T375,25 T500,25" fill="none" stroke="oklch(0.78 0.17 72)" strokeWidth="1.5" className="animate-spectral-opacity" style={{ animationDelay: '0s' }} />
+  1142→                    <path d="M0,25 Q62.5,45 125,25 T250,25 T375,25 T500,25" fill="none" stroke="oklch(0.7 0.15 160)" strokeWidth="1" className="animate-spectral-opacity" style={{ animationDelay: '1s' }} />
+  1143→                    <path d="M0,25 Q62.5,10 125,25 T250,25 T375,25 T500,25" fill="none" stroke="oklch(0.55 0 270)" strokeWidth="0.8" className="animate-spectral-opacity" style={{ animationDelay: '2s' }} />
+  1144→                  </svg>
+  1145→                  <Search className="w-12 h-12 mx-auto mb-3 opacity-20 animate-float" />
+  1146→                  <p className="text-sm">Awaiting signal — start an investigation to see hypotheses emerge.</p>
+  1147→                  <p className="text-xs mt-1 opacity-60">Each hypothesis is planned, executed, and judged in real-time.</p>
+  1148→                </div>) : (<ScrollArea className="max-h-[600px]" ref={timelineRef as any}><div className="space-y-2 pr-3">{store.hypotheses.map(h => <HypothesisItem key={h.hypId} hyp={h} isExpanded={expandedHyps.has(h.hypId)} onToggle={() => toggleHyp(h.hypId)} />)}{isRunning && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 p-3 text-muted-foreground text-sm"><div className="w-4 h-4 border-2 border-primary/50 border-t-primary rounded-full animate-spin" /><span>Investigating...</span><TypingDots /></motion.div>}</div></ScrollArea>)}</CardContent></Card></TabsContent>
+  1149→                  <TabsContent value="tree" className="mt-4"><Card className="border-border/40"><CardContent className="p-4"><HypothesisTreeView hypotheses={store.hypotheses} /></CardContent></Card></TabsContent>
+  1150→                  <TabsContent value="casefile" className="mt-4">{store.caseFile ? <CaseFileView caseFile={store.caseFile} /> : showExample ? <CaseFileView caseFile={EXAMPLE_CASE} isDemo /> : <Card className="border-border/40"><CardContent className="p-8 text-center text-muted-foreground"><FileText className="w-10 h-10 mx-auto mb-3 opacity-20" /><p className="text-sm">Case file will appear when the investigation completes.</p><Button variant="link" className="mt-3 text-xs" onClick={() => setShowExample(true)}>Or view an example output</Button></CardContent></Card>}</TabsContent>
+  1151→                  <TabsContent value="logs" className="mt-4"><Card className="border-border/40"><CardContent className="p-4"><ScrollArea className="max-h-[600px]"><div className="space-y-1 font-terminal text-xs bg-noise rounded-lg p-3">{store.logs.length === 0 ? <p className="text-muted-foreground py-8 text-center">No events yet.</p> : store.logs.map((l, i) => <div key={i} className={`flex gap-2 py-1 px-2 rounded ${l.type === 'error' ? 'bg-destructive/10 text-destructive' : l.type === 'killed' ? 'text-[oklch(0.65_0.25_25)]' : l.type === 'verdict' && l.message.includes('CONFIRMED') ? 'text-[oklch(0.7_0.15_160)]' : 'text-muted-foreground'}`}><span className="text-muted-foreground/40 shrink-0">{new Date(l.timestamp).toLocaleTimeString()}</span><span className="shrink-0 w-16">[{l.type}]</span><span className="break-all">{l.message}</span></div>)}</div></ScrollArea></CardContent></Card></TabsContent>
+  1152→                </Tabs>
+  1153→              </div>
+  1154→            </div>
+  1155→          </div>
+  1156→        </section>
+  1157→
+  1158→        {/* ═══ EXAMPLE OUTPUT (py-12) ═══ */}
+  1159→        <section id="example" className="py-12 section-divider">
+  1160→          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+  1161→            <Section number={5}><div className="text-center mb-10">
+  1162→              <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><FileText className="w-3 h-3 mr-1.5" />EXAMPLE OUTPUT</Badge>
+  1163→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">What a Case File Looks Like</h2>
+  1164→              <p className="text-muted-foreground max-w-2xl mx-auto">A finding with no trail is a hallucination with a chart. A finding with 47 reproducible queries attached is analysis.</p>
+  1165→            </div></Section>
+  1166→            <CaseFileView caseFile={EXAMPLE_CASE} isDemo />
+  1167→          </div>
+  1168→        </section>
+  1169→
+  1170→        {/* ═══ BENCHMARK (py-12) ═══ */}
+  1171→        <section id="benchmark" className="py-12 section-divider">
+  1172→          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+  1173→            <Section number={6}><div className="text-center mb-12">
+  1174→              <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><BarChart3 className="w-3 h-3 mr-1.5" />BENCHMARK</Badge>
+  1175→              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Same Trace, Two Engines</h2>
+  1176→              <p className="text-muted-foreground max-w-2xl mx-auto">The agent generated these queries before we knew what the benchmark would look like. That is a naturally-occurring workload, not a tuned one.</p>
+  1177→            </div>
+  1178→            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
+  1179→              <Card className="border-border/40"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium">Latency by Query Shape</CardTitle></CardHeader><CardContent><BenchmarkChart /></CardContent></Card>
+  1180→              <Card className="border-border/40"><CardHeader className="pb-3"><CardTitle className="text-sm font-medium">Summary Table</CardTitle></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><table className="w-full"><thead><tr className="border-b border-border/40"><th className="text-left p-3 text-xs font-medium text-muted-foreground">Shape</th><th className="text-right p-3 text-xs font-medium text-muted-foreground">Count</th><th className="text-right p-3 text-xs font-medium text-primary">Exasol</th><th className="text-right p-3 text-xs font-medium text-muted-foreground">DuckDB</th><th className="text-right p-3 text-xs font-medium text-muted-foreground">Ratio</th></tr></thead><tbody>
+  1181→                {BENCHMARK_DATA.map(r => (
+  1182→                  <Tooltip key={r.shape}>
+  1183→                    <TooltipTrigger asChild>
+  1184→                      <tr className="border-b border-border/15 hover:bg-secondary/20 transition-colors cursor-default"><td className="p-3 text-xs">{r.shape}</td><td className="p-3 text-xs font-terminal text-right text-muted-foreground">{r.count}</td><td className="p-3 text-xs font-terminal text-right text-primary font-semibold">{r.exasolMs}ms</td><td className="p-3 text-xs font-terminal text-right text-muted-foreground">{r.duckdbMs}ms</td><td className="p-3 text-xs font-terminal text-right text-[oklch(0.7_0.15_160)] bg-[oklch(0.7_0.15_160/0.06)]">{(r.duckdbMs / r.exasolMs).toFixed(1)}x</td></tr>
+  1185→                    </TooltipTrigger>
+  1186→                    <TooltipContent side="bottom" className="max-w-xs">
+  1187→                      <p className="text-xs font-medium">{r.shape}</p>
+  1188→                      <p className="text-xs text-muted-foreground mt-1">{r.count} queries of this shape in the investigation trace.</p>
+  1189→                      <p className="text-xs mt-1">Exasol: <span className="text-primary font-terminal">{r.exasolMs}ms</span> avg | DuckDB: <span className="font-terminal">{r.duckdbMs}ms</span> avg</p>
+  1190→                    </TooltipContent>
+  1191→                  </Tooltip>
+  1192→                ))}
+  1193→                <Tooltip>
+  1194→                  <TooltipTrigger asChild>
+  1195→                    <tr className="bg-primary/[0.06] font-semibold cursor-default"><td className="p-3 text-xs">Total (47 queries)</td><td className="p-3 text-xs font-terminal text-right">47</td><td className="p-3 text-xs font-terminal text-right text-primary">21.4s</td><td className="p-3 text-xs font-terminal text-right text-muted-foreground">4m 12s</td><td className="p-3 text-xs font-terminal text-right text-[oklch(0.7_0.15_160)] bg-[oklch(0.7_0.15_160/0.1)] font-bold">11.8x</td></tr>
+  1196→                  </TooltipTrigger>
+  1197→                  <TooltipContent side="bottom">
+  1198→                    <p className="text-xs font-medium">Total Investigation Time</p>
+  1199→                    <p className="text-xs text-muted-foreground mt-1">Cumulative across all 47 dependent queries in the investigation.</p>
+  1200→                    <p className="text-xs mt-1">Exasol completes in <span className="text-primary font-terminal">21.4s</span> vs DuckDB <span className="font-terminal">4m 12s</span></p>
+  1201→                  </TooltipContent>
+  1202→                </Tooltip>
+  1203→              </tbody></table></div></CardContent></Card>
+  1204→            </div>
+  1205→            <p className="text-center text-sm text-muted-foreground mt-6 max-w-xl mx-auto">The gap widens on multi-join queries \u2014 exactly the shapes an investigating agent generates most \u2014 because testing a hypothesis always requires a comparison against a baseline.</p></Section>
+  1206→          </div>
+  1207→        </section>
+  1208→
+  1209→        {/* ═══ REPRODUCIBLE ANALYSIS (py-12) ═══ */}
+  1210→        <section id="reproducible" className="py-12 section-divider">
+  1211→          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+  1212→            <Section number={7}>
+  1213→              <div className="text-center mb-12">
+  1214→                <Badge variant="outline" className="mb-4 border-border text-muted-foreground"><Terminal className="w-3 h-3 mr-1.5" />REPRODUCIBILITY</Badge>
+  1215→                <h2 className="text-2xl sm:text-3xl font-bold mb-3">Every Finding Has Reproducible SQL</h2>
+  1216→                <p className="text-muted-foreground max-w-2xl mx-auto">No black boxes. Every hypothesis in the evidence chain carries the exact query that tested it. Copy, paste, verify.</p>
+  1217→              </div>
+  1218→              <div className="max-w-4xl mx-auto space-y-4">
+  1219→                {EXAMPLE_CASE.evidenceChain.slice(0, 3).map((e, i) => (
+  1220→                  <Card key={i} className={`border-border/40 ${VERDICT_BG[e.verdict] || ''}`}>
+  1221→                    <CardContent className="p-5">
+  1222→                      <div className="flex items-center gap-3 mb-3">
+  1223→                        <span className="flex items-center justify-center w-7 h-7 rounded-full bg-secondary text-[11px] font-terminal font-bold text-muted-foreground">Q{e.queryNum}</span>
+  1224→                        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${VERDICT_COLORS[e.verdict] || ''}`}>{e.verdict} {e.confidence.toFixed(0)}%</Badge>
+  1225→                        <span className="text-sm font-medium flex-1">{e.statement}</span>
+  1226→                      </div>
+  1227→                      {e.sql && (
+  1228→                        <div className="relative group">
+  1229→                          <div className="absolute top-0 left-0 flex items-center gap-2">
+  1230→                            <Badge variant="secondary" className="text-[9px] font-terminal">SQL</Badge>
+  1231→                          </div>
+  1232→                          <button
+  1233→                            onClick={() => { navigator.clipboard.writeText(e.sql || '') }}
+  1234→                            className="absolute top-0 right-0 flex items-center gap-1 text-[10px] text-muted-foreground/60 hover:text-primary transition-colors opacity-0 group-hover:opacity-100 px-2 py-1 rounded-md hover:bg-secondary/50"
+  1235→                            title="Copy SQL to clipboard"
+  1236→                          >
+  1237→                            <Download className="w-3 h-3" />Copy
+  1238→                          </button>
+  1239→                          <div className="rounded-lg overflow-hidden bg-black/40 border border-border/20">
+  1240→                            <SyntaxHighlighter language="sql" style={oneDark} customStyle={{ margin: 0, fontSize: '13px', background: 'transparent', padding: '16px' }}>
+  1241→                              {e.sql}
+  1242→                            </SyntaxHighlighter>
+  1243→                          </div>
+  1244→                        </div>
+  1245→                      )}
+  1246→                      {e.resultSummary && (
+  1247→                        <div className="mt-3 p-3 rounded-lg bg-secondary/30 border border-border/20">
+  1248→                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1">Result Summary</p>
+  1249→                          <pre className="text-xs font-terminal text-muted-foreground whitespace-pre-wrap">{e.resultSummary}</pre>
+  1250→                        </div>
+  1251→                      )}
+  1252→                    </CardContent>
+  1253→                  </Card>
+  1254→                ))}
+  1255→                <p className="text-center text-sm text-muted-foreground mt-6 max-w-xl mx-auto">These are the actual queries the agent generated \u2014 not hand-picked demos. The full case file contains all 47 queries with their results.</p>
+  1256→              </div>
+  1257→            </Section>
+  1258→          </div>
+  1259→        </section>
+  1260→
+  1261→        {/* ═══ WHY EXASOL (py-12) ═══ */}
+  1262→        <section className="py-12 section-divider">
+  1263→          <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+  1264→            <Section number={8}>
+  1265→              <motion.div style={{ y: whyIconY }}>
+  1266→                <Database className="w-12 h-12 text-primary mx-auto mb-6" />
+  1267→              </motion.div>
+  1268→              <h2 className="text-2xl sm:text-3xl font-bold mb-4">Why Exasol Specifically</h2>
+  1269→              <p className="text-muted-foreground leading-relaxed mb-8">The agent design is a direct consequence of the latency budget. At sub-second query latency, a 25-step dependent investigation completes in under 30 seconds. At 8 seconds per query, the same investigation takes over 3 minutes and users abandon it. The database&apos;s core property is the enabling condition. This cannot be ported to a slower engine without breaking the user experience.</p>
+  1270→              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+  1271→                {[
+  1272→                  { label: 'Parquet Ingest', desc: 'GLOB pattern + schema inference, one statement', icon: CircuitBoard },
+  1273→                  { label: 'Sub-second Loops', desc: 'Dependent query chains feel instant', icon: Zap },
+  1274→                  { label: 'Queryable Audit Trail', desc: 'Agent reasoning is itself SQL-table data', icon: FileSearch },
+  1275→                ].map(item => (
+  1276→                  <Card key={item.label} className="border-border/40 card-hover"><CardContent className="p-5"><item.icon className="w-5 h-5 text-primary mx-auto mb-2" /><h3 className="font-semibold text-sm mb-1 text-primary">{item.label}</h3><p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p></CardContent></Card>
+  1277→                ))}
+  1278→              </div>
+  1279→            </Section>
+  1280→          </div>
+  1281→        </section>
+  1282→      </main>
+  1283→
+  1284→      {/* ═══ FOOTER ═══ */}
+  1285→      <footer className="border-t border-border/30 py-10 mt-auto bg-noise">
+  1286→        <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+  1287→          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+  1288→            {/* Column 1: Branding */}
+  1289→            <div className="col-span-2 md:col-span-1">
+  1290→              <div className="flex items-center gap-2 mb-3">
+  1291→                <Fingerprint className="w-5 h-5 text-primary" />
+  1292→                <span className="font-terminal font-bold tracking-tight">CASEFILE</span>
+  1293→              </div>
+  1294→              <p className="text-xs text-muted-foreground leading-relaxed">An autonomous investigation agent for Exasol. Built for the AI Build Challenge 2026.</p>
+  1295→            </div>
+  1296→            {/* Column 2: Project */}
+  1297→            <div>
+  1298→              <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3">Project</h4>
+  1299→              <ul className="space-y-2.5 text-sm text-muted-foreground">
+  1300→                <li><a href="#" className="hover:text-foreground transition-colors inline-flex items-center gap-1.5"><Github className="w-3.5 h-3.5" />Source Code</a></li>
+  1301→                <li><a href="#" className="hover:text-foreground transition-colors inline-flex items-center gap-1.5"><ExternalLink className="w-3.5 h-3.5" />Live Demo</a></li>
+  1302→                <li><span className="inline-flex items-center gap-1.5">MIT License</span></li>
+  1303→              </ul>
+  1304→            </div>
+  1305→            {/* Column 3: Architecture */}
+  1306→            <div>
+  1307→              <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3">Architecture</h4>
+  1308→              <ul className="space-y-2.5 text-sm text-muted-foreground">
+  1309→                <li>Next.js 16 + App Router</li>
+  1310→                <li>Socket.IO real-time</li>
+  1311→                <li>Exasol Personal DB</li>
+  1312→                <li>Zustand state mgmt</li>
+  1313→              </ul>
+  1314→            </div>
+  1315→            {/* Column 4: Data Source */}
+  1316→            <div>
+  1317→              <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3">Data Source</h4>
+  1318→              <ul className="space-y-2.5 text-sm text-muted-foreground">
+  1319→                <li className="font-medium text-foreground/80">NYC TLC Trip Records</li>
+  1320→                <li>320M+ rows (2022\u20132024)</li>
+  1321→                <li>Parquet format on Exasol</li>
+  1322→                <li><a href="#" className="hover:text-foreground transition-colors inline-flex items-center gap-1"><ExternalLink className="w-3 h-3" />NYC Open Data</a></li>
+  1323→              </ul>
+  1324→            </div>
+  1325→          </div>
+  1326→          <Separator className="my-6 opacity-30" />
+  1327→          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground/70">
+  1328→            <span>Exasol AI Build Challenge 2026 \u2014 Track: AI for Autonomous Agents</span>
+  1329→            <span>Every finding backed by reproducible SQL</span>
+  1330→          </div>
+  1331→        </div>
+  1332→      </footer>
+  1333→
+  1334→      {/* ═══ INLINE STYLES FOR ANIMATIONS ═══ */}
+  1335→      <style jsx>{`
+  1336→        @keyframes pipeline-flow {
+  1337→          0% { stroke-dashoffset: 0; }
+  1338→          100% { stroke-dashoffset: -20; }
+  1339→        }
+  1340→        .animate-pipeline-flow {
+  1341→          animation: pipeline-flow 1s linear infinite;
+  1342→        }
+  1343→        @keyframes hero-glow {
+  1344→          0%, 100% { 
+  1345→            background: radial-gradient(circle, oklch(0.78 0.17 72 / 0.08) 0%, transparent 70%);
+  1346→            transform: scale(1);
+  1347→          }
+  1348→          50% { 
+  1349→            background: radial-gradient(circle, oklch(0.78 0.17 72 / 0.15) 0%, transparent 70%);
+  1350→            transform: scale(1.05);
+  1351→          }
+  1352→        }
+  1353→        .animate-hero-glow {
+  1354→          animation: hero-glow 4s ease-in-out infinite;
+  1355→        }
+  1356→        @keyframes border-breathe {
+  1357→          0%, 100% { 
+  1358→            border-color: oklch(0.78 0.17 72 / 0.2);
+  1359→            box-shadow: 0 0 15px oklch(0.78 0.17 72 / 0.05), inset 0 0 15px oklch(0.78 0.17 72 / 0.02);
+  1360→          }
+  1361→          50% { 
+  1362→            border-color: oklch(0.78 0.17 72 / 0.5);
+  1363→            box-shadow: 0 0 30px oklch(0.78 0.17 72 / 0.15), inset 0 0 30px oklch(0.78 0.17 72 / 0.04);
+  1364→          }
+  1365→        }
+  1366→        .animate-border-breathe {
+  1367→          animation: border-breathe 3s ease-in-out infinite;
+  1368→        }
+  1369→        @keyframes typing-dot {
+  1370→          0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  1371→          30% { transform: translateY(-4px); opacity: 1; }
+  1372→        }
+  1373→        .typing-dot-1 { animation: typing-dot 1.4s ease-in-out infinite; }
+  1374→        .typing-dot-2 { animation: typing-dot 1.4s ease-in-out 0.2s infinite; }
+  1375→        .typing-dot-3 { animation: typing-dot 1.4s ease-in-out 0.4s infinite; }
+  1376→        @keyframes pulse-ring {
+  1377→          0% { transform: scale(1); opacity: 0.6; }
+  1378→          100% { transform: scale(1.15); opacity: 0; }
+  1379→        }
+  1380→        .animate-pulse-ring {
+  1381→          animation: pulse-ring 0.6s ease-out forwards;
+  1382→        }
+  1383→        @keyframes fade-in-number {
+  1384→          from { opacity: 0; transform: translateY(-10px); }
+  1385→          to { opacity: 1; transform: translateY(0); }
+  1386→        }
+  1387→        .animate-fade-in-number {
+  1388→          animation: fade-in-number 0.8s ease-out forwards;
+  1389→        }
+  1390→        .bg-diagonal-lines {
+  1391→          background-image: repeating-linear-gradient(
+  1392→            -45deg,
+  1393→            transparent,
+  1394→            transparent 14px,
+  1395→            oklch(0.17 0.006 270 / 0.08) 14px,
+  1396→            oklch(0.17 0.006 270 / 0.08) 15px
+  1397→          );
+  1398→        }
+  1399→      `}</style>
+  1400→    </div>
+  1401→    </TooltipProvider>
+  1402→  )
+  1403→}

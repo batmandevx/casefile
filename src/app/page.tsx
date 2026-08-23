@@ -74,6 +74,53 @@ const EXAMPLE_CASE: CaseFile = {
   allHypotheses: [],
 }
 
+// ─── Mock investigation data (for Simulate Demo) ───
+const MOCK_INVESTIGATION = [
+  { type: 'root_hypotheses', data: { hypotheses: [
+    { hypId: 'h1', statement: 'Fare-per-mile drift is concentrated in 3 outer borough zones', rationale: 'Initial hypothesis from data exploration pattern' },
+    { hypId: 'h2', statement: 'Drift is uniform across all zones with no spatial pattern', rationale: 'Null hypothesis' },
+    { hypId: 'h3', statement: 'Time-of-day is the primary confounding factor', rationale: 'Common in taxi analytics' },
+  ] } },
+  { type: 'planned', data: { hypId: 'h1', sql: 'SELECT pickup_borough, AVG(fare_amount / NULLIF(trip_distance,0)) as fpm FROM trips WHERE trip_year >= 2022 GROUP BY pickup_borough ORDER BY fpm DESC', queryNum: 1 } },
+  { type: 'executed', data: { hypId: 'h1', dbMs: 89, rowsReturned: 61, rowsScanned: 312400000, totalQueries: 1, totalDbMs: 89 } },
+  { type: 'judged', data: { hypId: 'h1', verdict: 'CONFIRMED', confidence: 0.72, reasoning: 'Brooklyn, Queens, and Bronx show 12-16% FPM increase while Manhattan is stable at 3.6%', queryNum: 1, confirmed: 0, killed: 0 } },
+  { type: 'children', data: { hypId: 'h1', children: [
+    { hypId: 'h1-1', statement: 'The effect is strongest during overnight hours 22:00-04:00', rationale: 'Late-night premium hypothesis' },
+  ] } },
+  { type: 'planned', data: { hypId: 'h1-1', sql: "SELECT hour_bucket, AVG(fare_per_mile_outer) / AVG(fare_per_mile_manhattan) as ratio FROM (SELECT CASE WHEN EXTRACT(HOUR FROM pickup_datetime) BETWEEN 22 AND 4 THEN '22-04' WHEN EXTRACT(HOUR FROM pickup_datetime) BETWEEN 4 AND 12 THEN '04-12' WHEN EXTRACT(HOUR FROM pickup_datetime) BETWEEN 12 AND 20 THEN '12-20' ELSE '20-24' END as hour_bucket, ...) GROUP BY hour_bucket", queryNum: 2 } },
+  { type: 'executed', data: { hypId: 'h1-1', dbMs: 145, rowsReturned: 6, rowsScanned: 312400000, totalQueries: 2, totalDbMs: 234 } },
+  { type: 'judged', data: { hypId: 'h1-1', verdict: 'CONFIRMED', confidence: 0.81, reasoning: 'Overnight FPM ratio jumped from 0.78 to 0.96 while daytime is unchanged', queryNum: 2, confirmed: 1, killed: 0 } },
+  { type: 'planned', data: { hypId: 'h2', sql: 'SELECT trip_year, MIN(fare_amount) as min_fare, AVG(fare_amount / NULLIF(trip_distance,0)) FROM trips GROUP BY trip_year', queryNum: 3 } },
+  { type: 'executed', data: { hypId: 'h2', dbMs: 210, rowsReturned: 3, rowsScanned: 312400000, totalQueries: 3, totalDbMs: 444 } },
+  { type: 'judged', data: { hypId: 'h2', verdict: 'REFUTED', confidence: 0.90, reasoning: 'Base fare rates are identical across years. Rate change <2%.', queryNum: 3, confirmed: 1, killed: 1 } },
+  { type: 'root_hypotheses', data: { hypotheses: [
+    { hypId: 'h4', statement: 'Tip percentage has declined uniformly due to payment method shift', rationale: 'Cash tip decline hypothesis' },
+  ] } },
+  { type: 'planned', data: { hypId: 'h4', sql: 'SELECT payment_type, AVG(tip_amount / NULLIF(total_amount,0)) * 100 as tip_pct FROM trips WHERE tip_amount > 0 GROUP BY payment_type', queryNum: 4 } },
+  { type: 'executed', data: { hypId: 'h4', dbMs: 178, rowsReturned: 4, rowsScanned: 312400000, totalQueries: 4, totalDbMs: 622 } },
+  { type: 'judged', data: { hypId: 'h4', verdict: 'REFUTED', confidence: 0.85, reasoning: 'Credit card tip share went from 72% to 76% but tipping patterns are stable.', queryNum: 4, confirmed: 1, killed: 2 } },
+]
+
+const MOCK_CASE_FILE: CaseFile = {
+  runId: 'sim_demo_static',
+  question: 'Fare-per-mile in outer boroughs has drifted upward. What is driving it?',
+  finding: 'The drift is concentrated in trips beginning between 22:00 and 04:00 in three outer zones, driven by a shift in trip composition: short trips under 1.5 miles rose from 18% to 34%, and short trips carry structurally higher fare-per-mile due to the fixed initial charge.',
+  finalConfidence: 0.87,
+  summary: { queriesExecuted: 4, rowsInScope: 312400000, totalDbMs: 622, elapsedSeconds: 6.8, hypothesesRefuted: 2, maxDepth: 2 },
+  evidenceChain: [
+    { queryNum: 1, statement: 'Fare-per-mile drift is concentrated in 3 of 61 outer zones.', verdict: 'CONFIRMED' as const, confidence: 0.72, reasoning: 'Brooklyn, Queens, Bronx show 12-16% increase; Manhattan stable at 3.6%.', sql: 'SELECT pickup_borough, AVG(fare_amount / NULLIF(trip_distance,0)) as fpm ...', resultSummary: 'Brooklyn: +14.5%, Queens: +13.8%, Bronx: +16.2%, Manhattan: +3.6%' },
+    { queryNum: 2, statement: 'The effect is strongest during overnight hours 22:00-04:00.', verdict: 'CONFIRMED' as const, confidence: 0.81, reasoning: 'Overnight FPM ratio jumped from 0.78 to 0.96. Daytime unchanged.', sql: 'SELECT hour_bucket, AVG(fare_per_mile_outer) / AVG(fare_per_mile_manhattan) as ratio ...', resultSummary: '00-04: 0.96, 04-08: 0.82, 08-12: 0.79, 12-16: 0.77, 16-20: 0.80, 20-24: 0.93' },
+    { queryNum: 3, statement: 'Base fare rates did not change over the period.', verdict: 'REFUTED' as const, confidence: 0.90, reasoning: 'Identical rate structures across years. Rate change <2%.', sql: 'SELECT trip_year, MIN(fare_amount) ...', resultSummary: '2022: $6.20/mi, 2023: $6.25/mi, 2024: $6.28/mi' },
+    { queryNum: 4, statement: 'Tip percentage decline is uniform across payment types.', verdict: 'REFUTED' as const, confidence: 0.85, reasoning: 'Credit card share rose 72% to 76% but tipping patterns stable.', sql: 'SELECT payment_type, AVG(tip_amount / NULLIF(total_amount,0)) * 100 ...', resultSummary: 'Cash: 8.2%, Credit: 11.1%, unchanged patterns' },
+  ],
+  ruledOut: [
+    { queryNum: 2, statement: 'Uniform drift across all zones', reasoning: 'Only 3 of 61 zones show significant increase' },
+    { queryNum: 3, statement: 'Fare rate changes are the cause', reasoning: 'Rates identical across all years' },
+    { queryNum: 4, statement: 'Payment method shift drives the drift', reasoning: 'Patterns stable across payment types' },
+  ],
+  allHypotheses: [],
+}
+
 // ─── Benchmark chart data ───
 const BENCHMARK_DATA = [
   { shape: 'Simple agg', exasolMs: 89, duckdbMs: 120, count: 14 },
@@ -432,8 +479,8 @@ function PipelineConnector() {
   return (
     <div className="hidden lg:flex items-center justify-center w-14 shrink-0">
       <svg width="56" height="28" className="overflow-visible">
-        <line x1="0" y1="14" x2="46" y2="14" stroke="oklch(0.78 0.17 72 / 0.6)" strokeWidth="2.5" strokeDasharray="6 4" className="animate-pipeline-flow" />
-        <polygon points="44,7 56,14 44,21" fill="oklch(0.78 0.17 72 / 0.8)" />
+        <line x1="0" y1="14" x2="46" y2="14" stroke="oklch(0.78 0.17 72 / 0.6)" strokeWidth="2" strokeDasharray="6 3" className="animate-pipeline-flow" />
+        <polygon points="46,9 56,14 46,19" fill="oklch(0.78 0.17 72 / 0.8)" />
       </svg>
     </div>
   )
@@ -560,6 +607,7 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState('timeline')
   const [queryTimes, setQueryTimes] = useState<Array<{ index: number; dbMs: number }>>([])
   const [pulseQuery, setPulseQuery] = useState(false)
+  const [heroVisible, setHeroVisible] = useState(false)
   const [historyItems, setHistoryItems] = useState<HistoryEntry[]>([])
   const [historyOpen, setHistoryOpen] = useState(false)
   const timelineRef = useRef<HTMLDivElement>(null)
@@ -574,6 +622,15 @@ export default function HomePage() {
   // ─── Parallax for hero stats ───
   const { scrollY } = useScroll()
   const heroStatsY = useTransform(scrollY, [0, 400], [0, -60])
+
+  // ─── Scroll-triggered hero counter animation ───
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) setHeroVisible(true)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // ─── Parallax for Why Exasol icon ───
   const whyIconY = useTransform(scrollY, [3000, 4000], [0, -25])
@@ -719,6 +776,59 @@ export default function HomePage() {
 
   const startInvestigation = () => { if (!store.question.trim() || !socketRef.current?.connected) return; store.reset(); store.setPhase('connecting'); setExpandedHyps(new Set()); setShowExample(false); setQueryTimes([]); setActiveTab('timeline'); socketRef.current.emit('start-investigation', { question: store.question }) }
   const stopInvestigation = () => { if (elapsedRef.current) { clearInterval(elapsedRef.current); elapsedRef.current = null }; store.setPhase('idle'); socketRef.current?.disconnect() }
+
+  // ─── Simulate Demo (frontend-only mock investigation) ───
+  const runSimulatedDemo = useCallback(() => {
+    store.reset()
+    store.setPhase('running')
+    setExpandedHyps(new Set())
+    setQueryTimes([])
+    setActiveTab('timeline')
+    setShowExample(false)
+    startTimeRef.current = Date.now()
+    store.addLog('system', 'Investigation sim_demo started')
+    if (elapsedRef.current) clearInterval(elapsedRef.current)
+    elapsedRef.current = setInterval(() => store.updateStats({ elapsedMs: Date.now() - startTimeRef.current }), 100)
+
+    let idx = 0
+    const timer = setInterval(() => {
+      if (idx >= MOCK_INVESTIGATION.length) {
+        clearInterval(timer)
+        if (elapsedRef.current) { clearInterval(elapsedRef.current); elapsedRef.current = null }
+        store.updateStats({ elapsedMs: Date.now() - startTimeRef.current })
+        const cf: CaseFile = {
+          ...MOCK_CASE_FILE,
+          runId: 'sim_demo_' + Date.now().toString(36),
+          question: store.question || MOCK_CASE_FILE.question,
+        }
+        store.setCaseFile(cf)
+        store.addLog('system', `Investigation completed: ${cf.summary.queriesExecuted} queries, ${(cf.summary.totalDbMs / 1000).toFixed(1)}s DB time`)
+        setTimeout(() => store.setPhase('completed'), 1000)
+        return
+      }
+      const ev = MOCK_INVESTIGATION[idx]
+      const { type, data } = ev
+      switch (type) {
+        case 'root_hypotheses': {
+          store.addLog('hypothesis', `Generated ${data.hypotheses.length} root hypotheses`)
+          for (const h of data.hypotheses) store.addHypothesis({ hypId: h.hypId, parentId: null, depth: 0, statement: h.statement, rationale: h.rationale, queryNum: 0, timestamp: Date.now() })
+          break
+        }
+        case 'planned': store.updateHypothesis(data.hypId, { sql: data.sql, queryNum: data.queryNum }); store.addLog('sql', `Q${data.queryNum}: SQL planned`); break
+        case 'executed': store.updateHypothesis(data.hypId, { dbMs: data.dbMs, rowsReturned: data.rowsReturned, rowsScanned: data.rowsScanned }); store.updateStats({ queriesExecuted: data.totalQueries, rowsInScope: (store.stats.rowsInScope || 0) + (data.rowsScanned || 0), totalDbMs: data.totalDbMs }); setQueryTimes(prev => [...prev, { index: data.totalQueries, dbMs: data.dbMs }]); break
+        case 'judged': store.updateHypothesis(data.hypId, { verdict: data.verdict, confidence: data.confidence, reasoning: data.reasoning }); if (data.verdict === 'CONFIRMED') store.updateStats({ hypothesesConfirmed: data.confirmed }); else if (data.verdict === 'REFUTED') store.updateStats({ hypothesesKilled: data.killed }); store.addLog('verdict', `Q${data.queryNum}: ${data.verdict} (${Math.round(data.confidence * 100)}%)`); break
+        case 'children': {
+          store.addLog('branch', `Spawned ${data.children.length} follow-ups`)
+          for (const c of data.children) store.addHypothesis({ hypId: c.hypId, parentId: data.hypId, depth: 1, statement: c.statement, rationale: c.rationale, queryNum: 0, timestamp: Date.now() })
+          break
+        }
+      }
+      if (timelineRef.current) timelineRef.current.scrollTop = timelineRef.current.scrollHeight
+      idx++
+    }, 400)
+    return () => clearInterval(timer)
+  }, [store])
+
   const isRunning = store.phase === 'running' || store.phase === 'connecting'
   const isCompleted = store.phase === 'completed'
 
@@ -846,7 +956,7 @@ export default function HomePage() {
                 { label: 'Rows Analyzed', value: '320M+', icon: Database, sub: 'NYC TLC 2022\u20132024' },
                 { label: 'Query Latency', value: '<500ms', icon: Zap, sub: 'sub-second median' },
                 { label: 'Investigation Depth', value: '4 levels', icon: GitBranch, sub: 'best-first search' },
-                { label: 'Verdicts', value: '3 states', icon: Shield, sub: 'confirmed/refuted/...' },
+                { label: 'Max Budget', value: '60 queries', icon: AlertTriangle, sub: 'hard cap per investigation' },
               ].map((s, i) => (
                 <motion.div
                   key={s.label}
@@ -856,7 +966,7 @@ export default function HomePage() {
                   className="group relative flex flex-col items-center p-4 rounded-xl border border-border/40 bg-card/50 backdrop-blur-md card-hover overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <s.icon className="w-5 h-5 text-primary mb-2 relative" /><span className="font-terminal font-bold text-xl relative">{s.value}</span>
+                  <s.icon className="w-5 h-5 text-primary mb-2 relative" /><span className={`font-terminal font-bold text-xl relative ${heroVisible ? 'animate-counter-tick' : ''}`}>{s.value}</span>
                   <span className="text-xs text-muted-foreground mt-1 relative">{s.label}</span>
                   <span className="text-[10px] text-muted-foreground/60 mt-0.5 relative">{s.sub}</span>
                 </motion.div>
@@ -891,7 +1001,7 @@ export default function HomePage() {
                       </div>
                     </div>
                     {i < 2 && (
-                      <ChevronRight className="w-5 h-5 text-primary/40 shrink-0 hidden sm:block" />
+                      <ChevronRight className="w-5 h-5 text-primary/40 shrink-0 hidden sm:block opacity-60" />
                     )}
                   </div>
                 ))}
@@ -941,7 +1051,7 @@ export default function HomePage() {
                 { state: 'INCONCLUSIVE', icon: HelpCircle, color: 'text-[oklch(0.75_0.15_85)]', border: 'border-[oklch(0.75_0.15_85/0.25)]', bg: 'from-[oklch(0.75_0.15_85/0.05)]', desc: 'Retry once with reformulation, then kill. Never loop forever on a broken query.' },
                 { state: 'BUDGET EXHAUSTED', icon: AlertTriangle, color: 'text-[oklch(0.75_0.15_85)]', border: 'border-[oklch(0.75_0.15_85/0.25)]', bg: 'from-[oklch(0.75_0.15_85/0.05)]', desc: 'Hard cap at 60 queries. Emit whatever confidence was reached. Never let a demo hang.' },
               ].map(s => (
-                <Card key={s.state} className={`relative overflow-hidden bg-gradient-to-br ${s.bg} to-card/50 ${s.border} hover:to-card/80 transition-all duration-300`}>
+                <Card key={s.state} className={`border-2 relative overflow-hidden bg-gradient-to-br ${s.bg} to-card/50 ${s.border} hover:to-card/80 transition-all duration-300`}>
                   <CardContent className="p-4 relative"><div className={`absolute inset-0 pointer-events-none ${s.state === 'CONFIRMED' ? 'verdict-glow-confirmed' : s.state === 'REFUTED' ? 'verdict-glow-refuted' : 'verdict-glow-inconclusive'}`} /><div className="flex items-center gap-2 mb-2 relative"><s.icon className={`w-4 h-4 ${s.color}`} /><h4 className={`font-terminal text-sm font-semibold ${s.color}`}>{s.state}</h4></div><p className="text-xs text-muted-foreground leading-relaxed relative">{s.desc}</p></CardContent>
                 </Card>
               ))}
@@ -958,12 +1068,12 @@ export default function HomePage() {
               <h2 className="text-2xl sm:text-3xl font-bold mb-3">The Speed Is Not a Nice-to-Have</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">It is the thing that converts a chatbot into an analyst.</p>
             </div>
-            <Card className="max-w-3xl mx-auto border-primary/20 glow-amber">
+            <Card className="max-w-3xl mx-auto backdrop-blur-md bg-card/80 border-border/30">
               <CardContent className="p-0"><div className="overflow-x-auto">
-                <table className="w-full"><thead><tr className="border-b border-border/40"><th className="text-left p-4 text-sm font-medium text-muted-foreground">Engine</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Per-query</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">47-query run</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Outcome</th></tr></thead>
+                <table className="w-full"><thead><tr className="border-b border-border/40"><th className="text-left p-4 text-[11px] uppercase tracking-wider font-terminal font-medium text-muted-foreground">Engine</th><th className="text-left p-4 text-[11px] uppercase tracking-wider font-terminal font-medium text-muted-foreground">Per-query</th><th className="text-left p-4 text-[11px] uppercase tracking-wider font-terminal font-medium text-muted-foreground">47-query run</th><th className="text-left p-4 text-[11px] uppercase tracking-wider font-terminal font-medium text-muted-foreground">Outcome</th></tr></thead>
                 <tbody>
-                  <tr className="border-b border-border/20"><td className="p-4 text-sm">Typical cloud warehouse</td><td className="p-4 font-terminal text-sm text-muted-foreground">8\u201312 s</td><td className="p-4 font-terminal text-sm text-destructive font-medium">6\u20139 min</td><td className="p-4 text-sm text-destructive">Agent times out, user leaves</td></tr>
-                  <tr className="animate-exasol-pulse"><td className="p-4 text-sm font-bold text-primary">Exasol Personal</td><td className="p-4 font-terminal text-sm text-primary font-medium">sub-second</td><td className="p-4 font-terminal text-sm text-[oklch(0.7_0.15_160)] font-medium">under 30 s</td><td className="p-4 text-sm text-[oklch(0.7_0.15_160)] font-medium">Investigation feels instant</td></tr>
+                  <tr className="border-b border-border/20"><td className="p-4 text-sm">Typical cloud warehouse</td><td className="p-4 font-terminal text-xs text-muted-foreground">8\u201312 s</td><td className="p-4 font-terminal text-xs text-destructive font-medium">6\u20139 min</td><td className="p-4"><span className="text-destructive">Agent times out</span><br/><span className="text-xs text-muted-foreground">User leaves</span></td></tr>
+                  <tr className="bg-primary/[0.06]"><td className="p-4 text-sm font-bold text-primary">Exasol Personal</td><td className="p-4 font-terminal text-xs text-primary font-medium">sub-second</td><td className="p-4 font-terminal text-xs text-[oklch(0.7_0.15_160)] font-medium">under 30 s</td><td className="p-4"><span className="text-[oklch(0.7_0.15_160)]">Instant</span><br/><span className="text-xs text-muted-foreground">Investigation feels instant</span></td></tr>
                 </tbody></table>
               </div></CardContent>
             </Card>
@@ -987,7 +1097,7 @@ export default function HomePage() {
                 { sub: 'BI copilot with pretty charts', why: 'Judged on the chart library, not the database.', Icon: BarChart3, iconBg: 'bg-muted/50', iconColor: 'text-muted-foreground' },
                 { sub: 'CASEFILE', why: 'The database\'s core property is the enabling condition. Cannot be ported without breaking.', Icon: CircuitBoard, iconBg: 'bg-primary/15', iconColor: 'text-primary', highlight: true },
               ].map((r, i) => (
-                <Card key={i} className={`border-border/40 ${r.highlight ? 'border-primary/30 bg-primary/[0.04] glow-amber' : 'competitor-card hover:bg-secondary/50'} transition-all duration-200`}>
+                <Card key={i} className={`border-border/40 ${r.highlight ? 'mt-6 border-primary/30 bg-primary/[0.04] glow-amber' : 'competitor-card hover:bg-secondary/50'} transition-all duration-200`}>
                   <CardContent className="p-4 flex items-start gap-4">
                     <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${r.iconBg} shrink-0 mt-0.5`}>
                       <r.Icon className={`w-5 h-5 ${r.iconColor}`} />
@@ -1087,6 +1197,7 @@ export default function HomePage() {
                           <Play className="w-4 h-4 mr-2" />Investigate
                           <Tooltip><TooltipTrigger asChild><span className="hidden lg:inline-flex items-center ml-2 text-xs opacity-60 font-normal"><Keyboard className="w-3 h-3 mr-0.5" />\u2318\u21a9</span></TooltipTrigger><TooltipContent side="bottom"><p>Press Ctrl+Enter or \u2318+Enter to start</p></TooltipContent></Tooltip>
                         </Button>
+                        <Button variant="outline" size="lg" onClick={runSimulatedDemo} className="h-12 px-6 border-border hover:bg-secondary/80 transition-colors"><Activity className="w-4 h-4 mr-2" />Simulate Demo</Button>
                         {isCompleted && <Button variant="outline" onClick={() => store.reset()} className="h-12 px-6 border-border"><RotateCcw className="w-4 h-4 mr-2" />Reset</Button>}
                       </>
                     )}
