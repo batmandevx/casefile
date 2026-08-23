@@ -3,9 +3,13 @@
 > **Powered by Exasol Personal In-Memory Analytics Engine**
 
 <p align="center">
-  <img src="screenshot-hero-final.png" alt="CASEFILE Hero Dashboard" width="800"/>
+  <img src="screenshot-hero-final.png" alt="CASEFILE Hero Dashboard Final" width="800"/>
   <br/>
-  <img src="screenshot-investigation-final.png" alt="CASEFILE Investigation Timeline" width="800"/>
+  <img src="screenshot-hero.png" alt="CASEFILE Hero Dashboard Alternative" width="800"/>
+  <br/>
+  <img src="screenshot-investigation-final.png" alt="CASEFILE Investigation Timeline Final" width="800"/>
+  <br/>
+  <img src="screenshot-investigation.png" alt="CASEFILE Investigation Timeline Alternative" width="800"/>
   <br/>
   <img src="screenshot-benchmark-final.png" alt="Exasol Benchmark Results" width="800"/>
 </p>
