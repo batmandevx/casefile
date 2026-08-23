@@ -42,16 +42,80 @@ Stage Summary:
 - Lint passes cleanly, dev server compiles successfully
 
 ---
+Task ID: 2
+Agent: Main Developer
+Task: Major page enhancement - styling polish, new features, and QA
 
-## Current Status
-- **Phase**: Core application complete, ready for testing through preview panel
-- **Known limitation**: Socket.io doesn't work in agent-browser testing (connects to port 3000 directly, bypasses Caddy gateway). Works correctly for users through the preview panel (port 81).
-- **Investigation service**: Must be started manually: `cd mini-services/investigation-service && bun index.ts`
+Work Log:
+- **Bug fixes:**
+  - Fixed ESLint warning (no-unused-expressions in toggleHyp callback)
+  - Fixed Next.js dev indicator showing in production (devIndicators: false)
+  - Fixed duplicate lucide-react import (Activity imported twice)
+  - Fixed non-existent lucide-react exports (MessageSquareQuestion → MessageSquare, MonitorDot → Activity)
+  - Fixed 'Budget Exhausted' verdict card styling (now uses inconclusive color scheme for visual consistency)
 
-## What's Next
-- Test full investigation flow through preview panel (socket.io connection required)
-- Add more visual polish and micro-animations
-- Consider adding a sample/completed investigation as static content
-- Add mobile-responsive improvements
-- Add dark/light theme toggle
-- Enhance benchmark section with real charts (recharts)
+- **New features added:**
+  1. Scroll progress indicator (2px fixed bar at top, primary color with glow)
+  2. Navigation scroll-spy (IntersectionObserver tracks active section, highlights nav link)
+  3. Animated pipeline flow connectors between architecture cards (SVG dashed lines, CSS animation)
+  4. Budget progress bar in Receipts panel (color-coded: green <50%, amber 50-80%, red >80%)
+  5. Replaced all emoji icons in competitive analysis with proper Lucide icons in colored pill backgrounds
+  6. Export case file button (generates downloadable Markdown with finding, evidence, ruled-out)
+  7. Keyboard shortcut Ctrl/Cmd+Enter to start investigation (with tooltip hint)
+  8. Improved mobile navigation with backdrop overlay and auto-close on link click
+  9. Hypothesis depth indentation with D1/D2/D3 badges for child hypotheses
+  10. "How It Works" micro-section between hero and architecture (3 steps with arrows)
+  11. Improved footer (4-column grid: Branding, Project, Architecture, Data Source)
+  12. Smooth scroll offset (-80px) for all nav anchor links
+  13. Placeholder text rotation animation (4 example questions cycle in input)
+  14. Input focus glow effect
+  15. New "Reproducible Analysis" section showing SQL queries from example case file
+  16. Sample question preset buttons (TRY: section below input)
+  17. Copy SQL to clipboard buttons on code blocks (hover-reveal)
+  18. Benchmark ratio column subtle green background highlight
+
+- **Styling improvements:**
+  - Animated hero radial gradient pulse
+  - Parallax effect on hero stats grid
+  - Footer link text size increased from xs to sm for accessibility
+  - Footer copyright text contrast improved
+  - Budget exhausted card now has consistent colored border/gradient
+  - Added CSS animations: hero-glow, pipeline-flow, pipeline-flow keyframes
+
+- **QA testing:**
+  - Used agent-browser to capture screenshots of all sections
+  - Used VLM (vision model) to analyze visual quality - scored 8-9.5/10 per section
+  - Mobile viewport test (375x812) - passed with no issues
+  - ESLint: 0 errors, 0 warnings
+  - Dev server: clean compilation, all 200 responses
+  - Browser console: no JavaScript errors
+
+Stage Summary:
+- Page expanded from 570 lines to ~1000 lines with 18+ new features
+- 10 distinct sections on the page (Hero, How It Works, Architecture, Economics, Competitive Analysis, Investigation, Example Output, Benchmark, Reproducible, Why Exasol)
+- VLM-rated average 8.6/10 across all sections
+- All lint clean, no compilation errors, no console errors
+- Mobile responsive, keyboard accessible, professional-grade design
+
+---
+
+## Current Project Status
+- **Phase**: V2 enhancement complete, production-quality landing page + live investigation demo
+- **File changes**: `src/app/page.tsx` (major rewrite), `src/app/globals.css` (new animations), `next.config.ts` (devIndicators disabled)
+- **Unchanged files**: `src/lib/investigation-store.ts`, `mini-services/investigation-service/index.ts`, `src/app/layout.tsx`
+
+## Known Limitations
+- Socket.io connection requires Caddy gateway (port 81) - doesn't work in agent-browser direct access
+- Investigation service must be started manually before live investigation works
+- No actual Exasol database - uses simulated query results
+
+## Unresolved Issues / Risks
+- None critical. All identified visual issues from VLM QA have been addressed.
+
+## Priority Recommendations for Next Phase
+1. Test full investigation flow through preview panel with real LLM calls
+2. Add dark/light theme toggle (mentioned in original spec)
+3. Consider adding investigation history persistence (localStorage or API)
+4. Add more animated transitions between sections
+5. Create a demo video recording for submission
+6. Prepare README.md and submission deck

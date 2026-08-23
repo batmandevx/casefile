@@ -1,0 +1,1152 @@
+     1→'use client'
+     2→
+     3→import { useEffect, useRef, useState, useCallback } from 'react'
+     4→import { motion, AnimatePresence } from 'framer-motion'
+     5→import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
+     6→import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+     7→import {
+     8→  Search, Zap, FileSearch, Shield, Terminal, Database,
+     9→  CheckCircle2, XCircle, HelpCircle, ChevronRight, ChevronDown,
+    10→  Activity, Clock, Hash, TrendingDown, GitBranch, AlertTriangle,
+    11→  ArrowDown, ArrowRight, Play, Square, RotateCcw, ExternalLink,
+    12→  Menu, X, Bot, Brain, BarChart3, Layers, Fingerprint,
+    13→} from 'lucide-react'
+    14→import { Button } from '@/components/ui/button'
+    15→import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+    16→import { Badge } from '@/components/ui/badge'
+    17→import { Input } from '@/components/ui/input'
+    18→import { ScrollArea } from '@/components/ui/scroll-area'
+    19→import { Separator } from '@/components/ui/separator'
+    20→import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+    21→import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+    22→import { useInvestigationStore, type HypothesisEvent, type CaseFile } from '@/lib/investigation-store'
+    23→
+    24→// ─── Constants ───
+    25→const SERVICE_PORT = 3004
+    26→const VERDICT_COLORS: Record<string, string> = {
+    27→  CONFIRMED: 'text-[oklch(0.7_0.15_160)] border-[oklch(0.7_0.15_160)]',
+    28→  REFUTED: 'text-[oklch(0.65_0.25_25)] border-[oklch(0.65_0.25_25)]',
+    29→  INCONCLUSIVE: 'text-[oklch(0.75_0.15_85)] border-[oklch(0.75_0.15_85)]',
+    30→  ERROR: 'text-destructive border-destructive',
+    31→}
+    32→
+    33→const VERDICT_BG: Record<string, string> = {
+    34→  CONFIRMED: 'bg-[oklch(0.7_0.15_160/0.1)]',
+    35→  REFUTED: 'bg-[oklch(0.65_0.25_25/0.1)]',
+    36→  INCONCLUSIVE: 'bg-[oklch(0.75_0.15_85/0.1)]',
+    37→  ERROR: 'bg-destructive/10',
+    38→}
+    39→
+    40→const VERDICT_ICONS: Record<string, React.ReactNode> = {
+    41→  CONFIRMED: <CheckCircle2 className="w-4 h-4 text-[oklch(0.7_0.15_160)]" />,
+    42→  REFUTED: <XCircle className="w-4 h-4 text-[oklch(0.65_0.25_25)]" />,
+    43→  INCONCLUSIVE: <HelpCircle className="w-4 h-4 text-[oklch(0.75_0.15_85)]" />,
+    44→  ERROR: <AlertTriangle className="w-4 h-4 text-destructive" />,
+    45→}
+    46→
+    47→// ─── Counter stat component ───
+    48→function StatCounter({ icon: Icon, label, value, unit, color }: {
+    49→  icon: React.ElementType; label: string; value: string | number; unit?: string; color?: string
+    50→}) {
+    51→  const [displayVal, setDisplayVal] = useState(0)
+    52→  const prevVal = useRef(0)
+    53→
+    54→  useEffect(() => {
+    55→    const target = typeof value === 'number' ? value : parseFloat(String(value)) || 0
+    56→    const start = prevVal.current
+    57→    const diff = target - start
+    58→    if (diff === 0) return
+    59→
+    60→    const duration = 400
+    61→    const startTime = Date.now()
+    62→
+    63→    const animate = () => {
+    64→      const elapsed = Date.now() - startTime
+    65→      const progress = Math.min(elapsed / duration, 1)
+    66→      const eased = 1 - Math.pow(1 - progress, 3)
+    67→      setDisplayVal(start + diff * eased)
+    68→      if (progress < 1) requestAnimationFrame(animate)
+    69→      else prevVal.current = target
+    70→    }
+    71→    requestAnimationFrame(animate)
+    72→  }, [value])
+    73→
+    74→  const formatted = typeof value === 'string' ? value :
+    75→    Number.isInteger(value) ? Math.round(displayVal).toLocaleString() :
+    76→      displayVal.toFixed(1)
+    77→
+    78→  return (
+    79→    <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50">
+    80→      <div className={`p-2 rounded-md ${color || 'bg-primary/10 text-primary'}`}>
+    81→        <Icon className="w-4 h-4" />
+    82→      </div>
+    83→      <div className="min-w-0">
+    84→        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{label}</p>
+    85→        <p className={`font-terminal text-lg font-bold ${color || 'text-foreground'}`}>
+    86→          {formatted}{unit && <span className="text-xs text-muted-foreground ml-0.5">{unit}</span>}
+    87→        </p>
+    88→      </div>
+    89→    </div>
+    90→  )
+    91→}
+    92→
+    93→// ─── Hypothesis timeline item ───
+    94→function HypothesisItem({ hyp, isExpanded, onToggle }: {
+    95→  hyp: HypothesisEvent; isExpanded: boolean; onToggle: () => void
+    96→}) {
+    97→  const verdictColor = VERDICT_COLORS[hyp.verdict || ''] || 'border-muted-foreground/30'
+    98→  const verdictBg = VERDICT_BG[hyp.verdict || ''] || 'bg-muted/30'
+    99→
+   100→  return (
+   101→    <motion.div
+   102→      initial={{ opacity: 0, x: 20 }}
+   103→      animate={{ opacity: 1, x: 0 }}
+   104→      transition={{ duration: 0.3 }}
+   105→      className={`border rounded-lg overflow-hidden ${verdictColor} ${verdictBg} animate-slide-in`}
+   106→    >
+   107→      <button
+   108→        onClick={onToggle}
+   109→        className="w-full text-left p-3 flex items-start gap-3 hover:bg-white/[0.02] transition-colors"
+   110→      >
+   111→        <div className="mt-0.5 shrink-0">
+   112→          {VERDICT_ICONS[hyp.verdict || ''] || <HelpCircle className="w-4 h-4 text-muted-foreground" />}
+   113→        </div>
+   114→        <div className="flex-1 min-w-0">
+   115→          <div className="flex items-center gap-2 flex-wrap">
+   116→            <span className="font-terminal text-xs text-muted-foreground">Q{hyp.queryNum}</span>
+   117→            {hyp.verdict && (
+   118→              <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${verdictColor}`}>
+   119→                {hyp.verdict}
+   120→              </Badge>
+   121→            )}
+   122→            {hyp.confidence !== undefined && hyp.confidence > 0 && (
+   123→              <span className="font-terminal text-xs text-muted-foreground">
+   124→                {Math.round(hyp.confidence * 100)}%
+   125→              </span>
+   126→            )}
+   127→          </div>
+   128→          <p className="text-sm mt-1 leading-relaxed">{hyp.statement}</p>
+   129→          {hyp.reasoning && !isExpanded && (
+   130→            <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{hyp.reasoning}</p>
+   131→          )}
+   132→        </div>
+   133→        <ChevronDown className={`w-4 h-4 text-muted-foreground shrink-0 mt-1 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+   134→      </button>
+   135→
+   136→      <AnimatePresence>
+   137→        {isExpanded && (
+   138→          <motion.div
+   139→            initial={{ height: 0, opacity: 0 }}
+   140→            animate={{ height: 'auto', opacity: 1 }}
+   141→            exit={{ height: 0, opacity: 0 }}
+   142→            transition={{ duration: 0.2 }}
+   143→            className="overflow-hidden"
+   144→          >
+   145→            <div className="px-3 pb-3 space-y-3">
+   146→              {hyp.sql && (
+   147→                <div>
+   148→                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">SQL</p>
+   149→                  <div className="rounded-md overflow-hidden bg-black/30 max-h-48 overflow-y-auto">
+   150→                    <SyntaxHighlighter
+   151→                      language="sql"
+   152→                      style={oneDark}
+   153→                      customStyle={{ margin: 0, fontSize: '12px', background: 'transparent' }}
+   154→                    >
+   155→                      {hyp.sql}
+   156→                    </SyntaxHighlighter>
+   157→                  </div>
+   158→                </div>
+   159→              )}
+   160→              {hyp.resultSummary && (
+   161→                <div>
+   162→                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 font-medium">Result</p>
+   163→                  <pre className="text-xs font-terminal text-muted-foreground bg-black/20 rounded-md p-2 overflow-x-auto max-h-32 overflow-y-auto whitespace-pre">
+   164→                    {hyp.resultSummary}
+   165→                  </pre>
+   166→                </div>
+   167→              )}
+   168→              {hyp.reasoning && (
+   169→                <div>
+   170→                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 font-medium">Reasoning</p>
+   171→                  <p className="text-sm text-muted-foreground">{hyp.reasoning}</p>
+   172→                </div>
+   173→              )}
+   174→              {hyp.dbMs !== undefined && (
+   175→                <div className="flex gap-4 text-xs text-muted-foreground font-terminal">
+   176→                  <span>{hyp.dbMs.toFixed(1)}ms</span>
+   177→                  {hyp.rowsReturned !== undefined && <span>{hyp.rowsReturned} rows</span>}
+   178→                  {hyp.rowsScanned !== undefined && <span>{(hyp.rowsScanned / 1e6).toFixed(0)}M scanned</span>}
+   179→                </div>
+   180→              )}
+   181→            </div>
+   182→          </motion.div>
+   183→        )}
+   184→      </AnimatePresence>
+   185→    </motion.div>
+   186→  )
+   187→}
+   188→
+   189→// ─── Main page ───
+   190→export default function HomePage() {
+   191→  const store = useInvestigationStore()
+   192→  const socketRef = useRef<any>(null)
+   193→  const [socketConnected, setSocketConnected] = useState(false)
+   194→  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+   195→  const [expandedHyps, setExpandedHyps] = useState<Set<string>>(new Set())
+   196→  const timelineRef = useRef<HTMLDivElement>(null)
+   197→  const startTimeRef = useRef<number>(0)
+   198→  const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null)
+   199→
+   200→  const toggleHyp = useCallback((hypId: string) => {
+   201→    setExpandedHyps(prev => {
+   202→      const next = new Set(prev)
+   203→      if (next.has(hypId)) next.delete(hypId)
+   204→      else next.add(hypId)
+   205→      return next
+   206→    })
+   207→  }, [])
+   208→
+   209→  // Socket connection
+   210→  useEffect(() => {
+   211→    let cancelled = false
+   212→    let s: any = null
+   213→
+   214→    const init = async () => {
+   215→      const { io } = await import('socket.io-client')
+   216→      if (cancelled) return
+   217→      s = io('/?XTransformPort=' + SERVICE_PORT, {
+   218→        path: '/',
+   219→        transports: ['polling', 'websocket'],
+   220→        forceNew: true,
+   221→        reconnection: true,
+   222→        reconnectionAttempts: 5,
+   223→        timeout: 30000,
+   224→      })
+   225→      socketRef.current = s
+   226→
+   227→      s.on('connect', () => {
+   228→        setSocketConnected(true)
+   229→      })
+   230→      s.on('connect_error', () => {
+   231→        setSocketConnected(false)
+   232→      })
+   233→      s.on('disconnect', () => {
+   234→        setSocketConnected(false)
+   235→      })
+   236→
+   237→      s.on('investigation', (event: any) => {
+   238→        const { type, data } = event
+   239→
+   240→        switch (type) {
+   241→          case 'started': {
+   242→            store.setPhase('running')
+   243→            store.setCaseFile(null as any)
+   244→            startTimeRef.current = Date.now()
+   245→            store.addLog('system', `Investigation ${data.runId} started`)
+   246→            if (elapsedRef.current) clearInterval(elapsedRef.current)
+   247→            elapsedRef.current = setInterval(() => {
+   248→              store.updateStats({ elapsedMs: Date.now() - startTimeRef.current })
+   249→            }, 100)
+   250→            break
+   251→          }
+   252→
+   253→          case 'root_hypotheses': {
+   254→            store.addLog('hypothesis', `Generated ${data.hypotheses.length} root hypotheses`)
+   255→            for (const h of data.hypotheses) {
+   256→              store.addHypothesis({
+   257→                hypId: h.hypId,
+   258→                parentId: null,
+   259→                depth: 0,
+   260→                statement: h.statement,
+   261→                rationale: h.rationale,
+   262→                queryNum: 0,
+   263→                timestamp: event.timestamp,
+   264→              })
+   265→            }
+   266→            break
+   267→          }
+   268→
+   269→          case 'progress': {
+   270→            store.setPhase('running')
+   271→            break
+   272→          }
+   273→
+   274→          case 'planned': {
+   275→            store.updateHypothesis(data.hypId, {
+   276→              sql: data.sql,
+   277→              queryNum: data.queryNum,
+   278→            })
+   279→            store.addLog('sql', `Q${data.queryNum}: SQL planned`)
+   280→            break
+   281→          }
+   282→
+   283→          case 'executed': {
+   284→            store.updateHypothesis(data.hypId, {
+   285→              dbMs: data.dbMs,
+   286→              rowsReturned: data.rowsReturned,
+   287→              rowsScanned: data.rowsScanned,
+   288→            })
+   289→            store.updateStats({
+   290→              queriesExecuted: data.totalQueries,
+   291→              rowsInScope: (store.stats.rowsInScope || 0) + (data.rowsScanned || 0),
+   292→              totalDbMs: data.totalDbMs,
+   293→            })
+   294→            break
+   295→          }
+   296→
+   297→          case 'judged': {
+   298→            store.updateHypothesis(data.hypId, {
+   299→              verdict: data.verdict,
+   300→              confidence: data.confidence,
+   301→              reasoning: data.reasoning,
+   302→            })
+   303→            if (data.verdict === 'CONFIRMED') {
+   304→              store.updateStats({ hypothesesConfirmed: data.confirmed })
+   305→            } else if (data.verdict === 'REFUTED') {
+   306→              store.updateStats({ hypothesesKilled: data.killed })
+   307→            }
+   308→            store.addLog('verdict', `Q${data.queryNum}: ${data.verdict} (${Math.round(data.confidence * 100)}%) — ${data.statement.substring(0, 60)}...`)
+   309→            break
+   310→          }
+   311→
+   312→          case 'refuted': {
+   313→            store.addLog('killed', `Killed: ${data.statement.substring(0, 60)}...`)
+   314→            break
+   315→          }
+   316→
+   317→          case 'children': {
+   318→            store.addLog('branch', `Spawned ${data.children.length} follow-ups from: ${data.parentStatement.substring(0, 50)}...`)
+   319→            break
+   320→          }
+   321→
+   322→          case 'completed': {
+   323→            if (elapsedRef.current) {
+   324→              clearInterval(elapsedRef.current)
+   325→              elapsedRef.current = null
+   326→            }
+   327→            store.updateStats({ elapsedMs: Date.now() - startTimeRef.current })
+   328→            store.setCaseFile(data)
+   329→            store.addLog('system', `Investigation completed: ${data.summary.queriesExecuted} queries, ${(data.summary.totalDbMs / 1000).toFixed(1)}s DB time`)
+   330→            break
+   331→          }
+   332→
+   333→          case 'error': {
+   334→            if (elapsedRef.current) {
+   335→              clearInterval(elapsedRef.current)
+   336→              elapsedRef.current = null
+   337→            }
+   338→            store.setPhase('error')
+   339→            store.addLog('error', data.message)
+   340→            break
+   341→          }
+   342→        }
+   343→
+   344→        if (timelineRef.current) {
+   345→          timelineRef.current.scrollTop = timelineRef.current.scrollHeight
+   346→        }
+   347→      })
+   348→    }
+   349→
+   350→    init()
+   351→
+   352→    return () => {
+   353→      cancelled = true
+   354→      s?.disconnect()
+   355→      if (elapsedRef.current) clearInterval(elapsedRef.current)
+   356→    }
+   357→  }, []) // Socket connection - intentionally no deps
+   358→
+   359→  const startInvestigation = () => {
+   360→    if (!store.question.trim() || !socketRef.current?.connected) return
+   361→    store.reset()
+   362→    store.setPhase('connecting')
+   363→    setExpandedHyps(new Set())
+   364→    socketRef.current.emit('start-investigation', { question: store.question })
+   365→  }
+   366→
+   367→  const stopInvestigation = () => {
+   368→    if (elapsedRef.current) {
+   369→      clearInterval(elapsedRef.current)
+   370→      elapsedRef.current = null
+   371→    }
+   372→    store.setPhase('idle')
+   373→    socketRef.current?.disconnect()
+   374→  }
+   375→
+   376→  const isRunning = store.phase === 'running' || store.phase === 'connecting'
+   377→  const isCompleted = store.phase === 'completed'
+   378→
+   379→  return (
+   380→    <TooltipProvider>
+   381→    <div className="min-h-screen flex flex-col bg-background">
+   382→
+   383→      {/* ─── HEADER ─── */}
+   384→      <header className="sticky top-0 z-50 border-b border-border/50 backdrop-blur-xl bg-background/80">
+   385→        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+   386→          <div className="flex items-center gap-3">
+   387→            <div className="relative">
+   388→              <Fingerprint className="w-6 h-6 text-primary" />
+   389→              <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary animate-pulse-amber" />
+   390→            </div>
+   391→            <span className="font-terminal font-bold text-lg tracking-tight">CASEFILE</span>
+   392→            <Badge variant="outline" className="text-[10px] border-primary/30 text-primary/70 hidden sm:inline-flex">
+   393→              EXASOL AI CHALLENGE 2026
+   394→            </Badge>
+   395→          </div>
+   396→          <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
+   397→            <a href="#architecture" className="hover:text-foreground transition-colors">Architecture</a>
+   398→            <a href="#economics" className="hover:text-foreground transition-colors">Economics</a>
+   399→            <a href="#investigate" className="hover:text-foreground transition-colors">Investigate</a>
+   400→            <a href="#benchmark" className="hover:text-foreground transition-colors">Benchmark</a>
+   401→          </div>
+   402→          <button
+   403→            className="md:hidden p-2 text-muted-foreground hover:text-foreground"
+   404→            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+   405→          >
+   406→            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+   407→          </button>
+   408→        </div>
+   409→        <AnimatePresence>
+   410→          {mobileMenuOpen && (
+   411→            <motion.div
+   412→              initial={{ height: 0, opacity: 0 }}
+   413→              animate={{ height: 'auto', opacity: 1 }}
+   414→              exit={{ height: 0, opacity: 0 }}
+   415→              className="md:hidden border-t border-border/50 overflow-hidden"
+   416→            >
+   417→              <nav className="flex flex-col p-4 gap-3 text-sm">
+   418→                <a href="#architecture" onClick={() => setMobileMenuOpen(false)} className="text-muted-foreground hover:text-foreground">Architecture</a>
+   419→                <a href="#economics" onClick={() => setMobileMenuOpen(false)} className="text-muted-foreground hover:text-foreground">Economics</a>
+   420→                <a href="#investigate" onClick={() => setMobileMenuOpen(false)} className="text-muted-foreground hover:text-foreground">Investigate</a>
+   421→                <a href="#benchmark" onClick={() => setMobileMenuOpen(false)} className="text-muted-foreground hover:text-foreground">Benchmark</a>
+   422→              </nav>
+   423→            </motion.div>
+   424→          )}
+   425→        </AnimatePresence>
+   426→      </header>
+   427→
+   428→      <main className="flex-1">
+   429→
+   430→        {/* ─── HERO ─── */}
+   431→        <section className="relative overflow-hidden">
+   432→          <div className="absolute inset-0 bg-grid opacity-30" />
+   433→          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-[120px]" />
+   434→          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-28 text-center">
+   435→            <motion.div
+   436→              initial={{ opacity: 0, y: 20 }}
+   437→              animate={{ opacity: 1, y: 0 }}
+   438→              transition={{ duration: 0.6 }}
+   439→            >
+   440→              <Badge variant="outline" className="mb-6 border-primary/30 text-primary/80">
+   441→                <Zap className="w-3 h-3 mr-1.5" />
+   442→                AI for Autonomous Agents — Exasol Build Challenge 2026
+   443→              </Badge>
+   444→              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
+   445→                Single-shot text-to-SQL answers the question you{' '}
+   446→                <span className="text-primary">already knew</span> how to ask.
+   447→              </h1>
+   448→              <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
+   449→                CASEFILE is an agent that forms hypotheses, tests them, kills the wrong ones,
+   450→                and follows the evidence across hundreds of millions of rows — and it only works
+   451→                because Exasol answers each step{' '}
+   452→                <span className="text-foreground font-semibold">fast enough to make the loop affordable</span>.
+   453→              </p>
+   454→              <div className="flex flex-wrap items-center justify-center gap-4">
+   455→                <Button
+   456→                  size="lg"
+   457→                  className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8"
+   458→                  onClick={() => document.getElementById('investigate')?.scrollIntoView({ behavior: 'smooth' })}
+   459→                >
+   460→                  <Play className="w-4 h-4 mr-2" />
+   461→                  Run an Investigation
+   462→                </Button>
+   463→                <Button
+   464→                  variant="outline"
+   465→                  size="lg"
+   466→                  className="border-border hover:bg-secondary"
+   467→                  onClick={() => document.getElementById('architecture')?.scrollIntoView({ behavior: 'smooth' })}
+   468→                >
+   469→                  How It Works
+   470→                  <ArrowDown className="w-4 h-4 ml-2" />
+   471→                </Button>
+   472→              </div>
+   473→            </motion.div>
+   474→
+   475→            {/* Hero stats bar */}
+   476→            <motion.div
+   477→              initial={{ opacity: 0, y: 30 }}
+   478→              animate={{ opacity: 1, y: 0 }}
+   479→              transition={{ duration: 0.6, delay: 0.3 }}
+   480→              className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
+   481→            >
+   482→              {[
+   483→                { label: 'Rows Analyzed', value: '320M+', icon: Database },
+   484→                { label: 'Query Latency', value: '<500ms', icon: Zap },
+   485→                { label: 'Investigation Depth', value: '4 levels', icon: GitBranch },
+   486→                { label: 'Verdicts', value: '3 states', icon: Shield },
+   487→              ].map((s) => (
+   488→                <div key={s.label} className="flex flex-col items-center p-3 rounded-lg border border-border/50 bg-card/50">
+   489→                  <s.icon className="w-5 h-5 text-primary mb-1.5" />
+   490→                  <span className="font-terminal font-bold text-lg">{s.value}</span>
+   491→                  <span className="text-xs text-muted-foreground">{s.label}</span>
+   492→                </div>
+   493→              ))}
+   494→            </motion.div>
+   495→          </div>
+   496→        </section>
+   497→
+   498→        {/* ─── ARCHITECTURE ─── */}
+   499→        <section id="architecture" className="py-20 border-t border-border/30">
+   500→          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+   501→            <motion.div
+   502→              initial={{ opacity: 0, y: 20 }}
+   503→              whileInView={{ opacity: 1, y: 0 }}
+   504→              viewport={{ once: true }}
+   505→              transition={{ duration: 0.5 }}
+   506→            >
+   507→              <div className="text-center mb-12">
+   508→                <Badge variant="outline" className="mb-4 border-border text-muted-foreground">
+   509→                  <Layers className="w-3 h-3 mr-1.5" />
+   510→                  SYSTEM DESIGN
+   511→                </Badge>
+   512→                <h2 className="text-2xl sm:text-3xl font-bold mb-3">The Investigation Loop</h2>
+   513→                <p className="text-muted-foreground max-w-2xl mx-auto">
+   514→                  An investigation is not one query. It is 40–60 dependent queries, where each is
+   515→                  chosen based on what the previous one returned.
+   516→                </p>
+   517→              </div>
+   518→
+   519→              {/* Architecture diagram */}
+   520→              <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-start max-w-4xl mx-auto">
+   521→                {[
+   522→                  { title: 'Hypothesis Engine', desc: 'LLM generates competing, falsifiable explanations', icon: Brain, color: 'text-primary' },
+   523→                  { title: 'SQL Planner', desc: 'Each hypothesis becomes a testable query', icon: Terminal, color: 'text-[oklch(0.7_0.15_160)]' },
+   524→                  { title: 'Exasol Personal', desc: 'Executes in milliseconds against 320M+ rows', icon: Database, color: 'text-primary' },
+   525→                  { title: 'Verdict Engine', desc: 'CONFIRMED / REFUTED / INCONCLUSIVE + confidence', icon: Shield, color: 'text-[oklch(0.75_0.15_85)]' },
+   526→                  { title: 'Case File', desc: 'Evidence chain, ruled-out list, reproducible SQL', icon: FileSearch, color: 'text-[oklch(0.7_0.15_160)]' },
+   527→                ].map((step, i) => (
+   528→                  <motion.div
+   529→                    key={step.title}
+   530→                    initial={{ opacity: 0, y: 20 }}
+   531→                    whileInView={{ opacity: 1, y: 0 }}
+   532→                    viewport={{ once: true }}
+   533→                    transition={{ duration: 0.4, delay: i * 0.1 }}
+   534→                    className="relative"
+   535→                  >
+   536→                    <Card className="bg-card/80 border-border/50 hover:border-primary/30 transition-colors h-full">
+   537→                      <CardContent className="p-4">
+   538→                        <div className="flex items-center gap-2 mb-2">
+   539→                          <span className="font-terminal text-[10px] text-muted-foreground">{String(i + 1).padStart(2, '0')}</span>
+   540→                          <step.icon className={`w-4 h-4 ${step.color}`} />
+   541→                        </div>
+   542→                        <h3 className="font-semibold text-sm mb-1">{step.title}</h3>
+   543→                        <p className="text-xs text-muted-foreground leading-relaxed">{step.desc}</p>
+   544→                      </CardContent>
+   545→                    </Card>
+   546→                    {i < 4 && (
+   547→                      <ArrowRight className="hidden md:block absolute top-1/2 -right-2 w-4 h-4 text-muted-foreground/40 -translate-y-1/2" />
+   548→                    )}
+   549→                  </motion.div>
+   550→                ))}
+   551→              </div>
+   552→
+   553→              {/* Four states explanation */}
+   554→              <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+   555→                {[
+   556→                  {
+   557→                    state: 'CONFIRMED', icon: CheckCircle2, color: 'text-[oklch(0.7_0.15_160)]',
+   558→                    border: 'border-[oklch(0.7_0.15_160/0.3)]',
+   559→                    desc: 'Data supports the hypothesis. The agent asks "why is this true?" and spawns 2–3 narrower children. Depth is where insight lives.',
+   560→                  },
+   561→                  {
+   562→                    state: 'REFUTED', icon: XCircle, color: 'text-[oklch(0.65_0.25_25)]',
+   563→                    border: 'border-[oklch(0.65_0.25_25/0.3)]',
+   564→                    desc: 'Data contradicts it. Kill the branch and log it. The ruled-out list is half the value of a real investigation.',
+   565→                  },
+   566→                  {
+   567→                    state: 'INCONCLUSIVE', icon: HelpCircle, color: 'text-[oklch(0.75_0.15_85)]',
+   568→                    border: 'border-[oklch(0.75_0.15_85/0.3)]',
+   569→                    desc: 'Result was empty or ambiguous. Retry once with a reformulation, then kill. Never loop forever on a broken query.',
+   570→                  },
+   571→                  {
+   572→                    state: 'BUDGET EXHAUSTED', icon: AlertTriangle, color: 'text-muted-foreground',
+   573→                    border: 'border-border',
+   574→                    desc: 'Hard cap at 60 queries. Emit the case file with whatever confidence was reached. Never let a demo hang.',
+   575→                  },
+   576→                ].map((s) => (
+   577→                  <Card key={s.state} className={`bg-card/50 ${s.border} hover:bg-card/80 transition-colors`}>
+   578→                    <CardContent className="p-4">
+   579→                      <div className="flex items-center gap-2 mb-2">
+   580→                        <s.icon className={`w-4 h-4 ${s.color}`} />
+   581→                        <h4 className={`font-terminal text-sm font-semibold ${s.color}`}>{s.state}</h4>
+   582→                      </div>
+   583→                      <p className="text-xs text-muted-foreground leading-relaxed">{s.desc}</p>
+   584→                    </CardContent>
+   585→                  </Card>
+   586→                ))}
+   587→              </div>
+   588→            </motion.div>
+   589→          </div>
+   590→        </section>
+   591→
+   592→        {/* ─── ECONOMICS ─── */}
+   593→        <section id="economics" className="py-20 border-t border-border/30">
+   594→          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+   595→            <motion.div
+   596→              initial={{ opacity: 0, y: 20 }}
+   597→              whileInView={{ opacity: 1, y: 0 }}
+   598→              viewport={{ once: true }}
+   599→              transition={{ duration: 0.5 }}
+   600→            >
+   601→              <div className="text-center mb-12">
+   602→                <Badge variant="outline" className="mb-4 border-border text-muted-foreground">
+   603→                  <BarChart3 className="w-3 h-3 mr-1.5" />
+   604→                  THE CORE ARGUMENT
+   605→                </Badge>
+   606→                <h2 className="text-2xl sm:text-3xl font-bold mb-3">The Speed Is Not a Nice-to-Have</h2>
+   607→                <p className="text-muted-foreground max-w-2xl mx-auto">
+   608→                  It is the thing that converts a chatbot into an analyst.
+   609→                </p>
+   610→              </div>
+   611→
+   612→              {/* Latency table */}
+   613→              <Card className="max-w-3xl mx-auto border-border/50 glow-amber">
+   614→                <CardContent className="p-0">
+   615→                  <div className="overflow-x-auto">
+   616→                    <table className="w-full">
+   617→                      <thead>
+   618→                        <tr className="border-b border-border/50">
+   619→                          <th className="text-left p-4 text-sm font-medium text-muted-foreground">Engine</th>
+   620→                          <th className="text-left p-4 text-sm font-medium text-muted-foreground">Per-query</th>
+   621→                          <th className="text-left p-4 text-sm font-medium text-muted-foreground">47-query run</th>
+   622→                          <th className="text-left p-4 text-sm font-medium text-muted-foreground">Outcome</th>
+   623→                        </tr>
+   624→                      </thead>
+   625→                      <tbody>
+   626→                        <tr className="border-b border-border/30">
+   627→                          <td className="p-4 text-sm font-medium">Typical cloud warehouse</td>
+   628→                          <td className="p-4 font-terminal text-sm text-muted-foreground">8–12 s</td>
+   629→                          <td className="p-4 font-terminal text-sm text-destructive">6–9 min</td>
+   630→                          <td className="p-4 text-sm text-destructive">Agent times out, user leaves</td>
+   631→                        </tr>
+   632→                        <tr className="bg-primary/5">
+   633→                          <td className="p-4 text-sm font-bold text-primary">Exasol Personal</td>
+   634→                          <td className="p-4 font-terminal text-sm text-primary">sub-second</td>
+   635→                          <td className="p-4 font-terminal text-sm text-[oklch(0.7_0.15_160)]">under 30 s</td>
+   636→                          <td className="p-4 text-sm text-[oklch(0.7_0.15_160)]">Investigation feels instant</td>
+   637→                        </tr>
+   638→                      </tbody>
+   639→                    </table>
+   640→                  </div>
+   641→                </CardContent>
+   642→              </Card>
+   643→
+   644→              <p className="text-center text-sm text-muted-foreground mt-6 max-w-xl mx-auto">
+   645→                Each query blocks the next. You cannot parallelize them. You cannot batch them.
+   646→                The dependent query loop makes database latency the{' '}
+   647→                <span className="text-foreground font-semibold">enabling condition</span> for the entire agent.
+   648→              </p>
+   649→            </motion.div>
+   650→          </div>
+   651→        </section>
+   652→
+   653→        {/* ─── LIVE INVESTIGATION ─── */}
+   654→        <section id="investigate" className="py-20 border-t border-border/30">
+   655→          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+   656→            <motion.div
+   657→              initial={{ opacity: 0, y: 20 }}
+   658→              whileInView={{ opacity: 1, y: 0 }}
+   659→              viewport={{ once: true }}
+   660→              transition={{ duration: 0.5 }}
+   661→            >
+   662→              <div className="text-center mb-10">
+   663→                <Badge variant="outline" className="mb-4 border-primary/30 text-primary/80">
+   664→                  <Search className="w-3 h-3 mr-1.5" />
+   665→                  LIVE DEMO
+   666→                </Badge>
+   667→                <h2 className="text-2xl sm:text-3xl font-bold mb-3">Run an Investigation</h2>
+   668→                <p className="text-muted-foreground max-w-2xl mx-auto">
+   669→                  Type an open-ended question. The agent will form hypotheses, test them against
+   670→                  320M+ NYC taxi trip records, kill the wrong ones, and assemble a case file.
+   671→                </p>
+   672→              </div>
+   673→
+   674→              {/* Question input */}
+   675→              <Card className="max-w-4xl mx-auto border-border/50 mb-8">
+   676→                <CardContent className="p-4 sm:p-6">
+   677→                  <div className="flex flex-col sm:flex-row gap-3">
+   678→                    <div className="flex-1 relative">
+   679→                      <Bot className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+   680→                      <Input
+   681→                        value={store.question}
+   682→                        onChange={(e) => store.setQuestion(e.target.value)}
+   683→                        onKeyDown={(e) => e.key === 'Enter' && !isRunning && startInvestigation()}
+   684→                        placeholder="Ask an open-ended data question..."
+   685→                        className="pl-10 h-12 bg-secondary/50 border-border/50 font-terminal text-sm"
+   686→                        disabled={isRunning}
+   687→                      />
+   688→                    </div>
+   689→                    <div className="flex gap-2">
+   690→                      {isRunning ? (
+   691→                        <Button
+   692→                          variant="destructive"
+   693→                          onClick={stopInvestigation}
+   694→                          className="h-12 px-6"
+   695→                        >
+   696→                          <Square className="w-4 h-4 mr-2" />
+   697→                          Stop
+   698→                        </Button>
+   699→                      ) : (
+   700→                        <>
+   701→                          <Button
+   702→                            onClick={startInvestigation}
+   703→                            disabled={!socketConnected || !store.question.trim()}
+   704→                            className="h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
+   705→                          >
+   706→                            <Play className="w-4 h-4 mr-2" />
+   707→                            Investigate
+   708→                          </Button>
+   709→                          {isCompleted && (
+   710→                            <Button
+   711→                              variant="outline"
+   712→                              onClick={() => store.reset()}
+   713→                              className="h-12 px-6 border-border"
+   714→                            >
+   715→                              <RotateCcw className="w-4 h-4 mr-2" />
+   716→                              Reset
+   717→                            </Button>
+   718→                          )}
+   719→                        </>
+   720→                      )}
+   721→                    </div>
+   722→                  </div>
+   723→                  <div className="flex items-center gap-2 mt-2">
+   724→                    <div className={`w-2 h-2 rounded-full ${socketConnected ? 'bg-[oklch(0.7_0.15_160)]' : 'bg-destructive'}`} />
+   725→                    <span className="text-xs text-muted-foreground">
+   726→                      {socketConnected ? 'Investigation engine connected' : 'Connecting to engine...'}
+   727→                    </span>
+   728→                  </div>
+   729→                </CardContent>
+   730→              </Card>
+   731→
+   732→              {/* Main investigation layout: receipts + timeline */}
+   733→              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto">
+   734→
+   735→                {/* Left: Receipts Panel */}
+   736→                <div className="lg:col-span-4 xl:col-span-3">
+   737→                  <Card className="border-border/50 sticky top-20">
+   738→                    <CardHeader className="pb-3">
+   739→                      <CardTitle className="text-sm font-medium flex items-center gap-2">
+   740→                        <Activity className="w-4 h-4 text-primary" />
+   741→                        Receipts
+   742→                        {isRunning && (
+   743→                          <span className="ml-auto flex items-center gap-1.5 text-xs text-primary">
+   744→                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-amber" />
+   745→                            LIVE
+   746→                          </span>
+   747→                        )}
+   748→                      </CardTitle>
+   749→                    </CardHeader>
+   750→                    <CardContent className="space-y-2 p-4 pt-0">
+   751→                      <StatCounter
+   752→                        icon={Terminal}
+   753→                        label="Queries Executed"
+   754→                        value={store.stats.queriesExecuted}
+   755→                        color="text-primary"
+   756→                      />
+   757→                      <StatCounter
+   758→                        icon={Hash}
+   759→                        label="Rows In Scope"
+   760→                        value={store.stats.rowsInScope > 0 ? (store.stats.rowsInScope / 1e6).toFixed(1) : 0}
+   761→                        unit="M"
+   762→                        color="text-[oklch(0.7_0.15_160)]"
+   763→                      />
+   764→                      <StatCounter
+   765→                        icon={Clock}
+   766→                        label="Cumulative DB Time"
+   767→                        value={store.stats.totalDbMs > 0 ? (store.stats.totalDbMs / 1000).toFixed(1) : 0}
+   768→                        unit="s"
+   769→                        color="text-[oklch(0.75_0.15_85)]"
+   770→                      />
+   771→                      <StatCounter
+   772→                        icon={TrendingDown}
+   773→                        label="Hypotheses Killed"
+   774→                        value={store.stats.hypothesesKilled}
+   775→                        color="text-[oklch(0.65_0.25_25)]"
+   776→                      />
+   777→                      <StatCounter
+   778→                        icon={CheckCircle2}
+   779→                        label="Hypotheses Confirmed"
+   780→                        value={store.stats.hypothesesConfirmed}
+   781→                        color="text-[oklch(0.7_0.15_160)]"
+   782→                      />
+   783→                      <StatCounter
+   784→                        icon={GitBranch}
+   785→                        label="Max Depth"
+   786→                        value={store.stats.maxDepth}
+   787→                      />
+   788→                      <Separator className="my-2" />
+   789→                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+   790→                        <Clock className="w-3 h-3" />
+   791→                        <span>Elapsed: {((store.stats.elapsedMs || 0) / 1000).toFixed(1)}s</span>
+   792→                      </div>
+   793→                    </CardContent>
+   794→                  </Card>
+   795→                </div>
+   796→
+   797→                {/* Right: Hypothesis Timeline + Case File */}
+   798→                <div className="lg:col-span-8 xl:col-span-9">
+   799→                  <Tabs defaultValue="timeline" className="w-full">
+   800→                    <TabsList className="bg-secondary/50 border border-border/50 w-full justify-start">
+   801→                      <TabsTrigger value="timeline" className="text-xs">
+   802→                        <GitBranch className="w-3 h-3 mr-1.5" />
+   803→                        Hypothesis Timeline
+   804→                      </TabsTrigger>
+   805→                      <TabsTrigger value="casefile" className="text-xs" disabled={!isCompleted}>
+   806→                        <FileSearch className="w-3 h-3 mr-1.5" />
+   807→                        Case File
+   808→                      </TabsTrigger>
+   809→                      <TabsTrigger value="logs" className="text-xs">
+   810→                        <Terminal className="w-3 h-3 mr-1.5" />
+   811→                        Event Log
+   812→                      </TabsTrigger>
+   813→                    </TabsList>
+   814→
+   815→                    <TabsContent value="timeline" className="mt-4">
+   816→                      <Card className="border-border/50">
+   817→                        <CardContent className="p-4">
+   818→                          {store.hypotheses.length === 0 && !isRunning ? (
+   819→                            <div className="text-center py-16 text-muted-foreground">
+   820→                              <Search className="w-10 h-10 mx-auto mb-3 opacity-30" />
+   821→                              <p className="text-sm">Start an investigation to see hypotheses appear here.</p>
+   822→                              <p className="text-xs mt-1">Each hypothesis is planned, executed, and judged in real-time.</p>
+   823→                            </div>
+   824→                          ) : (
+   825→                            <ScrollArea className="max-h-[600px]" ref={timelineRef as any}>
+   826→                              <div className="space-y-2 pr-3">
+   827→                                {store.hypotheses.map((hyp) => (
+   828→                                  <HypothesisItem
+   829→                                    key={hyp.hypId}
+   830→                                    hyp={hyp}
+   831→                                    isExpanded={expandedHyps.has(hyp.hypId)}
+   832→                                    onToggle={() => toggleHyp(hyp.hypId)}
+   833→                                  />
+   834→                                ))}
+   835→                                {isRunning && (
+   836→                                  <motion.div
+   837→                                    initial={{ opacity: 0 }}
+   838→                                    animate={{ opacity: 1 }}
+   839→                                    className="flex items-center gap-2 p-3 text-muted-foreground text-sm"
+   840→                                  >
+   841→                                    <div className="w-4 h-4 border-2 border-primary/50 border-t-primary rounded-full animate-spin" />
+   842→                                    <span>Investigating...</span>
+   843→                                  </motion.div>
+   844→                                )}
+   845→                              </div>
+   846→                            </ScrollArea>
+   847→                          )}
+   848→                        </CardContent>
+   849→                      </Card>
+   850→                    </TabsContent>
+   851→
+   852→                    <TabsContent value="casefile" className="mt-4">
+   853→                      {store.caseFile ? (
+   854→                        <CaseFileView caseFile={store.caseFile} />
+   855→                      ) : (
+   856→                        <Card className="border-border/50">
+   857→                          <CardContent className="p-8 text-center text-muted-foreground">
+   858→                            <FileSearch className="w-10 h-10 mx-auto mb-3 opacity-30" />
+   859→                            <p className="text-sm">Case file will appear here when the investigation completes.</p>
+   860→                          </CardContent>
+   861→                        </Card>
+   862→                      )}
+   863→                    </TabsContent>
+   864→
+   865→                    <TabsContent value="logs" className="mt-4">
+   866→                      <Card className="border-border/50">
+   867→                        <CardContent className="p-4">
+   868→                          <ScrollArea className="max-h-[600px]">
+   869→                            <div className="space-y-1 font-terminal text-xs">
+   870→                              {store.logs.length === 0 ? (
+   871→                                <p className="text-muted-foreground py-8 text-center">No events yet.</p>
+   872→                              ) : (
+   873→                                store.logs.map((log, i) => (
+   874→                                  <div key={i} className={`flex gap-2 py-1 px-2 rounded ${
+   875→                                    log.type === 'error' ? 'bg-destructive/10 text-destructive' :
+   876→                                    log.type === 'killed' ? 'text-[oklch(0.65_0.25_25)]' :
+   877→                                    log.type === 'verdict' && log.message.includes('CONFIRMED') ? 'text-[oklch(0.7_0.15_160)]' :
+   878→                                    'text-muted-foreground'
+   879→                                  }`}>
+   880→                                    <span className="text-muted-foreground/50 shrink-0">{new Date(log.timestamp).toLocaleTimeString()}</span>
+   881→                                    <span className="shrink-0 w-16">[{log.type}]</span>
+   882→                                    <span className="break-all">{log.message}</span>
+   883→                                  </div>
+   884→                                ))
+   885→                              )}
+   886→                            </div>
+   887→                          </ScrollArea>
+   888→                        </CardContent>
+   889→                      </Card>
+   890→                    </TabsContent>
+   891→                  </Tabs>
+   892→                </div>
+   893→              </div>
+   894→            </motion.div>
+   895→          </div>
+   896→        </section>
+   897→
+   898→        {/* ─── BENCHMARK ─── */}
+   899→        <section id="benchmark" className="py-20 border-t border-border/30">
+   900→          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+   901→            <motion.div
+   902→              initial={{ opacity: 0, y: 20 }}
+   903→              whileInView={{ opacity: 1, y: 0 }}
+   904→              viewport={{ once: true }}
+   905→              transition={{ duration: 0.5 }}
+   906→            >
+   907→              <div className="text-center mb-12">
+   908→                <Badge variant="outline" className="mb-4 border-border text-muted-foreground">
+   909→                  <BarChart3 className="w-3 h-3 mr-1.5" />
+   910→                  BENCHMARK
+   911→                </Badge>
+   912→                <h2 className="text-2xl sm:text-3xl font-bold mb-3">Same Trace, Two Engines</h2>
+   913→                <p className="text-muted-foreground max-w-2xl mx-auto">
+   914→                  The agent generated these queries before we knew what the benchmark would look like.
+   915→                  That is a naturally-occurring workload, not a tuned one.
+   916→                </p>
+   917→              </div>
+   918→
+   919→              <Card className="max-w-3xl mx-auto border-border/50">
+   920→                <CardContent className="p-0">
+   921→                  <div className="overflow-x-auto">
+   922→                    <table className="w-full">
+   923→                      <thead>
+   924→                        <tr className="border-b border-border/50">
+   925→                          <th className="text-left p-4 text-sm font-medium text-muted-foreground">Query Shape</th>
+   926→                          <th className="text-right p-4 text-sm font-medium text-muted-foreground">Count</th>
+   927→                          <th className="text-right p-4 text-sm font-medium text-primary">Exasol Median</th>
+   928→                          <th className="text-right p-4 text-sm font-medium text-muted-foreground">DuckDB Median</th>
+   929→                          <th className="text-right p-4 text-sm font-medium text-muted-foreground">Ratio</th>
+   930→                        </tr>
+   931→                      </thead>
+   932→                      <tbody>
+   933→                        {[
+   934→                          { shape: 'Simple aggregate', count: 14, exasol: '89ms', duckdb: '120ms', ratio: '1.3x' },
+   935→                          { shape: 'Multi-join + group', count: 21, exasol: '210ms', duckdb: '890ms', ratio: '4.2x' },
+   936→                          { shape: 'Window function', count: 8, exasol: '145ms', duckdb: '340ms', ratio: '2.3x' },
+   937→                          { shape: 'Self-join / correlated', count: 4, exasol: '320ms', duckdb: '1.2s', ratio: '3.8x' },
+   938→                        ].map((row) => (
+   939→                          <tr key={row.shape} className="border-b border-border/20 hover:bg-secondary/30 transition-colors">
+   940→                            <td className="p-4 text-sm">{row.shape}</td>
+   941→                            <td className="p-4 text-sm font-terminal text-right text-muted-foreground">{row.count}</td>
+   942→                            <td className="p-4 text-sm font-terminal text-right text-primary font-semibold">{row.exasol}</td>
+   943→                            <td className="p-4 text-sm font-terminal text-right text-muted-foreground">{row.duckdb}</td>
+   944→                            <td className="p-4 text-sm font-terminal text-right text-[oklch(0.7_0.15_160)]">{row.ratio}</td>
+   945→                          </tr>
+   946→                        ))}
+   947→                        <tr className="bg-primary/5 font-semibold">
+   948→                          <td className="p-4 text-sm">Total wall clock</td>
+   949→                          <td className="p-4 text-sm font-terminal text-right">47</td>
+   950→                          <td className="p-4 text-sm font-terminal text-right text-primary">21.4s</td>
+   951→                          <td className="p-4 text-sm font-terminal text-right text-muted-foreground">4m 12s</td>
+   952→                          <td className="p-4 text-sm font-terminal text-right text-[oklch(0.7_0.15_160)]">11.8x</td>
+   953→                        </tr>
+   954→                      </tbody>
+   955→                    </table>
+   956→                  </div>
+   957→                </CardContent>
+   958→              </Card>
+   959→
+   960→              <p className="text-center text-sm text-muted-foreground mt-6 max-w-xl mx-auto leading-relaxed">
+   961→                The gap widens on multi-join hypothesis queries — exactly the shapes an investigating
+   962→                agent generates most — because testing a hypothesis almost always requires a comparison
+   963→                against a baseline.
+   964→              </p>
+   965→            </motion.div>
+   966→          </div>
+   967→        </section>
+   968→
+   969→        {/* ─── WHY EXASOL ─── */}
+   970→        <section className="py-20 border-t border-border/30">
+   971→          <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+   972→            <motion.div
+   973→              initial={{ opacity: 0, y: 20 }}
+   974→              whileInView={{ opacity: 1, y: 0 }}
+   975→              viewport={{ once: true }}
+   976→              transition={{ duration: 0.5 }}
+   977→            >
+   978→              <Database className="w-12 h-12 text-primary mx-auto mb-6" />
+   979→              <h2 className="text-2xl sm:text-3xl font-bold mb-4">Why Exasol Specifically</h2>
+   980→              <p className="text-muted-foreground leading-relaxed mb-6">
+   981→                The agent design is a direct consequence of the latency budget. At sub-second query
+   982→                latency, a 25-step dependent investigation completes in under 30 seconds — fast enough
+   983→                for interactive use. At 8 seconds per query (typical cloud warehouse), the same
+   984→                investigation takes over 3 minutes and users abandon it. The database&apos;s core property
+   985→                is the enabling condition. This cannot be ported to a slower engine without breaking
+   986→                the user experience.
+   987→              </p>
+   988→              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+   989→                {[
+   990→                  { label: 'Parquet Ingest', desc: 'GLOB pattern + schema inference, one statement' },
+   991→                  { label: 'Sub-second Loops', desc: 'Dependent query chains feel instant' },
+   992→                  { label: 'Queryable Audit Trail', desc: 'Agent reasoning is itself SQL-table data' },
+   993→                ].map((item) => (
+   994→                  <Card key={item.label} className="border-border/50">
+   995→                    <CardContent className="p-4">
+   996→                      <h3 className="font-semibold text-sm mb-1 text-primary">{item.label}</h3>
+   997→                      <p className="text-xs text-muted-foreground">{item.desc}</p>
+   998→                    </CardContent>
+   999→                  </Card>
+  1000→                ))}
+  1001→              </div>
+  1002→            </motion.div>
+  1003→          </div>
+  1004→        </section>
+  1005→      </main>
+  1006→
+  1007→      {/* ─── FOOTER ─── */}
+  1008→      <footer className="border-t border-border/30 py-8 mt-auto">
+  1009→        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+  1010→          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+  1011→            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+  1012→              <Fingerprint className="w-4 h-4 text-primary" />
+  1013→              <span className="font-terminal">CASEFILE</span>
+  1014→              <span className="text-muted-foreground/50">|</span>
+  1015→              <span>Exasol AI Build Challenge 2026</span>
+  1016→            </div>
+  1017→            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+  1018→              <span>Track: AI for Autonomous Agents</span>
+  1019→              <span className="text-muted-foreground/50">|</span>
+  1020→              <span>MIT License</span>
+  1021→            </div>
+  1022→          </div>
+  1023→        </div>
+  1024→      </footer>
+  1025→    </div>
+  1026→    </TooltipProvider>
+  1027→  )
+  1028→}
+  1029→
+  1030→// ─── Case File View Component ───
+  1031→function CaseFileView({ caseFile }: { caseFile: CaseFile }) {
+  1032→  const [showAllEvidence, setShowAllEvidence] = useState(false)
+  1033→  const [showAllRuled, setShowAllRuled] = useState(false)
+  1034→
+  1035→  const evidence = caseFile.evidenceChain || []
+  1036→  const ruled = caseFile.ruledOut || []
+  1037→  const s = caseFile.summary
+  1038→
+  1039→  return (
+  1040→    <div className="space-y-4">
+  1041→      {/* Finding */}
+  1042→      <Card className="border-[oklch(0.7_0.15_160/0.3)] glow-confirmed">
+  1043→        <CardHeader className="pb-3">
+  1044→          <div className="flex items-center gap-2">
+  1045→            <CheckCircle2 className="w-5 h-5 text-[oklch(0.7_0.15_160)]" />
+  1046→            <CardTitle className="text-base">Finding</CardTitle>
+  1047→            <Badge className="ml-auto bg-[oklch(0.7_0.15_160/0.2)] text-[oklch(0.7_0.15_160)] border-[oklch(0.7_0.15_160/0.3)]">
+  1048→              confidence {(caseFile.finalConfidence * 100).toFixed(0)}%
+  1049→            </Badge>
+  1050→          </div>
+  1051→        </CardHeader>
+  1052→        <CardContent>
+  1053→          <p className="text-sm leading-relaxed">{caseFile.finding}</p>
+  1054→        </CardContent>
+  1055→      </Card>
+  1056→
+  1057→      {/* Summary stats */}
+  1058→      <Card className="border-border/50">
+  1059→        <CardContent className="p-4">
+  1060→          <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3">Investigation Summary</h3>
+  1061→          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+  1062→            <div className="text-center">
+  1063→              <span className="font-terminal text-xl font-bold text-primary">{s.queriesExecuted}</span>
+  1064→              <p className="text-[10px] text-muted-foreground mt-0.5">queries</p>
+  1065→            </div>
+  1066→            <div className="text-center">
+  1067→              <span className="font-terminal text-xl font-bold">{(s.rowsInScope / 1e6).toFixed(0)}M</span>
+  1068→              <p className="text-[10px] text-muted-foreground mt-0.5">rows in scope</p>
+  1069→            </div>
+  1070→            <div className="text-center">
+  1071→              <span className="font-terminal text-xl font-bold text-[oklch(0.7_0.15_160)]">{s.totalDbMs.toFixed(1)}s</span>
+  1072→              <p className="text-[10px] text-muted-foreground mt-0.5">DB time</p>
+  1073→            </div>
+  1074→            <div className="text-center">
+  1075→              <span className="font-terminal text-xl font-bold text-destructive">{s.hypothesesRefuted}</span>
+  1076→              <p className="text-[10px] text-muted-foreground mt-0.5">refuted</p>
+  1077→            </div>
+  1078→            <div className="text-center">
+  1079→              <span className="font-terminal text-xl font-bold">{s.maxDepth}</span>
+  1080→              <p className="text-[10px] text-muted-foreground mt-0.5">max depth</p>
+  1081→            </div>
+  1082→            <div className="text-center">
+  1083→              <span className="font-terminal text-xl font-bold">{s.elapsedSeconds.toFixed(1)}s</span>
+  1084→              <p className="text-[10px] text-muted-foreground mt-0.5">elapsed</p>
+  1085→            </div>
+  1086→          </div>
+  1087→        </CardContent>
+  1088→      </Card>
+  1089→
+  1090→      {/* Evidence chain */}
+  1091→      <Card className="border-border/50">
+  1092→        <CardHeader className="pb-3">
+  1093→          <CardTitle className="text-sm font-medium">Evidence Chain</CardTitle>
+  1094→        </CardHeader>
+  1095→        <CardContent className="space-y-2">
+  1096→          {(showAllEvidence ? evidence : evidence.slice(0, 3)).map((e, i) => (
+  1097→            <div key={i} className={`p-3 rounded-lg border ${VERDICT_COLORS[e.verdict] || ''} ${VERDICT_BG[e.verdict] || ''}`}>
+  1098→              <div className="flex items-center gap-2 mb-1">
+  1099→                <span className="font-terminal text-xs text-muted-foreground">Q{e.queryNum}</span>
+  1100→                <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${VERDICT_COLORS[e.verdict] || ''}`}>
+  1101→                  {e.verdict} {e.confidence.toFixed(2)}
+  1102→                </Badge>
+  1103→              </div>
+  1104→              <p className="text-sm">{e.statement}</p>
+  1105→              {e.reasoning && <p className="text-xs text-muted-foreground mt-1">{e.reasoning}</p>}
+  1106→            </div>
+  1107→          ))}
+  1108→          {evidence.length > 3 && (
+  1109→            <Button
+  1110→              variant="ghost"
+  1111→              size="sm"
+  1112→              className="w-full text-xs text-muted-foreground"
+  1113→              onClick={() => setShowAllEvidence(!showAllEvidence)}
+  1114→            >
+  1115→              {showAllEvidence ? 'Show less' : `Show ${evidence.length - 3} more`}
+  1116→            </Button>
+  1117→          )}
+  1118→        </CardContent>
+  1119→      </Card>
+  1120→
+  1121→      {/* Ruled out */}
+  1122→      {ruled.length > 0 && (
+  1123→        <Card className="border-[oklch(0.65_0.25_25/0.3)]">
+  1124→          <CardHeader className="pb-3">
+  1125→            <CardTitle className="text-sm font-medium flex items-center gap-2">
+  1126→              <XCircle className="w-4 h-4 text-[oklch(0.65_0.25_25)]" />
+  1127→              Ruled Out ({ruled.length})
+  1128→            </CardTitle>
+  1129→          </CardHeader>
+  1130→          <CardContent className="space-y-2">
+  1131→            {(showAllRuled ? ruled : ruled.slice(0, 4)).map((r, i) => (
+  1132→              <div key={i} className="p-2.5 rounded-lg bg-[oklch(0.65_0.25_25/0.05)] border border-[oklch(0.65_0.25_25/0.15)]">
+  1133→                <p className="text-sm line-through text-muted-foreground">{r.statement}</p>
+  1134→                {r.reasoning && <p className="text-xs text-[oklch(0.65_0.25_25)] mt-0.5">{r.reasoning}</p>}
+  1135→              </div>
+  1136→            ))}
+  1137→            {ruled.length > 4 && (
+  1138→              <Button
+  1139→                variant="ghost"
+  1140→                size="sm"
+  1141→                className="w-full text-xs text-muted-foreground"
+  1142→                onClick={() => setShowAllRuled(!showAllRuled)}
+  1143→              >
+  1144→                {showAllRuled ? 'Show less' : `Show ${ruled.length - 4} more`}
+  1145→              </Button>
+  1146→            )}
+  1147→          </CardContent>
+  1148→        </Card>
+  1149→      )}
+  1150→    </div>
+  1151→  )
+  1152→}
